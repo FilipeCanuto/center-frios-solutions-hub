@@ -217,6 +217,60 @@ export function Pa7ProLanding() {
         <Showcase key={i} item={item} reverse={i % 2 === 1} />
       ))}
 
+      {/* INCLUDED DISCS */}
+      <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-24">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 tech-grid opacity-30"
+        />
+        <div className="relative mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
+              Já vem completo
+            </span>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+              07 discos com suporte inclusos
+            </h2>
+            <p className="mt-3 text-base text-muted-foreground">
+              Pronto para fatiar, ralar e cortar em palitos desde o primeiro dia. Disco de 203 mm
+              de diâmetro, fixados em suporte para troca rápida.
+            </p>
+          </div>
+          <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-7">
+            {PA7_INCLUDED_DISCS.map((d) => (
+              <div
+                key={d.code}
+                className="group relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-white/[0.07]"
+              >
+                <div
+                  className="relative grid size-16 place-items-center rounded-full border border-white/15 bg-gradient-to-br from-white/[0.08] to-white/[0.02] shadow-inner"
+                  aria-hidden
+                >
+                  <div
+                    className="absolute inset-1 rounded-full border border-white/10"
+                    style={{
+                      background:
+                        "radial-gradient(circle at 30% 30%, color-mix(in oklab, var(--brand-blue) 22%, transparent), transparent 70%)",
+                    }}
+                  />
+                  <span className="relative text-base font-bold tracking-tight text-foreground">
+                    {d.code}
+                  </span>
+                </div>
+                <p className="mt-3 text-[11px] font-semibold uppercase tracking-widest text-accent">
+                  {d.group}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">{d.desc}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-8 text-center text-xs text-muted-foreground">
+            Grades de cubo (GC8, GC10, GC14 e GC20 PRO) e discos adicionais disponíveis sob
+            consulta.
+          </p>
+        </div>
+      </section>
+
       {/* SPECS */}
       <section className="border-t border-white/5 py-20 md:py-28">
         <div className="mx-auto max-w-5xl px-6">
@@ -236,12 +290,62 @@ export function Pa7ProLanding() {
         </div>
       </section>
 
+      {/* USE CASES */}
+      <section className="border-t border-white/5 py-20 md:py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
+              Ideal para o seu negócio
+            </span>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+              Os cortes certos para cada operação
+            </h2>
+            <p className="mt-3 text-base text-muted-foreground">
+              Combinações de discos recomendadas pela Skymsen para os principais segmentos.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {PA7_USE_CASES.map((u) => {
+              const Icon = USE_CASE_ICONS[u.icon as keyof typeof USE_CASE_ICONS];
+              return (
+                <div
+                  key={u.name}
+                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.07]"
+                >
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute -right-10 -top-10 size-32 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
+                    style={{
+                      background:
+                        "radial-gradient(circle, color-mix(in oklab, var(--brand-blue) 55%, transparent), transparent 70%)",
+                    }}
+                  />
+                  <Icon className="size-7 text-accent" />
+                  <h3 className="mt-4 text-lg font-semibold text-foreground">{u.name}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{u.desc}</p>
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    {u.discs.map((d) => (
+                      <span
+                        key={d}
+                        className="rounded-md border border-white/10 bg-white/[0.05] px-2 py-0.5 text-[11px] font-semibold text-foreground"
+                      >
+                        {d}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* APPLICATIONS */}
       {product.applications && (
         <section className="border-t border-white/5 py-20 md:py-24">
           <div className="mx-auto max-w-5xl px-6">
             <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
-              Aplicações
+              Onde já está em operação
             </span>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
               Para operações que exigem padrão
