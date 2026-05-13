@@ -357,8 +357,8 @@ function Showcase() {
               className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-background shadow-2xl lg:order-2 lg:col-span-7"
             >
               <img
-                src={HS98_IMAGES.detail7}
-                alt="Sistema de segurança patenteado"
+                src={HS98_IMAGES.switch}
+                alt="Chave geral com bloqueio de segurança NR-12"
                 className="h-full w-full object-cover"
               />
             </motion.div>
