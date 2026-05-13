@@ -3,6 +3,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { QuoteDialog } from "./QuoteDialog";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo.png";
 
 const NAV = [
   { to: "/produtos", label: "Produtos" },
@@ -18,8 +19,12 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-        <Link to="/" className="text-xl font-semibold tracking-tight">
-          CENTER<span className="text-accent">FRIOS</span>
+        <Link to="/" className="flex items-center">
+          <img 
+            src={logo} 
+            alt="CENTERFRIOS" 
+            className="h-10 w-auto object-contain"
+          />
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">

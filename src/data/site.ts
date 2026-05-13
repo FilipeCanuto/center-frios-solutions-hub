@@ -1,5 +1,5 @@
 import heroImg from "@/assets/hero-equipamentos.jpg";
-import pa7 from "@/assets/produto-pa7.jpg";
+import pa7 from "@/assets/products/pa7-pro/main.png";
 import amp40 from "@/assets/produto-amp40.jpg";
 import climatizador from "@/assets/produto-climatizador.jpg";
 import segSupermercados from "@/assets/seg-supermercados.jpg";

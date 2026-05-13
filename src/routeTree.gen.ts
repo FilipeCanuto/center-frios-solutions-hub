@@ -15,6 +15,8 @@ import { Route as ProdutosRouteImport } from './routes/produtos'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SegmentosIndexRouteImport } from './routes/segmentos.index'
+import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
 import { Route as SegmentosSlugRouteImport } from './routes/segmentos.$slug'
 import { Route as ProdutosSlugRouteImport } from './routes/produtos.$slug'
 
@@ -48,6 +50,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SegmentosIndexRoute = SegmentosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SegmentosRoute,
+} as any)
+const ProdutosIndexRoute = ProdutosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProdutosRoute,
+} as any)
 const SegmentosSlugRoute = SegmentosSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -68,16 +80,18 @@ export interface FileRoutesByFullPath {
   '/solucoes': typeof SolucoesRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
+  '/produtos/': typeof ProdutosIndexRoute
+  '/segmentos/': typeof SegmentosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/blog': typeof BlogRoute
   '/contato': typeof ContatoRoute
-  '/produtos': typeof ProdutosRouteWithChildren
-  '/segmentos': typeof SegmentosRouteWithChildren
   '/solucoes': typeof SolucoesRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
+  '/produtos': typeof ProdutosIndexRoute
+  '/segmentos': typeof SegmentosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +103,8 @@ export interface FileRoutesById {
   '/solucoes': typeof SolucoesRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
+  '/produtos/': typeof ProdutosIndexRoute
+  '/segmentos/': typeof SegmentosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,16 +117,18 @@ export interface FileRouteTypes {
     | '/solucoes'
     | '/produtos/$slug'
     | '/segmentos/$slug'
+    | '/produtos/'
+    | '/segmentos/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/blog'
     | '/contato'
-    | '/produtos'
-    | '/segmentos'
     | '/solucoes'
     | '/produtos/$slug'
     | '/segmentos/$slug'
+    | '/produtos'
+    | '/segmentos'
   id:
     | '__root__'
     | '/'
@@ -121,6 +139,8 @@ export interface FileRouteTypes {
     | '/solucoes'
     | '/produtos/$slug'
     | '/segmentos/$slug'
+    | '/produtos/'
+    | '/segmentos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -176,6 +196,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/segmentos/': {
+      id: '/segmentos/'
+      path: '/'
+      fullPath: '/segmentos/'
+      preLoaderRoute: typeof SegmentosIndexRouteImport
+      parentRoute: typeof SegmentosRoute
+    }
+    '/produtos/': {
+      id: '/produtos/'
+      path: '/'
+      fullPath: '/produtos/'
+      preLoaderRoute: typeof ProdutosIndexRouteImport
+      parentRoute: typeof ProdutosRoute
+    }
     '/segmentos/$slug': {
       id: '/segmentos/$slug'
       path: '/$slug'
@@ -195,10 +229,12 @@ declare module '@tanstack/react-router' {
 
 interface ProdutosRouteChildren {
   ProdutosSlugRoute: typeof ProdutosSlugRoute
+  ProdutosIndexRoute: typeof ProdutosIndexRoute
 }
 
 const ProdutosRouteChildren: ProdutosRouteChildren = {
   ProdutosSlugRoute: ProdutosSlugRoute,
+  ProdutosIndexRoute: ProdutosIndexRoute,
 }
 
 const ProdutosRouteWithChildren = ProdutosRoute._addFileChildren(
@@ -207,10 +243,12 @@ const ProdutosRouteWithChildren = ProdutosRoute._addFileChildren(
 
 interface SegmentosRouteChildren {
   SegmentosSlugRoute: typeof SegmentosSlugRoute
+  SegmentosIndexRoute: typeof SegmentosIndexRoute
 }
 
 const SegmentosRouteChildren: SegmentosRouteChildren = {
   SegmentosSlugRoute: SegmentosSlugRoute,
+  SegmentosIndexRoute: SegmentosIndexRoute,
 }
 
 const SegmentosRouteWithChildren = SegmentosRoute._addFileChildren(
@@ -228,3 +266,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

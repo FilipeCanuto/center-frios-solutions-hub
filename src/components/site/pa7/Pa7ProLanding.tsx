@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   Beef,
@@ -12,7 +13,6 @@ import {
   Power,
   Salad,
   ShieldCheck,
-  
   Truck,
   Wrench,
 } from "lucide-react";
@@ -22,6 +22,7 @@ import { Gallery } from "./Gallery";
 import { Showcase } from "./Showcase";
 import { StickyBuyBar } from "./StickyBuyBar";
 import { CheckoutDialog } from "./CheckoutDialog";
+import { CheckoutSection } from "./CheckoutSection";
 import { FaqPa7 } from "./FaqPa7";
 import {
   PA7_GALLERY,
@@ -52,7 +53,12 @@ export function Pa7ProLanding() {
   return (
     <>
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-white/5">
+      <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="relative overflow-hidden border-b border-white/5"
+      >
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 tech-grid opacity-40"
@@ -173,10 +179,16 @@ export function Pa7ProLanding() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* HIGHLIGHTS */}
-      <section className="border-b border-white/5 py-20 md:py-24">
+      <motion.section 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="border-b border-white/5 py-20 md:py-24"
+      >
         <div className="mx-auto max-w-7xl px-6">
           <div className="mx-auto max-w-2xl text-center">
             <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
@@ -210,7 +222,7 @@ export function Pa7ProLanding() {
             })}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* SHOWCASE */}
       {PA7_SHOWCASE.map((item, i) => (
@@ -218,11 +230,13 @@ export function Pa7ProLanding() {
       ))}
 
       {/* INCLUDED DISCS */}
-      <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-24">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 tech-grid opacity-30"
-        />
+      <motion.section 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="relative overflow-hidden border-t border-white/5 py-20 md:py-24"
+      >
         <div className="relative mx-auto max-w-7xl px-6">
           <div className="mx-auto max-w-2xl text-center">
             <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
@@ -269,10 +283,16 @@ export function Pa7ProLanding() {
             consulta.
           </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* SPECS */}
-      <section className="border-t border-white/5 py-20 md:py-28">
+      <motion.section 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="border-t border-white/5 py-20 md:py-28"
+      >
         <div className="mx-auto max-w-5xl px-6">
           <div className="flex items-end justify-between gap-6">
             <div>
@@ -288,10 +308,16 @@ export function Pa7ProLanding() {
             <SpecGrid specs={product.specs} columns={3} />
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* USE CASES */}
-      <section className="border-t border-white/5 py-20 md:py-24">
+      <motion.section 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="border-t border-white/5 py-20 md:py-24"
+      >
         <div className="mx-auto max-w-7xl px-6">
           <div className="mx-auto max-w-2xl text-center">
             <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
@@ -338,7 +364,7 @@ export function Pa7ProLanding() {
             })}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* APPLICATIONS */}
       {product.applications && (
@@ -368,38 +394,8 @@ export function Pa7ProLanding() {
       {/* FAQ */}
       <FaqPa7 />
 
-      {/* CTA */}
-      <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(60% 50% at 50% 50%, color-mix(in oklab, var(--brand-blue) 22%, transparent), transparent 70%)",
-          }}
-        />
-        <div className="relative mx-auto max-w-4xl px-6">
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center backdrop-blur-xl md:p-12">
-            <h2 className="text-balance text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-              Pronto para acelerar o pré-preparo da sua cozinha?
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground">
-              Compre online com nota fiscal, garantia de fábrica e suporte técnico próprio em
-              campo da Center Frios.
-            </p>
-            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button size="lg" className="rounded-full px-8" onClick={() => setOpen(true)}>
-                Comprar agora
-              </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full px-8">
-                <a href="https://wa.me/558232232497" target="_blank" rel="noreferrer">
-                  Falar com especialista
-                </a>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* CHECKOUT SECTION */}
+      <CheckoutSection />
 
       <StickyBuyBar
         name="PA7 Pro Skymsen"
