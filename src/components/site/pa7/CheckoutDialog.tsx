@@ -235,8 +235,8 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                 <form
                   onSubmit={handleStepTwo}
                   onChangeCapture={(e) => {
-                    const t = e.target as HTMLInputElement;
-                    if (t.name === "cep" && t.value.replace(/\D/g, "").length === 8) {
+                    const t = e.target as unknown as HTMLInputElement;
+                    if (t?.name === "cep" && t.value.replace(/\D/g, "").length === 8) {
                       lookupCep(t.value, e.currentTarget);
                     }
                   }}
