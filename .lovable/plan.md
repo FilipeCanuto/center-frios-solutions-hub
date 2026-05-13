@@ -1,74 +1,85 @@
-## Escopo
 
-Atualizar **somente** o conteúdo da landing `/produtos/processador-pa7-pro-skymsen` com as informações reais do flyer Skymsen. Layout, componentes, checkout e sistema de design ficam intactos — só troca de copy/dados + duas seções novas que o flyer pede.
+# Plano — HS-98 Skymsen | Landing nível agência
 
-## Conteúdo extraído do flyer (será aplicado)
+## Diagnóstico (o que está errado hoje)
 
-**Headline / claim oficial**
-- "O melhor que a sua cozinha merece"
-- Subheadline: "Cortes precisos e sem esforço, alta produtividade e grande variedade de cortes — agora também em cubos e palitos (julienne)."
+1. **Bug crítico de texto** — Todos os textos no `Hs98Landing.tsx` e `hs98.ts` estão com escapes Unicode literais (`\u00E7`, `\u00E3`, `\u00F3`…) renderizando como código no navegador. É a causa real do "texto misturado com código" que você viu. Precisa ser convertido para caracteres PT-BR reais (`ç`, `ã`, `ó`).
+2. **Imagem principal ruim** — Está usando `Hs98 (1).png` (vista isolada técnica). Existe `homogeneizador foto principal.png` no diretório, claramente a foto editorial correta.
+3. **Efeito de luz inativo** — Hoje é só um `blur-[100px]` estático atrás do produto. Sem profundidade, sem rim-light, sem reflexo de chão, sem gradiente cônico animado.
+4. **Galeria fraca** — Layout 8/4 quebra no zoom (`object-contain p-12` deixa o produto pequeno), thumbnails opacos, sem lightbox, sem navegação por teclado, legenda flutuante com fundo preto cobrindo o produto.
+5. **CTA genérico** — "Solicitar Proposta" / "Falar com Especialista" / "Impulsione seu PDV agora" são frases vazias. Falta gancho de dor (margem, quebra de carne, fila no PDV), prova social, urgência real e oferta clara.
+6. **Cara de "IA"** — Estrutura previsível (hero + 4 cards + 2 features + galeria + specs + CTA), tipografia uniforme, paleta sem hierarquia, ausência de elementos editoriais (números grandes, citações, comparativos antes/depois, ticker de dados).
 
-**Diferenciais (8 do flyer, vou consolidar em 4 cards visuais e listar o restante)**
-- Construção em aço inox · Câmara injetada · Tampa removível
-- Bocal extra largo + empurrador cilíndrico
-- Movimento único de alimentação
-- Sensor de segurança na tampa
-- Bivolt com chave seletora
-- 7 discos com suporte inclusos
+## Direção criativa (referência: agência premium B2B industrial — DJI, Leica, Hobart, Rational)
 
-**Discos inclusos (7)** — E1 (fatiador 1mm), E3 (fatiador 3mm), V (ralador fino), Z3, Z5, Z8 (raladores), H7 (julienne 7×7mm)
+- **Tom**: editorial técnico. Frases curtas, números grandes, palavras em destaque por peso/cor, não por emoji.
+- **Hierarquia**: 1 herói cinematográfico → 1 manifesto de valor (uma frase enorme) → prova em números → showcase técnico → galeria imersiva → comparativo "moedor comum vs HS-98" → ROI/payback → checkout → FAQ → CTA final ancorado em dor real.
+- **Luz**: gradiente cônico atrás do produto (rim-light azul frio + key-light quente embaixo), reflexo no "chão" via `mask-image`, partículas sutis com `mix-blend-screen`.
+- **Tipografia**: display tracking-tighter, números em tabular-nums, eyebrows em uppercase 0.3em.
 
-**Specs reais (substitui os placeholders atuais)**
-- Tensão: 127/220 V (bivolt com chave) · 60 Hz
-- Potência nominal: 600 W
-- Motor: 0,5 HP-CV
-- Consumo: 0,6 kWh
-- Rotação: 440 rpm
-- Diâmetro do disco: 203 mm
-- Produção: até 250 kg/h
-- Dimensões: 590 × 325 × 520 mm (A×L×P)
-- Embalagem: 640 × 400 × 620 mm
-- Peso: 25,70 kg (líquido) / 29,70 kg (bruto)
-- NCM: 84386000 · EAN: 7895707702608
-- Origem: Indústria Brasileira · Garantia 12 meses
+## Mudanças por bloco
 
-**Aplicações por segmento (do flyer "discos ideais para o seu negócio")**
-- Pizzaria, Hamburgueria, Buffet livre, Seleta de legumes — cada um com os discos recomendados.
+### A. Conteúdo & dados
+- `src/data/hs98.ts`: reescrever todos os textos em PT-BR real (sem `\u00xx`); adicionar `HS98_PROOF` (números de impacto), `HS98_COMPARISON` (comum vs HS-98), `HS98_ROI` (payback estimado), `HS98_FAQ` (5 perguntas reais de açougue/supermercado), `HS98_TESTIMONIAL` (1 depoimento de operação), atualizar `HS98_GALLERY` priorizando as fotos editoriais (`homogeneizador foto principal.png`, fotos em ambiente, vistas técnicas).
+- Trocar `HS98_IMAGES.main` para `homogeneizador foto principal.png`.
 
-## Mudanças na página
+### B. Componentização (decompor o monólito)
+Dividir `Hs98Landing.tsx` em componentes em `src/components/site/hs98/`:
+- `Hero.tsx` — herói com luz cinematográfica real
+- `ProofBar.tsx` — ticker horizontal com 4 métricas
+- `Manifesto.tsx` — frase grande de posicionamento
+- `Showcase.tsx` — features alternadas (substitui o bloco atual)
+- `Comparison.tsx` — moedor comum vs HS-98 (tabela visual lado a lado)
+- `Gallery.tsx` — nova galeria com lightbox, navegação por teclado, zoom on hover
+- `RoiBlock.tsx` — calculadora visual de payback
+- `Specs.tsx` — grid de specs (mantém estrutura, melhora densidade)
+- `Faq.tsx` — accordion shadcn
+- `FinalCta.tsx` — CTA persuasivo com dor + oferta + microcopy de confiança
 
-### 1. Trocar texto/dados existentes (sem mexer no layout)
-- Hero: novo H1, subheadline e bullets → claim oficial + 3 bullets reescritos.
-- Trust strip: ajustar para "Bivolt 127/220V", "Indústria Brasileira", "Garantia 12m", "NR-12".
-- Highlights (4 cards glass): reescritos com 250 kg/h, 7 discos, sensor de segurança, inox AISI 304.
-- Showcase parallax (3 blocos): copy reescrito alinhado ao discurso Skymsen.
-- Specs grid: substituir todas as 6 specs atuais pelas 11 do flyer.
-- FAQ: adicionar pergunta sobre cubos/julienne e atualizar tensão.
+### C. Efeito de luz cinematográfico (no Hero)
+- Gradiente cônico animado atrás do produto (`background: conic-gradient(...)`, `animation: spin 20s linear infinite`)
+- Rim-light: `radial-gradient` azul frio no topo + `radial-gradient` âmbar quente embaixo
+- Reflexo do produto no chão via `transform: scaleY(-1)` + `mask-image: linear-gradient(to bottom, black, transparent)`
+- Partículas sutis (CSS-only, 6 divs com `animation: float`)
+- Shadow do produto reagindo ao mouse (parallax leve com `useParallax`)
 
-### 2. Seções novas
+### D. Nova galeria
+- Layout principal: 1 imagem grande à esquerda (60%) + grid 2x3 de thumbnails à direita (40%)
+- Click → abre lightbox fullscreen com navegação ←/→ e ESC
+- Hover na thumb → preview cresce 1.05, brilho aumenta
+- Legenda discreta no canto inferior esquerdo, fora da imagem (não sobreposta)
+- Padding reduzido (`p-6` em vez de `p-12`) para o produto preencher
 
-**A. "Discos inclusos" (após Highlights)**
-Grid com os 7 discos (E1, E3, V, Z3, Z5, Z8, H7). Cada card mostra um thumbnail do disco extraído do flyer + código + descrição (ex.: "E3 — Fatiador 3 mm"). Glassmorfismo + hover lift, mesmo idioma visual.
+### E. CTAs persuasivos (substituir os atuais)
+- **Hero CTA primário**: "Calcular meu ROI em 30 segundos" (abre RoiBlock) + secundário: "Quero uma demonstração no meu PDV"
+- **Sticky bar de conversão**: aparece após scroll do hero, com preço + "Garanta o seu — entrega em 7 dias úteis"
+- **CTA final**: headline com dor real ("Cada quilo mal apresentado é margem indo embora") + bullets de garantia (entrega, NF-e, assistência, garantia 12m) + botão "Falar agora com um especialista da Center Frios" + telefone clicável + horário de atendimento
+- **Microcopy de confiança** sob cada CTA: "Resposta em até 2h úteis · Sem compromisso · Atendimento técnico, não comercial"
 
-**B. "Ideal para o seu negócio" (antes do FAQ)**
-4 cards (Pizzaria, Hamburgueria, Buffet livre, Seleta de legumes) listando os discos recomendados como chips. Cada card com ícone Lucide (Pizza, Beef, Salad, Carrot).
+### F. Toques editoriais anti-IA
+- Números grandes em `tabular-nums` com unidade pequena ao lado (ex.: **900** kg/h)
+- 1 citação técnica destacada do tipo manual ("Sistema patenteado de homogeneização contínua — Skymsen")
+- Quebra de grid intencional em 1 seção (assimetria 7/5 em vez de 6/6)
+- Eyebrows numerados (`01 — Produtividade`, `02 — Segurança`, `03 — Apresentação`)
 
-**C. Mini-banner "Acessórios opcionais" (curto, dentro de B ou após specs)**
-Linha discreta mencionando "grades de cubo (8/10/14/20mm) e fatiadores adicionais disponíveis sob consulta". Sem entrar em catálogo completo de acessórios — mantém foco no PA7.
+## Fora de escopo (não mexer agora)
+- PA7 PRO (já entregue)
+- Outras páginas, header, footer
+- Integração real de pagamento (mantém `CheckoutSection` mock)
+- Novas fotos geradas por IA — usaremos só as que já estão em `src/assets/products/hs-98/`
 
-### 3. Imagens do flyer
-- Copio os 7 thumbnails dos discos inclusos (`page_2_image_*`) para `src/assets/products/pa7-pro/discos/` e uso na seção "Discos inclusos".
-- Não substituo as fotos principais do produto (já são as 10 que você enviou).
+## Critérios de aceitação
+- Zero ocorrências de `\u00` no DOM renderizado da página HS-98
+- LCP ≤ 2.5s no preview, sem warnings de console
+- Imagem principal = `homogeneizador foto principal.png`
+- Gallery navegável por teclado (←, →, ESC) e com lightbox funcional
+- Pelo menos 3 CTAs distintos, todos ancorados em dor/benefício específico (não genéricos)
+- Build verde
 
-### 4. Pequenos ajustes
-- `src/data/site.ts` PA7: atualiza `specs`, `tagline`, `description`, `longDescription`, `applications`, `compliance` com texto do flyer (também impacta o catálogo).
-- `src/data/pa7.ts`: atualiza `PA7_HIGHLIGHTS`, `PA7_SHOWCASE`, `PA7_FAQ`; adiciona `PA7_INCLUDED_DISCS` e `PA7_USE_CASES`.
+## Como vou executar (multi-agente, conforme maestro)
+1. **implementer** — corrige `hs98.ts` (textos PT-BR + novos blocos de dados) e troca imagem principal
+2. **ui-designer** — quebra `Hs98Landing.tsx` em componentes, implementa Hero com luz cinematográfica, nova Gallery, Comparison, RoiBlock, Manifesto e FinalCta
+3. **qa-guardian** — verifica build, console, LCP, render PT-BR e teclado na galeria
+4. Relatório final com lista de arquivos alterados
 
-## Fora de escopo
-- Preço real (mantenho o mock R$ 4.490).
-- Catálogo completo de acessórios opcionais (kits, grades de cubo, etc.).
-- Mudanças em qualquer outra página, header, footer.
-- Integração de pagamento real.
-
-## Próximo passo
-Aprovado o plano, implemento direto: copio os thumbnails do flyer, atualizo os dois arquivos de dados, ajusto o hero e adiciono as duas seções novas dentro do `Pa7ProLanding.tsx` existente.
+Posso começar?
