@@ -606,17 +606,14 @@ function FinalCta() {
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_50%,color-mix(in_oklab,var(--accent)_18%,transparent),transparent_70%)]"
       />
       <div className="mx-auto max-w-4xl px-6 text-center">
-        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-          10 — Hora de decidir
-        </span>
-        <h2 className="mt-4 text-balance text-4xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
+        <h2 className="text-balance text-4xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
           Cada quilo mal apresentado{" "}
           <span className="text-accent">é margem indo embora</span>.
         </h2>
         <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
-          Fale agora com um especialista técnico da Center Frios. A gente entende
-          de operação de cozinha industrial — não vamos te empurrar uma máquina
-          que não cabe no seu PDV.
+          Fale agora com um especialista técnico da Center Frios.
+          A gente entende de operação de PDV — não vamos te empurrar
+          uma máquina que não cabe no seu balcão.
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
