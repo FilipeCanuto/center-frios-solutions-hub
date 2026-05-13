@@ -448,10 +448,7 @@ function RoiBlock() {
       />
       <div className="mx-auto grid max-w-6xl gap-14 px-6 lg:grid-cols-2 lg:items-center">
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-            06 — Retorno
-          </span>
-          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
             {HS98_ROI.headline}
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
