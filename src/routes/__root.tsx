@@ -83,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Refrigeração comercial e equipamentos para gastronomia profissional. Soluções robustas para supermercados, restaurantes, redes, cozinhas industriais e hotéis.",
       },
       { name: "author", content: "Center Frios" },
-      { property: "og:title", content: "Center Frios — Equipamentos de Alta Performance" },
+      { property: "og:title", content: "Center Frios — Equipamentos de Alta Performance para Gastronomia" },
       {
         property: "og:description",
         content:
@@ -91,6 +91,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Center Frios — Equipamentos de Alta Performance para Gastronomia" },
+      { name: "description", content: "Center Frios Hub provides B2B solutions for high-performance food industry equipment." },
+      { property: "og:description", content: "Center Frios Hub provides B2B solutions for high-performance food industry equipment." },
+      { name: "twitter:description", content: "Center Frios Hub provides B2B solutions for high-performance food industry equipment." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d2b748c9-57a5-41fb-8ac8-94a0085b3e3a/id-preview-932e4feb--f21498b6-eb3f-40e4-80e5-7f31d6c98171.lovable.app-1778680713714.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d2b748c9-57a5-41fb-8ac8-94a0085b3e3a/id-preview-932e4feb--f21498b6-eb3f-40e4-80e5-7f31d6c98171.lovable.app-1778680713714.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
