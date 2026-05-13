@@ -197,14 +197,11 @@ function Manifesto() {
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,color-mix(in_oklab,var(--accent)_8%,transparent),transparent_70%)]"
       />
       <div className="mx-auto max-w-5xl px-6 text-center">
-        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-          01 — Posicionamento
-        </span>
-        <p className="mt-6 text-balance text-3xl font-semibold leading-[1.15] tracking-tight md:text-5xl lg:text-6xl">
-          Não é um moedor. É a diferença entre vender carne{" "}
-          <span className="text-accent">a R$ 39,90</span> ou rebaixar para{" "}
+        <p className="text-balance text-3xl font-semibold leading-[1.15] tracking-tight md:text-5xl lg:text-6xl">
+          Não é um moedor. É a diferença entre vender a{" "}
+          <span className="text-accent">R$ 39,90</span> ou rebaixar para{" "}
           <span className="text-muted-foreground line-through decoration-accent/60">R$ 29,90</span>{" "}
-          no fim do dia.
+          às seis da tarde.
         </p>
         <div className="mx-auto mt-10 h-px w-24 bg-accent" />
         <p className="mt-6 text-sm uppercase tracking-[0.25em] text-muted-foreground">
