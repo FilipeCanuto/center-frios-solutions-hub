@@ -12,7 +12,7 @@ import {
   Power,
   Salad,
   ShieldCheck,
-  Sparkles,
+  
   Truck,
   Wrench,
 } from "lucide-react";
