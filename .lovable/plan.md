@@ -1,106 +1,70 @@
-# Plano — Site Center Frios
+## Escopo
 
-Direção visual escolhida: **Technical Premium (dark)**. Fundo zinc-950, tipografia Inter, azul (#2563eb) e amarelo (#fbbf24) como acentos, grid técnico sutil no hero.
+Refazer **somente** a página `/produtos/processador-pa7-pro-skymsen` como landing page premium de alta conversão. Nada mais no site é alterado.
 
-## 1. Tokens & estilo base
-- Atualizar `src/styles.css`: tema dark por padrão, `--background` zinc-950, `--foreground` zinc-100, `--primary` azul Center Frios, `--accent` amarelo, raio menor (0.75rem), classe utilitária `.tech-grid`.
-- Importar Inter via tag `<link>` no `__root.tsx` (head).
-- Aplicar classe `dark` no `<html>` para já nascer no tema escuro.
+Conteúdo técnico definitivo virá no flyer — implemento a estrutura agora com as specs já existentes em `src/data/site.ts` como placeholder. Quando o flyer chegar, atualizo só o conteúdo (texto/specs), sem mexer no layout.
 
-## 2. Estrutura de rotas (TanStack file-based)
-```
-src/routes/
-  __root.tsx              (head global + Header/Footer + Toaster)
-  index.tsx               (Home)
-  produtos.tsx            (hub catálogo + cards)
-  produtos.$slug.tsx      (landing detalhada por produto)
-  segmentos.tsx           (hub de segmentos)
-  segmentos.$slug.tsx     (página por segmento)
-  solucoes.tsx
-  contato.tsx             (form + dados + WhatsApp)
-  blog.tsx                ("Em breve")
-```
-Cada rota com `head()` próprio (title, description, og:title, og:description) em PT-BR e palavras-chave do briefing.
+## Imagens
 
-## 3. Componentes compartilhados
-- `components/site/Header.tsx` — nav sticky com logo CENTER**FRIOS**, links (Produtos, Segmentos, Soluções, Blog, Contato), CTA "Solicite Orçamento" (abre dialog do form).
-- `components/site/Footer.tsx` — contato (82 3223-2497, marketing@centerfrios.com), Instagram @centerfriosoficial, links rápidos.
-- `components/site/QuoteDialog.tsx` — dialog shadcn com formulário (nome, empresa, e-mail, telefone, segmento, produto interesse, mensagem) + Zod + envia para server fn.
-- `components/site/WhatsAppButton.tsx` — botão flutuante fixo bottom-right com link `https://wa.me/558232232497`.
-- `components/site/SectionHeading.tsx`, `ProductCard.tsx`, `SegmentCard.tsx`, `SpecGrid.tsx`.
+Copio as 10 fotos enviadas para `src/assets/products/pa7-pro/` (01, 06, 07, 09, 10, 14, 19, 20, 23 + capa). Eleger:
+- **Capa** (hero / galeria principal): `PA7PRO.png`
+- **Showcase** (seções com parallax): 06, 10, 14, 19, 20, 23
+- **Detalhes técnicos** (cards): 01, 07, 09
 
-## 4. Home (`/`)
-Seções na ordem do protótipo escolhido:
-1. Hero centralizado com badge amarelo "Engenharia de Refrigeração Profissional", H1, subtítulo, CTAs ("Catálogo Técnico" → /produtos, "Solicite Orçamento" → abre dialog) + imagem hero com overlays de specs.
-2. Faixa de segmentos (5 cards quadrados com imagem ao fundo).
-3. Produtos em destaque (3 cards com SpecGrid 2x2: PA7 Pro, AMP40, Tudo Brisa).
-4. Autoridade — 3 stats (anos de mercado, clientes, cobertura).
-5. CTA azul "Pronto para elevar seu padrão operacional?" (orçamento + WhatsApp).
+## Estrutura da landing page
 
-## 5. Catálogo de produtos
-**3 detalhados** com landing dedicada:
-- `processador-pa7-pro-skymsen`
-- `abridora-de-massa-amp40`
-- `climatizador-tudo-brisa`
+1. **Hero split** — galeria à esquerda (imagem grande + 4 thumbnails com troca animada e zoom on hover) e à direita: badge "Skymsen · Linha Profissional", H1, tagline, 3 bullets de valor, CTA primário "Comprar agora" (abre checkout mock) + CTA secundário "Falar com especialista" (WhatsApp). Trust strip abaixo (NR-12, RDC 91, garantia 12m, frete BR).
+2. **Sticky buy bar** — barra que aparece no scroll com nome + preço (mock) + botão Comprar.
+3. **Diferenciais** — 4 cards com glassmorfismo (backdrop-blur sobre gradiente sutil), hover lift.
+4. **Showcase parallax** — 2-3 seções alternadas (texto + imagem) com `translateY` no scroll, usando fotos 06/14/20.
+5. **Specs técnicas** — `SpecGrid` existente, com leve refinamento visual (ícones).
+6. **Aplicações** — chips/cards com ícone por segmento.
+7. **Conformidade & Garantia** — selos NR-12 / RDC 91 / 12 meses.
+8. **FAQ** — Accordion (shadcn) com 5-6 perguntas-padrão.
+9. **CTA final** — banner com gradiente + glass, dois botões (Comprar / WhatsApp).
 
-**6 placeholders** apenas listados em `/produtos` com card e página simples "em breve detalhamento + CTA orçamento": Forno de Lastro, Câmara Fria Modular, Balcão Refrigerado, Fritadeira Industrial, Liquidificador Industrial, Masseira Espiral.
+## Checkout mock (visual, não persiste)
 
-Dados em `src/data/products.ts` (array tipado). Página `/produtos/$slug` consome do array; 404 via `notFoundComponent` se slug não existir.
+Componente `CheckoutDialog` (shadcn Dialog em modo full-screen no mobile) com 3 passos:
+1. **Identificação** — nome, empresa, CNPJ (opcional), email, telefone, CEP (Zod).
+2. **Entrega** — endereço (auto-preenche por CEP via ViaCEP, sem chave), método de envio (placeholders).
+3. **Pagamento** — tabs com 5 métodos:
+   - **PIX** (QR code SVG decorativo + chave fake + copy)
+   - **Boleto** (linha digitável fake + botão "Gerar boleto")
+   - **Transferência** (dados bancários fictícios)
+   - **Cartão de crédito** (form com bandeiras, parcelamento até 12x)
+   - **Cartão de débito** (form simples)
+   
+   Resumo do pedido sticky à direita (produto + foto + subtotal + frete + total).
 
-Estrutura da landing de produto: hero com imagem + título + categoria, descrição persuasiva, SpecGrid de características técnicas, seção de aplicações/casos de uso, bloco de normas sanitárias, CTA "Solicite Orçamento".
+Submit de qualquer método mostra tela de sucesso com aviso "Plataforma de pagamento em integração — entraremos em contato para confirmar." Não grava em banco. Toast de confirmação.
 
-## 6. Segmentos
-5 segmentos com página própria: supermercados, bares-restaurantes, redes-franquias, cozinhas-industriais, hoteis. Cada uma: hero do segmento, lista de produtos recomendados (filtra do array por `segments`), benefícios específicos, CTA consulta personalizada.
+Selos de confiança no rodapé do checkout (SSL, LGPD, "Compra Segura", bandeiras).
 
-## 7. Imagens
-Gerar via `imagegen` (fast) e salvar em `src/assets/`:
-- 1 hero principal (equipamento premium escuro)
-- 3 produtos em destaque
-- 5 segmentos
-- 3 imagens auxiliares (autoridade/aplicações)
+## Design
 
-≈12 imagens. Importadas como ES6.
+- Mantém tema dark (zinc-950) + acentos azul/amarelo já definidos.
+- **Glassmorfismo**: `bg-white/5 backdrop-blur-xl border border-white/10` em cards de diferenciais e checkout summary.
+- **Parallax**: hook `useParallax` simples baseado em `scroll` + `translate3d` (sem libs).
+- **Hover**: scale-[1.02], glow do acento, transições 300ms.
+- **Reveal on scroll**: IntersectionObserver + `animate-fade-in`.
+- Tudo via tokens semânticos do `src/styles.css`.
 
-## 8. Backend (Lovable Cloud)
-Habilitar Cloud. Migration cria tabela `quote_leads`:
-```
-id uuid pk default gen_random_uuid()
-created_at timestamptz default now()
-name text not null
-company text
-email text not null
-phone text not null
-segment text
-product_interest text
-message text
-source text  -- página de origem
-```
-RLS: ativar; policy só de **INSERT público** (anônimo permitido), sem SELECT público. Admin pode ler depois via dashboard do Cloud.
+## Arquivos
 
-Server function `submitQuote` em `src/lib/leads.functions.ts`:
-- `inputValidator` com Zod (trim, email, telefone obrigatório, max lengths).
-- `handler` insere via cliente Supabase server.
-- Retorna `{ ok: true }`.
+- **Novo**: `src/components/site/pa7/Gallery.tsx`, `Showcase.tsx`, `StickyBuyBar.tsx`, `CheckoutDialog.tsx`, `FaqPa7.tsx`, `useParallax.ts`, `useReveal.ts`.
+- **Editado**: `src/routes/produtos.$slug.tsx` — quando `slug === "processador-pa7-pro-skymsen"`, renderiza componente dedicado `<Pa7ProLanding />`; demais produtos seguem layout atual intocado.
+- **Novo**: `src/components/site/pa7/Pa7ProLanding.tsx` (composição da landing).
+- **Assets**: `src/assets/products/pa7-pro/*.png` (10 arquivos copiados).
+- **Data**: pequeno bloco `PA7_CONTENT` em `src/data/pa7.ts` (preço mock, parcelamento, FAQ, copy) — fácil de trocar quando flyer chegar.
 
-Form chama via `useServerFn`, mostra toast de sucesso/erro (sonner já existe).
+## Fora de escopo
 
-## 9. SEO & técnico
-- Meta tags pt-BR em todas as rotas com palavras-chave: "equipamentos para gastronomia profissional", "refrigeração comercial", "alta performance".
-- `<html lang="pt-BR">`.
-- Imagens com `alt` descritivo e `loading="lazy"` (exceto hero).
-- Mobile-first: classes responsivas Tailwind, breakpoints `md`/`lg`.
-- H1 único por página, hierarquia semântica.
+- Integração real de pagamento.
+- Persistência do pedido no Lovable Cloud.
+- Mudanças em outras páginas, header, footer, dados gerais.
+- SEO da página será atualizado, mas só os campos do PA7.
 
-## 10. Detalhes técnicos importantes
-- Não criar entry-client/server, manter shell atual em `__root.tsx`.
-- `src/routeTree.gen.ts` é auto-gerado — não editar.
-- Server fn em `src/lib/leads.functions.ts` (client-safe path), só com declarações de server fn.
-- Toaster do sonner adicionado em `RootComponent`.
-- WhatsApp button visível em todas as páginas (renderizado no `__root`).
+## Próximo passo após aprovação
 
-## Entregas finais
-- Home, Produtos (hub + 3 detalhadas + 6 cards placeholder), Segmentos (hub + 5), Soluções, Contato, Blog (em breve).
-- Formulário funcional persistindo leads no Cloud.
-- Tema dark Technical Premium aplicado.
-- 12 imagens geradas.
-- SEO básico em todas as rotas.
+Implemento a estrutura. Quando você enviar o flyer, faço um segundo passe trocando texto/specs/preço sem refatorar.
