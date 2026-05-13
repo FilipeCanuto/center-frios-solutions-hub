@@ -77,12 +77,13 @@ function Hero() {
             Linha Skymsen Profissional · Homogeneização contínua
           </Badge>
           <h1 className="text-balance text-5xl font-semibold leading-[1.02] tracking-tight md:text-7xl">
-            A carne que <span className="text-accent">vende sozinha</span> no balcão.
+            900 kg/h. Vermelho de vitrine.{" "}
+            <span className="text-accent">Margem de volta no caixa.</span>
           </h1>
           <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
-            HS-98 é o moedor homogeneizador que devolve margem ao seu açougue.
-            Mói, mistura e entrega um vermelho uniforme — o tipo de apresentação
-            que faz o cliente decidir antes mesmo de pegar a senha.
+            Moedor comum entrega carne branca e até 12% de quebra no balcão.
+            O HS-98 mói e homogeneíza no mesmo ciclo — devolve cada quilo
+            como produto que vende pelo preço cheio.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-3">
