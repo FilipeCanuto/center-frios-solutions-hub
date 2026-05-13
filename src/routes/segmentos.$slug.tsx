@@ -73,7 +73,7 @@ function SegmentoPage() {
             Por que escolher a Center Frios para esse segmento
           </h2>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {segment.benefits.map((b) => (
+            {segment.benefits.map((b: string) => (
               <li
                 key={b}
                 className="flex items-start gap-3 rounded-lg border border-border bg-card p-4"

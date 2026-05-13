@@ -120,7 +120,7 @@ function ProductPage() {
           <div className="mx-auto max-w-5xl px-6">
             <h2 className="text-2xl font-semibold text-foreground">Aplicações</h2>
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-              {product.applications.map((a) => (
+              {product.applications.map((a: string) => (
                 <li
                   key={a}
                   className="flex items-start gap-3 rounded-lg border border-border bg-card p-4"
@@ -144,7 +144,7 @@ function ProductPage() {
               </h2>
             </div>
             <ul className="mt-6 space-y-2">
-              {product.compliance.map((c) => (
+              {product.compliance.map((c: string) => (
                 <li key={c} className="text-sm text-muted-foreground">
                   • {c}
                 </li>
