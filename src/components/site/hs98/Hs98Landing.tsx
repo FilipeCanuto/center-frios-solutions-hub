@@ -577,10 +577,7 @@ function Faq() {
   return (
     <section className="border-b border-border py-28">
       <div className="mx-auto max-w-3xl px-6">
-        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-          09 — Dúvidas reais
-        </span>
-        <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+        <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
           Perguntas que recebemos do chão de fábrica.
         </h2>
         <Accordion type="single" collapsible className="mt-10">
