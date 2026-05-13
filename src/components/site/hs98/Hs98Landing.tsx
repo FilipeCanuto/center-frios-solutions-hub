@@ -77,12 +77,13 @@ function Hero() {
             Linha Skymsen Profissional · Homogeneização contínua
           </Badge>
           <h1 className="text-balance text-5xl font-semibold leading-[1.02] tracking-tight md:text-7xl">
-            A carne que <span className="text-accent">vende sozinha</span> no balcão.
+            900 kg/h. Vermelho de vitrine.{" "}
+            <span className="text-accent">Margem de volta no caixa.</span>
           </h1>
           <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
-            HS-98 é o moedor homogeneizador que devolve margem ao seu açougue.
-            Mói, mistura e entrega um vermelho uniforme — o tipo de apresentação
-            que faz o cliente decidir antes mesmo de pegar a senha.
+            Moedor comum entrega carne branca e até 12% de quebra no balcão.
+            O HS-98 mói e homogeneíza no mesmo ciclo — devolve cada quilo
+            como produto que vende pelo preço cheio.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-3">
@@ -196,14 +197,11 @@ function Manifesto() {
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,color-mix(in_oklab,var(--accent)_8%,transparent),transparent_70%)]"
       />
       <div className="mx-auto max-w-5xl px-6 text-center">
-        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-          01 — Posicionamento
-        </span>
-        <p className="mt-6 text-balance text-3xl font-semibold leading-[1.15] tracking-tight md:text-5xl lg:text-6xl">
-          Não é um moedor. É a diferença entre vender carne{" "}
-          <span className="text-accent">a R$ 39,90</span> ou rebaixar para{" "}
+        <p className="text-balance text-3xl font-semibold leading-[1.15] tracking-tight md:text-5xl lg:text-6xl">
+          Não é um moedor. É a diferença entre vender a{" "}
+          <span className="text-accent">R$ 39,90</span> ou rebaixar para{" "}
           <span className="text-muted-foreground line-through decoration-accent/60">R$ 29,90</span>{" "}
-          no fim do dia.
+          às seis da tarde.
         </p>
         <div className="mx-auto mt-10 h-px w-24 bg-accent" />
         <p className="mt-6 text-sm uppercase tracking-[0.25em] text-muted-foreground">
@@ -220,17 +218,12 @@ function Highlights() {
     <section className="border-b border-border py-24">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-              02 — Por dentro
-            </span>
-            <h2 className="mt-3 max-w-xl text-balance text-4xl font-semibold tracking-tight md:text-5xl">
-              Quatro decisões de engenharia que mudam seu PDV.
-            </h2>
-          </div>
+          <h2 className="max-w-xl text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+            Quatro decisões que mudam o sábado de manhã.
+          </h2>
           <p className="max-w-sm text-sm text-muted-foreground">
-            Cada componente foi escolhido para suportar o regime mais duro do
-            varejo brasileiro: o sábado de manhã.
+            Cada componente foi escolhido para suportar o regime mais duro
+            do varejo brasileiro: pico de movimento, sem margem pra parada.
           </p>
         </div>
 
@@ -264,10 +257,7 @@ function Showcase() {
     <section className="border-b border-border bg-card/30 py-28">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-20 max-w-2xl">
-          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-            03 — Engenharia
-          </span>
-          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
             Engenharia em cada detalhe.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
@@ -367,8 +357,8 @@ function Showcase() {
               className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-background shadow-2xl lg:order-2 lg:col-span-7"
             >
               <img
-                src={HS98_IMAGES.detail7}
-                alt="Sistema de segurança patenteado"
+                src={HS98_IMAGES.switch}
+                alt="Chave geral com bloqueio de segurança NR-12"
                 className="h-full w-full object-cover"
               />
             </motion.div>
@@ -385,14 +375,11 @@ function Comparison() {
     <section className="border-b border-border py-28">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-14 max-w-2xl">
-          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-            04 — Comparativo
-          </span>
-          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
             Moedor comum vs. HS-98 Skymsen.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            O mesmo lote de carne, dois resultados diferentes no balcão.
+            Mesmo lote de carne. Dois resultados no balcão.
           </p>
         </div>
 
@@ -461,10 +448,7 @@ function RoiBlock() {
       />
       <div className="mx-auto grid max-w-6xl gap-14 px-6 lg:grid-cols-2 lg:items-center">
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-            06 — Retorno
-          </span>
-          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
             {HS98_ROI.headline}
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
@@ -548,10 +532,7 @@ function Specs() {
     <section className="border-b border-border bg-card/10 py-28">
       <div className="mx-auto grid max-w-7xl gap-14 px-6 lg:grid-cols-3">
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-            07 — Especificações
-          </span>
-          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
             Dados de engenharia.
           </h2>
           <p className="mt-5 text-muted-foreground">
@@ -596,10 +577,7 @@ function Faq() {
   return (
     <section className="border-b border-border py-28">
       <div className="mx-auto max-w-3xl px-6">
-        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-          09 — Dúvidas reais
-        </span>
-        <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+        <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
           Perguntas que recebemos do chão de fábrica.
         </h2>
         <Accordion type="single" collapsible className="mt-10">
@@ -628,17 +606,14 @@ function FinalCta() {
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_50%,color-mix(in_oklab,var(--accent)_18%,transparent),transparent_70%)]"
       />
       <div className="mx-auto max-w-4xl px-6 text-center">
-        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-          10 — Hora de decidir
-        </span>
-        <h2 className="mt-4 text-balance text-4xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
+        <h2 className="text-balance text-4xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
           Cada quilo mal apresentado{" "}
           <span className="text-accent">é margem indo embora</span>.
         </h2>
         <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
-          Fale agora com um especialista técnico da Center Frios. A gente entende
-          de operação de cozinha industrial — não vamos te empurrar uma máquina
-          que não cabe no seu PDV.
+          Fale agora com um especialista técnico da Center Frios.
+          A gente entende de operação de PDV — não vamos te empurrar
+          uma máquina que não cabe no seu balcão.
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
