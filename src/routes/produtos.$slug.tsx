@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { QuoteDialog } from "@/components/site/QuoteDialog";
 import { SpecGrid } from "@/components/site/SpecGrid";
 import { CtaBanner } from "@/components/site/CtaBanner";
+import { Pa7ProLanding } from "@/components/site/pa7/Pa7ProLanding";
 import { getProduct } from "@/data/site";
 
 export const Route = createFileRoute("/produtos/$slug")({
@@ -42,6 +43,10 @@ export const Route = createFileRoute("/produtos/$slug")({
 
 function ProductPage() {
   const { product } = Route.useLoaderData();
+
+  if (product.slug === "processador-pa7-pro-skymsen") {
+    return <Pa7ProLanding />;
+  }
 
   return (
     <>
