@@ -532,10 +532,7 @@ function Specs() {
     <section className="border-b border-border bg-card/10 py-28">
       <div className="mx-auto grid max-w-7xl gap-14 px-6 lg:grid-cols-3">
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-            07 — Especificações
-          </span>
-          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
             Dados de engenharia.
           </h2>
           <p className="mt-5 text-muted-foreground">
