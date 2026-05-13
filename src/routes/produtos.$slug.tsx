@@ -5,6 +5,7 @@ import { QuoteDialog } from "@/components/site/QuoteDialog";
 import { SpecGrid } from "@/components/site/SpecGrid";
 import { CtaBanner } from "@/components/site/CtaBanner";
 import { Pa7ProLanding } from "@/components/site/pa7/Pa7ProLanding";
+import { Hs98Landing } from "@/components/site/hs98/Hs98Landing";
 import { getProduct } from "@/data/site";
 
 export const Route = createFileRoute("/produtos/$slug")({
@@ -46,6 +47,10 @@ function ProductPage() {
 
   if (product.slug === "processador-pa7-pro-skymsen") {
     return <Pa7ProLanding />;
+  }
+
+  if (product.slug === "moeder-homogeneizador-hs-98") {
+    return <Hs98Landing />;
   }
 
   return (

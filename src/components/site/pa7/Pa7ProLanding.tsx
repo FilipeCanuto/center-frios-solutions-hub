@@ -395,7 +395,17 @@ export function Pa7ProLanding() {
       <FaqPa7 />
 
       {/* CHECKOUT SECTION */}
-      <CheckoutSection />
+      <CheckoutSection 
+        product={{
+          id: product.slug,
+          name: product.name,
+          image: PA7_IMAGES.main,
+          price: PA7_PRICE.amount,
+          installments: PA7_PRICE.installments,
+          pixDiscount: 5,
+          subtitle: "Linha Industrial · Bivolt"
+        }}
+      />
 
       <StickyBuyBar
         name="PA7 Pro Skymsen"

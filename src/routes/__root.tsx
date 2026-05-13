@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
+import { MouseSpotlight } from "@/components/site/MouseSpotlight";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -133,6 +134,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <MouseSpotlight />
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1">

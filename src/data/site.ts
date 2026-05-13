@@ -1,5 +1,6 @@
 import heroImg from "@/assets/hero-equipamentos.jpg";
 import pa7 from "@/assets/products/pa7-pro/main.png";
+import hs98 from "@/assets/products/hs-98/Hs98 (1).png";
 import amp40 from "@/assets/produto-amp40.jpg";
 import climatizador from "@/assets/produto-climatizador.jpg";
 import segSupermercados from "@/assets/seg-supermercados.jpg";
@@ -180,6 +181,37 @@ export const PRODUCTS: Product[] = [
     ],
   },
   {
+    slug: "moeder-homogeneizador-hs-98",
+    name: "Moedor Homogeneizador HS-98 Skymsen",
+    category: "Processamento de Carnes",
+    tagline: "Mais que um moedor de carne.",
+    description: "Mistura e mói simultaneamente, aumentando a produtividade e qualidade do auto serviço.",
+    longDescription: "Ideal para grandes produções com capacidade de até 900 kg/h. Operação automática que libera o operador e sistema de homogeneização que reduz a gordura aparente, agregando valor final ao produto.",
+    image: hs98,
+    highlight: true,
+    detailed: true,
+    specs: [
+      { label: "Produção aproximada", value: "Até 900 kg/h" },
+      { label: "Capacidade da caçamba", value: "41 L / 31 kg" },
+      { label: "Potência motor", value: "3 CV" },
+      { label: "Tensão", value: "220V ou 380V (Trifásico)" },
+      { label: "Peso Líquido", value: "183 kg" },
+      { label: "Garantia", value: "12 meses" },
+    ],
+    applications: [
+      "Açougues de alto volume",
+      "Supermercados e hipermercados",
+      "Indústrias de embutidos",
+      "Cozinhas industriais de grande escala",
+    ],
+    compliance: [
+      "Segurança INMETRO",
+      "Certificação UL",
+      "Conformidade NR-12",
+      "Patente de conjunto de segurança exclusivo",
+    ],
+  },
+  {
     slug: "abridora-de-massa-amp40",
     name: "Abridora de Massa de Pizza AMP40",
     category: "Panificação & Pizzaria",
@@ -324,6 +356,7 @@ export const PRODUCTS: Product[] = [
 
 export const FEATURED_PRODUCT_SLUGS = [
   "processador-pa7-pro-skymsen",
+  "moeder-homogeneizador-hs-98",
   "abridora-de-massa-amp40",
   "climatizador-tudo-brisa",
 ];

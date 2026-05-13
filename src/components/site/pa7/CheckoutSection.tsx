@@ -2,23 +2,34 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, CreditCard, ShieldCheck, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PA7_PRICE, PA7_IMAGES } from "@/data/pa7";
 import { CheckoutDialog } from "./CheckoutDialog";
 
-export function CheckoutSection() {
+interface CheckoutSectionProps {
+  product: {
+    id: string;
+    name: string;
+    image: any;
+    price: number;
+    installments: number;
+    pixDiscount: number;
+    subtitle?: string;
+  };
+}
+
+export function CheckoutSection({ product }: CheckoutSectionProps) {
   const [open, setOpen] = useState(false);
   
-  const totalBRL = PA7_PRICE.amount.toLocaleString("pt-BR", {
+  const totalBRL = product.price.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
   
-  const pixPrice = (PA7_PRICE.amount * (1 - PA7_PRICE.pixDiscountPct / 100)).toLocaleString("pt-BR", {
+  const pixPrice = (product.price * (1 - product.pixDiscount / 100)).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
   
-  const installmentValue = (PA7_PRICE.amount / PA7_PRICE.installments).toLocaleString("pt-BR", {
+  const installmentValue = (product.price / product.installments).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
@@ -27,7 +38,7 @@ export function CheckoutSection() {
     <section className="relative overflow-hidden border-t border-white/5 bg-background py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          {/* Lado Esquerdo: Produto e Confiança */}
+          {/* Lado Esquerdo: Produto e Confian\u00E7a */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -35,8 +46,8 @@ export function CheckoutSection() {
             className="flex flex-col gap-8"
           >
             <div>
-              <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                Adquira o seu <span className="text-accent">PA7 Pro</span> agora
+              <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl text-pretty">
+                Adquira o seu <span className="text-accent">{product.name}</span> agora
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
                 O equipamento que vai transformar a produtividade da sua cozinha. 
@@ -46,10 +57,10 @@ export function CheckoutSection() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                { icon: Truck, title: "Entrega Rápida", desc: "Logística especializada em todo Brasil" },
+                { icon: Truck, title: "Entrega R\u00E1pida", desc: "Log\u00EDstica especializada em todo Brasil" },
                 { icon: ShieldCheck, title: "Compra Segura", desc: "Ambiente criptografado e NF-e" },
-                { icon: CreditCard, title: "Até 12x Sem Juros", desc: "Parcelamento facilitado no cartão" },
-                { icon: Check, title: "Garantia 12 Meses", desc: "Suporte técnico próprio em campo" },
+                { icon: CreditCard, title: "At\u00E9 12x Sem Juros", desc: "Parcelamento facilitado no cart\u00E3o" },
+                { icon: Check, title: "Garantia 12 Meses", desc: "Suporte t\u00E9cnico pr\u00F3prio em campo" },
               ].map((item) => (
                 <div key={item.title} className="flex gap-3 rounded-2xl border border-white/5 bg-white/[0.02] p-4">
                   <item.icon className="size-5 shrink-0 text-accent" />
@@ -69,7 +80,7 @@ export function CheckoutSection() {
             </div>
           </motion.div>
 
-          {/* Lado Direito: Card de Preço */}
+          {/* Lado Direito: Card de Pre\u00E7o */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -81,30 +92,30 @@ export function CheckoutSection() {
             <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl md:p-10">
               <div className="flex items-center gap-4 mb-8">
                 <div className="size-16 rounded-xl border border-white/10 bg-white/5 p-2">
-                  <img src={PA7_IMAGES.main} alt="PA7 Pro" className="h-full w-full object-contain" />
+                  <img src={product.image} alt={product.name} className="h-full w-full object-contain" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Processador PA7 Pro Skymsen</h3>
-                  <p className="text-xs text-muted-foreground">Linha Industrial · Bivolt</p>
+                  <h3 className="font-semibold text-foreground leading-tight">{product.name}</h3>
+                  <p className="text-xs text-muted-foreground mt-1">{product.subtitle || "Linha Profissional Center Frios"}</p>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div className="pb-6 border-b border-white/5">
-                  <p className="text-sm text-muted-foreground uppercase tracking-widest font-semibold">Preço à vista no PIX</p>
+                  <p className="text-sm text-muted-foreground uppercase tracking-widest font-semibold text-[10px]">Pre\u00E7o \u00E0 vista no PIX</p>
                   <div className="mt-2 flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-foreground md:text-5xl">{pixPrice}</span>
-                    <span className="rounded-md bg-accent/10 px-2 py-0.5 text-xs font-bold text-accent">-{PA7_PRICE.pixDiscountPct}%</span>
+                    <span className="text-4xl font-bold text-foreground md:text-5xl tracking-tighter">{pixPrice}</span>
+                    <span className="rounded-md bg-accent/10 px-2 py-0.5 text-xs font-bold text-accent">-{product.pixDiscount}%</span>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-sm text-muted-foreground">Ou parcelado no cartão</p>
+                  <p className="text-sm text-muted-foreground text-[10px] uppercase font-semibold">Ou parcelado no cart\u00E3o</p>
                   <div className="mt-2 text-2xl font-semibold text-foreground">
                     {totalBRL}
                   </div>
                   <p className="mt-1 text-sm text-accent font-medium">
-                    em {PA7_PRICE.installments}x de {installmentValue} sem juros
+                    em {product.installments}x de {installmentValue} sem juros
                   </p>
                 </div>
 
@@ -117,7 +128,7 @@ export function CheckoutSection() {
                 </Button>
                 
                 <p className="text-center text-[10px] text-muted-foreground uppercase tracking-widest font-medium">
-                  🔒 Pagamento 100% seguro · Nota Fiscal Inclusa
+                  🔒 Pagamento 100% seguro \u00B7 Nota Fiscal Inclusa
                 </p>
               </div>
             </div>
@@ -129,9 +140,9 @@ export function CheckoutSection() {
         open={open}
         onOpenChange={setOpen}
         product={{
-          name: "Processador de Alimentos PA7 Pro Skymsen",
-          image: PA7_IMAGES.main,
-          price: PA7_PRICE.amount,
+          name: product.name,
+          image: product.image,
+          price: product.price,
         }}
       />
     </section>
