@@ -1,332 +1,724 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { 
-  Check, 
-  ShieldCheck, 
-  Settings, 
-  Zap, 
-  ArrowRight, 
-  Truck, 
+import {
+  Check,
+  ShieldCheck,
+  ArrowRight,
+  Phone,
+  Clock,
+  FileCheck,
+  Truck,
   Wrench,
-  ChevronRight,
-  Play
+  TrendingDown,
+  TrendingUp,
 } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { HS98_IMAGES, HS98_GALLERY, HS98_HIGHLIGHTS, HS98_FEATURES, HS98_SPECS, HS98_PRICE } from "@/data/hs98";
+import {
+  HS98_IMAGES,
+  HS98_HIGHLIGHTS,
+  HS98_FEATURES,
+  HS98_SPECS,
+  HS98_PRICE,
+  HS98_PROOF,
+  HS98_COMPARISON,
+  HS98_ROI,
+  HS98_FAQ,
+  HS98_TESTIMONIAL,
+} from "@/data/hs98";
 import { getProduct } from "@/data/site";
 import { CheckoutSection } from "@/components/site/pa7/CheckoutSection";
+import { Hs98Gallery } from "@/components/site/hs98/Hs98Gallery";
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.3 }
-  }
-};
+/* ──────────────────────────────────────────────────────────── HERO */
+function Hero() {
+  return (
+    <section className="relative isolate overflow-hidden border-b border-border bg-background">
+      {/* Cinematic light layers */}
+      <div aria-hidden className="absolute inset-0 -z-10">
+        {/* deep base */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,color-mix(in_oklab,var(--accent)_18%,transparent),transparent_60%)]" />
+        {/* warm under-glow */}
+        <div className="absolute bottom-[-30%] left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,#f59e0b40,transparent_70%)] blur-3xl" />
+        {/* cool rim */}
+        <div className="absolute right-[-10%] top-[10%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(closest-side,#3b82f640,transparent_70%)] blur-3xl" />
+        {/* conic spin */}
+        <div
+          className="absolute right-[-15%] top-[15%] h-[700px] w-[700px] rounded-full opacity-30 mix-blend-screen"
+          style={{
+            background:
+              "conic-gradient(from 0deg, transparent 0deg, color-mix(in oklab, var(--accent) 30%, transparent) 60deg, transparent 180deg, color-mix(in oklab, #3b82f6 25%, transparent) 240deg, transparent 360deg)",
+            animation: "spin 28s linear infinite",
+            filter: "blur(40px)",
+          }}
+        />
+        {/* grid texture */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
+            backgroundSize: "64px 64px",
+          }}
+        />
+      </div>
 
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeInOut" } as any }
-};
+      <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 pb-24 pt-28 md:pb-32 md:pt-36 lg:grid-cols-12">
+        <div className="lg:col-span-6">
+          <Badge
+            variant="outline"
+            className="mb-6 border-accent/40 bg-accent/10 text-accent"
+          >
+            Linha Skymsen Profissional · Homogeneização contínua
+          </Badge>
+          <h1 className="text-balance text-5xl font-semibold leading-[1.02] tracking-tight md:text-7xl">
+            A carne que <span className="text-accent">vende sozinha</span> no balcão.
+          </h1>
+          <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
+            HS-98 é o moedor homogeneizador que devolve margem ao seu açougue.
+            Mói, mistura e entrega um vermelho uniforme — o tipo de apresentação
+            que faz o cliente decidir antes mesmo de pegar a senha.
+          </p>
 
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Button
+              asChild
+              size="lg"
+              className="rounded-full px-7 py-6 text-base font-semibold shadow-lg shadow-accent/20"
+            >
+              <a href="#roi">
+                Ver quanto vou recuperar em margem
+                <ArrowRight className="ml-2 size-5" />
+              </a>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="rounded-full px-7 py-6 text-base font-semibold"
+            >
+              <a
+                href="https://wa.me/558232232497?text=Olá! Quero conversar sobre o HS-98."
+                target="_blank"
+                rel="noreferrer"
+              >
+                Demonstração no meu PDV
+              </a>
+            </Button>
+          </div>
+          <p className="mt-4 text-xs text-muted-foreground">
+            Resposta em até 2h úteis · Atendimento técnico, não comercial · Sem compromisso
+          </p>
+        </div>
+
+        {/* Hero visual */}
+        <div className="relative lg:col-span-6">
+          <div className="relative mx-auto aspect-square w-full max-w-[560px]">
+            {/* halo */}
+            <div className="absolute inset-0 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent)_25%,transparent),transparent_70%)] blur-2xl" />
+            {/* product */}
+            <motion.img
+              initial={{ opacity: 0, y: 30, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              src={HS98_IMAGES.main}
+              alt="Moedor Homogeneizador HS-98 Skymsen"
+              className="relative z-10 h-full w-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.6)]"
+              loading="eager"
+              fetchPriority="high"
+            />
+            {/* floor reflection */}
+            <img
+              src={HS98_IMAGES.main}
+              alt=""
+              aria-hidden
+              className="pointer-events-none absolute left-0 right-0 top-[68%] mx-auto h-[40%] w-full object-contain opacity-25"
+              style={{
+                transform: "scaleY(-1)",
+                maskImage:
+                  "linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 80%)",
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 80%)",
+                filter: "blur(2px)",
+              }}
+            />
+          </div>
+
+          {/* floating chip */}
+          <div className="absolute -bottom-2 left-2 hidden items-center gap-3 rounded-2xl border border-border bg-card/80 px-4 py-3 backdrop-blur-xl md:flex">
+            <div className="size-2 animate-pulse rounded-full bg-emerald-400" />
+            <div className="text-xs">
+              <div className="font-semibold">Pronta entrega</div>
+              <div className="text-muted-foreground">7 dias úteis · Brasil todo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Proof bar */}
+      <div className="border-t border-border bg-card/40 backdrop-blur">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 divide-border px-6 py-6 sm:grid-cols-4 sm:divide-x">
+          {HS98_PROOF.map((p) => (
+            <div
+              key={p.label}
+              className="px-4 first:pl-0 sm:px-8 sm:first:pl-0"
+            >
+              <div className="flex items-baseline gap-1.5 tabular-nums">
+                <span className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+                  {p.value}
+                </span>
+                <span className="text-sm font-medium text-muted-foreground">
+                  {p.unit}
+                </span>
+              </div>
+              <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                {p.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────── MANIFESTO */
+function Manifesto() {
+  return (
+    <section className="relative overflow-hidden border-b border-border py-28 md:py-36">
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,color-mix(in_oklab,var(--accent)_8%,transparent),transparent_70%)]"
+      />
+      <div className="mx-auto max-w-5xl px-6 text-center">
+        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
+          01 — Posicionamento
+        </span>
+        <p className="mt-6 text-balance text-3xl font-semibold leading-[1.15] tracking-tight md:text-5xl lg:text-6xl">
+          Não é um moedor. É a diferença entre vender carne{" "}
+          <span className="text-accent">a R$ 39,90</span> ou rebaixar para{" "}
+          <span className="text-muted-foreground line-through decoration-accent/60">R$ 29,90</span>{" "}
+          no fim do dia.
+        </p>
+        <div className="mx-auto mt-10 h-px w-24 bg-accent" />
+        <p className="mt-6 text-sm uppercase tracking-[0.25em] text-muted-foreground">
+          Sistema patenteado de homogeneização contínua · Skymsen
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────── HIGHLIGHTS */
+function Highlights() {
+  return (
+    <section className="border-b border-border py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
+              02 — Por dentro
+            </span>
+            <h2 className="mt-3 max-w-xl text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+              Quatro decisões de engenharia que mudam seu PDV.
+            </h2>
+          </div>
+          <p className="max-w-sm text-sm text-muted-foreground">
+            Cada componente foi escolhido para suportar o regime mais duro do
+            varejo brasileiro: o sábado de manhã.
+          </p>
+        </div>
+
+        <div className="grid gap-px overflow-hidden rounded-3xl border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
+          {HS98_HIGHLIGHTS.map((h, idx) => (
+            <div
+              key={h.title}
+              className="group relative bg-background p-8 transition-colors hover:bg-card"
+            >
+              <div className="text-xs font-bold tabular-nums text-muted-foreground">
+                0{idx + 1}
+              </div>
+              <h3 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
+                {h.title}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {h.desc}
+              </p>
+              <div className="absolute bottom-0 left-0 h-px w-0 bg-accent transition-all duration-500 group-hover:w-full" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────── SHOWCASE */
+function Showcase() {
+  return (
+    <section className="border-b border-border bg-card/30 py-28">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="mb-20 max-w-2xl">
+          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
+            03 — Engenharia
+          </span>
+          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+            Engenharia em cada detalhe.
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Projetado para o regime contínuo das maiores indústrias e
+            supermercados do país.
+          </p>
+        </div>
+
+        <div className="space-y-32">
+          {/* Feature 1 — asymmetric 7/5 */}
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-background shadow-2xl lg:col-span-7"
+            >
+              <img
+                src={HS98_IMAGES.internal}
+                alt="Caçamba interna em aço inox"
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              <div className="absolute bottom-7 left-7">
+                <div className="text-xl font-semibold text-white">
+                  Caçamba de 41 litros
+                </div>
+                <div className="mt-1 max-w-xs text-sm text-white/75">
+                  Capacidade para até 31 kg de carne por ciclo de processamento.
+                </div>
+              </div>
+            </motion.div>
+            <div className="lg:col-span-5">
+              <h3 className="text-balance text-3xl font-semibold tracking-tight md:text-4xl">
+                Homogeneização que valoriza o produto.
+              </h3>
+              <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
+                Diferente dos moedores comuns, o sistema HS mistura a carne
+                enquanto mói. A gordura é distribuída de forma uniforme,
+                eliminando aquele aspecto de "carne branca" e entregando o
+                vermelho vibrante que vende no PDV.
+              </p>
+              <ul className="mt-8 space-y-3">
+                {HS98_FEATURES.productivity.map((f) => (
+                  <li key={f} className="flex items-start gap-3">
+                    <div className="mt-0.5 grid size-5 place-items-center rounded-full bg-accent/20 text-accent">
+                      <Check className="size-3" strokeWidth={3} />
+                    </div>
+                    <span className="text-sm font-medium text-foreground">
+                      {f}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Feature 2 — reverse asymmetric 5/7 */}
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+            <div className="lg:order-1 lg:col-span-5">
+              <h3 className="text-balance text-3xl font-semibold tracking-tight md:text-4xl">
+                Segurança total, sem improviso.
+              </h3>
+              <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
+                Equipado com o Conjunto Único de Segurança Skymsen. Sensores e
+                travas na tampa interrompem o motor instantaneamente — em
+                conformidade total com a NR-12, sem perder agilidade no chão de
+                fábrica.
+              </p>
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-border bg-background p-5">
+                  <div className="flex items-center gap-2 text-foreground">
+                    <ShieldCheck className="size-4 text-accent" />
+                    <span className="text-sm font-semibold">Sensor magnético</span>
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Interrupção imediata do ciclo ao abrir a tampa.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-border bg-background p-5">
+                  <div className="flex items-center gap-2 text-foreground">
+                    <ShieldCheck className="size-4 text-accent" />
+                    <span className="text-sm font-semibold">Trava mecânica</span>
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Bloqueio físico das partes móveis em operação.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-background shadow-2xl lg:order-2 lg:col-span-7"
+            >
+              <img
+                src={HS98_IMAGES.detail7}
+                alt="Sistema de segurança patenteado"
+                className="h-full w-full object-cover"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────── COMPARISON */
+function Comparison() {
+  return (
+    <section className="border-b border-border py-28">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mb-14 max-w-2xl">
+          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
+            04 — Comparativo
+          </span>
+          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+            Moedor comum vs. HS-98 Skymsen.
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            O mesmo lote de carne, dois resultados diferentes no balcão.
+          </p>
+        </div>
+
+        <div className="overflow-hidden rounded-3xl border border-border">
+          <div className="grid grid-cols-12 border-b border-border bg-card/60 text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
+            <div className="col-span-4 p-5">Critério</div>
+            <div className="col-span-4 flex items-center gap-2 p-5">
+              <TrendingDown className="size-4 text-muted-foreground" /> Moedor comum
+            </div>
+            <div className="col-span-4 flex items-center gap-2 bg-accent/10 p-5 text-accent">
+              <TrendingUp className="size-4" /> HS-98 Skymsen
+            </div>
+          </div>
+          {HS98_COMPARISON.map((row, i) => (
+            <div
+              key={row.point}
+              className={`grid grid-cols-12 border-b border-border last:border-0 ${
+                i % 2 === 0 ? "bg-background" : "bg-card/20"
+              }`}
+            >
+              <div className="col-span-4 p-5 text-sm font-semibold text-foreground">
+                {row.point}
+              </div>
+              <div className="col-span-4 p-5 text-sm text-muted-foreground">
+                {row.common}
+              </div>
+              <div className="col-span-4 bg-accent/[0.04] p-5 text-sm font-medium text-foreground">
+                {row.hs98}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Testimonial */}
+        <figure className="mt-14 rounded-3xl border border-border bg-card/40 p-8 md:p-12">
+          <blockquote className="text-balance text-2xl font-medium leading-snug tracking-tight text-foreground md:text-3xl">
+            <span className="text-accent">"</span>
+            {HS98_TESTIMONIAL.quote}
+            <span className="text-accent">"</span>
+          </blockquote>
+          <figcaption className="mt-6 flex items-center gap-3 text-sm text-muted-foreground">
+            <div className="size-10 rounded-full bg-gradient-to-br from-accent/40 to-accent/10" />
+            <div>
+              <div className="font-semibold text-foreground">
+                {HS98_TESTIMONIAL.author}
+              </div>
+              <div>{HS98_TESTIMONIAL.role}</div>
+            </div>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────── ROI */
+function RoiBlock() {
+  return (
+    <section
+      id="roi"
+      className="relative overflow-hidden border-b border-border py-28"
+    >
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_30%_30%,color-mix(in_oklab,var(--accent)_15%,transparent),transparent_60%)]"
+      />
+      <div className="mx-auto grid max-w-6xl gap-14 px-6 lg:grid-cols-2 lg:items-center">
+        <div>
+          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
+            06 — Retorno
+          </span>
+          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+            {HS98_ROI.headline}
+          </h2>
+          <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
+            {HS98_ROI.body}
+          </p>
+          <ul className="mt-8 space-y-3">
+            {HS98_ROI.bullets.map((b) => (
+              <li key={b} className="flex items-start gap-3">
+                <div className="mt-0.5 grid size-5 place-items-center rounded-full bg-accent text-accent-foreground">
+                  <Check className="size-3" strokeWidth={3} />
+                </div>
+                <span className="text-sm font-medium text-foreground">{b}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="relative">
+          <div className="rounded-3xl border border-border bg-card/60 p-8 backdrop-blur-xl md:p-10">
+            <div className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              Cenário típico — açougue 200 kg/dia
+            </div>
+            <div className="mt-6 grid grid-cols-2 gap-6">
+              <div>
+                <div className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Quebra atual
+                </div>
+                <div className="mt-1 text-4xl font-semibold tabular-nums text-foreground">
+                  ~6%
+                </div>
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Perda mensal
+                </div>
+                <div className="mt-1 text-4xl font-semibold tabular-nums text-foreground">
+                  R$ 11k
+                </div>
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Com HS-98
+                </div>
+                <div className="mt-1 text-4xl font-semibold tabular-nums text-accent">
+                  &lt; 1%
+                </div>
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Payback
+                </div>
+                <div className="mt-1 text-4xl font-semibold tabular-nums text-accent">
+                  ~4 meses
+                </div>
+              </div>
+            </div>
+            <Button
+              asChild
+              size="lg"
+              className="mt-8 w-full rounded-full py-6 text-base font-semibold"
+            >
+              <a href="#checkout">
+                Garantir o meu HS-98
+                <ArrowRight className="ml-2 size-5" />
+              </a>
+            </Button>
+            <p className="mt-3 text-center text-[11px] text-muted-foreground">
+              Estimativa baseada em operações reais. Solicite o memorial técnico
+              para o seu cenário.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────── SPECS */
+function Specs() {
+  return (
+    <section className="border-b border-border bg-card/10 py-28">
+      <div className="mx-auto grid max-w-7xl gap-14 px-6 lg:grid-cols-3">
+        <div>
+          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
+            07 — Especificações
+          </span>
+          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+            Dados de engenharia.
+          </h2>
+          <p className="mt-5 text-muted-foreground">
+            Use no memorial descritivo e no projeto elétrico antes da entrega.
+          </p>
+          <div className="mt-8 space-y-3 text-sm text-foreground">
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="size-4 text-accent" />
+              Certificação INMETRO · NR-12
+            </div>
+            <div className="flex items-center gap-3">
+              <Wrench className="size-4 text-accent" />
+              Assistência autorizada Skymsen em todo o Brasil
+            </div>
+            <div className="flex items-center gap-3">
+              <Truck className="size-4 text-accent" />
+              Logística refrigerada Center Frios
+            </div>
+          </div>
+        </div>
+        <div className="lg:col-span-2">
+          <div className="grid gap-px overflow-hidden rounded-3xl border border-border bg-border sm:grid-cols-2">
+            {HS98_SPECS.map((s) => (
+              <div key={s.label} className="bg-background p-6">
+                <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+                  {s.label}
+                </div>
+                <div className="mt-2 text-lg font-semibold tabular-nums text-foreground">
+                  {s.value}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────── FAQ */
+function Faq() {
+  return (
+    <section className="border-b border-border py-28">
+      <div className="mx-auto max-w-3xl px-6">
+        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
+          09 — Dúvidas reais
+        </span>
+        <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          Perguntas que recebemos do chão de fábrica.
+        </h2>
+        <Accordion type="single" collapsible className="mt-10">
+          {HS98_FAQ.map((f, i) => (
+            <AccordionItem key={i} value={`item-${i}`} className="border-border">
+              <AccordionTrigger className="text-left text-base font-semibold hover:no-underline">
+                {f.q}
+              </AccordionTrigger>
+              <AccordionContent className="text-base leading-relaxed text-muted-foreground">
+                {f.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────── FINAL CTA */
+function FinalCta() {
+  return (
+    <section className="relative overflow-hidden py-32">
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_50%,color-mix(in_oklab,var(--accent)_18%,transparent),transparent_70%)]"
+      />
+      <div className="mx-auto max-w-4xl px-6 text-center">
+        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
+          10 — Hora de decidir
+        </span>
+        <h2 className="mt-4 text-balance text-4xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
+          Cada quilo mal apresentado{" "}
+          <span className="text-accent">é margem indo embora</span>.
+        </h2>
+        <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
+          Fale agora com um especialista técnico da Center Frios. A gente entende
+          de operação de cozinha industrial — não vamos te empurrar uma máquina
+          que não cabe no seu PDV.
+        </p>
+
+        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Button
+            asChild
+            size="lg"
+            className="rounded-full px-8 py-7 text-base font-semibold shadow-lg shadow-accent/30"
+          >
+            <a
+              href="https://wa.me/558232232497?text=Olá! Quero falar com um especialista da Center Frios sobre o HS-98."
+              target="_blank"
+              rel="noreferrer"
+            >
+              Falar agora com um especialista
+              <ArrowRight className="ml-2 size-5" />
+            </a>
+          </Button>
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="rounded-full px-8 py-7 text-base font-semibold"
+          >
+            <a href="tel:+558232232497">
+              <Phone className="mr-2 size-5" /> (82) 3223-2497
+            </a>
+          </Button>
+        </div>
+
+        <div className="mt-10 grid grid-cols-2 gap-4 text-left sm:grid-cols-4">
+          {[
+            { Icon: Truck, t: "Entrega em 7 dias úteis" },
+            { Icon: FileCheck, t: "NF-e e CNPJ aceitos" },
+            { Icon: ShieldCheck, t: "Garantia 12 meses em campo" },
+            { Icon: Clock, t: "Atendimento técnico em 2h" },
+          ].map(({ Icon, t }) => (
+            <div
+              key={t}
+              className="flex items-start gap-3 rounded-2xl border border-border bg-card/40 p-4 backdrop-blur"
+            >
+              <Icon className="mt-0.5 size-5 shrink-0 text-accent" />
+              <span className="text-xs font-medium text-foreground">{t}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────── PAGE */
 export function Hs98Landing() {
-  const [activeImage, setActiveImage] = useState(0);
   const product = getProduct("moeder-homogeneizador-hs-98")!;
 
   return (
     <div className="bg-background text-foreground">
-      {/* HERO SECTION - DJI STYLE */}
-      <section className="relative min-h-[90vh] overflow-hidden border-b border-border bg-card/20">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
-          {/* Subtle animated background element */}
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.1, 1],
-              opacity: [0.1, 0.15, 0.1]
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            className="absolute -right-1/4 -top-1/4 h-[800px] w-[800px] rounded-full bg-accent/5 blur-[120px]" 
-          />
-        </div>
+      <Hero />
+      <Manifesto />
+      <Highlights />
+      <Showcase />
+      <Comparison />
+      <Hs98Gallery />
+      <RoiBlock />
+      <Specs />
 
-        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-20 md:pt-32">
-          <motion.div 
-            variants={container}
-            initial="hidden"
-            animate="show"
-            className="grid gap-12 lg:grid-cols-2 lg:items-center"
-          >
-            <div className="max-w-2xl">
-              <motion.div variants={item}>
-                <Badge variant="outline" className="mb-6 border-accent/30 bg-accent/5 text-accent">
-                  Tecnologia Skymsen Profissional
-                </Badge>
-              </motion.div>
-              
-              <motion.h1 
-                variants={item}
-                className="text-5xl font-bold tracking-tight text-foreground md:text-7xl"
-              >
-                Mais que um moedor. <br />
-                <span className="text-accent">Homogeneização</span> de Elite.
-              </motion.h1>
-              
-              <motion.p 
-                variants={item}
-                className="mt-8 text-xl leading-relaxed text-muted-foreground"
-              >
-                O HS-98 m\u00F3i e mistura simultaneamente grandes quantidades de carne, reduzindo a gordura aparente e entregando uma textura homog\u00EAnea inigual\u00E1vel para o auto servi\u00E7o.
-              </motion.p>
-
-              <motion.div variants={item} className="mt-10 flex flex-wrap gap-4">
-                <Button size="lg" className="rounded-full px-8 py-7 text-lg font-semibold shadow-lg shadow-primary/20">
-                  Solicitar Proposta <ArrowRight className="ml-2 size-5" />
-                </Button>
-                <Button variant="outline" size="lg" className="rounded-full px-8 py-7 text-lg font-semibold">
-                  <Play className="mr-2 size-5 fill-current" /> Ver em Opera\u00E7\u00E3o
-                </Button>
-              </motion.div>
-
-              <motion.div variants={item} className="mt-12 flex items-center gap-8 border-t border-border pt-8">
-                <div>
-                  <div className="text-2xl font-bold text-foreground">900 kg/h</div>
-                  <div className="text-xs uppercase tracking-widest text-muted-foreground">Produtividade</div>
-                </div>
-                <div className="h-10 w-px bg-border" />
-                <div>
-                  <div className="text-2xl font-bold text-foreground">3 CV</div>
-                  <div className="text-xs uppercase tracking-widest text-muted-foreground">Pot\u00EAncia Bruta</div>
-                </div>
-                <div className="h-10 w-px bg-border" />
-                <div>
-                  <div className="text-2xl font-bold text-foreground">30 kg</div>
-                  <div className="text-xs uppercase tracking-widest text-muted-foreground">Capacidade Ca\u00E7amba</div>
-                </div>
-              </motion.div>
-            </div>
-
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8, x: 50 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeInOut", delay: 0.5 } as any}
-              className="relative aspect-square"
-            >
-              <div className="absolute inset-0 rounded-full bg-accent/5 blur-[100px]" />
-              <img 
-                src={HS98_IMAGES.main} 
-                alt="Moedor HS-98 Premium" 
-                className="relative z-10 h-full w-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-              />
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* HIGHLIGHTS GRID */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {HS98_HIGHLIGHTS.map((h, idx) => (
-              <motion.div 
-                key={h.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                viewport={{ once: true }}
-                className="group rounded-2xl border border-border bg-card/50 p-8 transition-all hover:border-accent/30 hover:bg-accent/5"
-              >
-                <div className="mb-4 inline-flex size-12 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-white">
-                  {idx === 0 && <Zap className="size-6" />}
-                  {idx === 1 && <ShieldCheck className="size-6" />}
-                  {idx === 2 && <Settings className="size-6" />}
-                  {idx === 3 && <Zap className="size-6" />}
-                </div>
-                <h3 className="text-xl font-bold text-foreground">{h.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{h.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PRODUCT SHOWCASE - ALTERNATING */}
-      <section className="bg-card/30 py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-20 text-center">
-            <h2 className="text-3xl font-bold md:text-5xl">Engenharia em cada detalhe</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              Projetado para resistir ao regime de trabalho cont\u00EDnuo das maiores ind\u00FAstrias e supermercados.
-            </p>
-          </div>
-
-          <div className="space-y-32">
-            {/* FEATURE 1 */}
-            <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
-              <motion.div 
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="relative aspect-video overflow-hidden rounded-3xl border border-border bg-background shadow-2xl"
-              >
-                <img src={HS98_IMAGES.internal} alt="Interior da ca\u00E7amba inox" className="h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-8 left-8">
-                  <div className="text-lg font-bold text-white">Ca\u00E7amba de 41 Litros</div>
-                  <div className="text-sm text-gray-300 text-pretty max-w-xs">Capacidade para at\u00E9 31kg de carne por ciclo de processamento.</div>
-                </div>
-              </motion.div>
-              <div>
-                <h3 className="text-2xl font-bold md:text-4xl">Homogeneiza\u00E7\u00E3o que valoriza o produto</h3>
-                <p className="mt-6 text-lg text-muted-foreground">
-                  Diferente dos moedores comuns, o sistema HS mistura a carne enquanto m\u00F3i. Isso garante que a gordura seja distribu\u00EDda uniformemente, evitando aquele aspecto de "carne branca" e entregando um vermelho vibrante que atrai o cliente no PDV.
-                </p>
-                <ul className="mt-8 space-y-4">
-                  {HS98_FEATURES.productivity.map(f => (
-                    <li key={f} className="flex items-center gap-3">
-                      <div className="size-5 rounded-full bg-accent/20 flex items-center justify-center text-accent">
-                        <Check className="size-3" />
-                      </div>
-                      <span className="text-sm font-medium">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* FEATURE 2 */}
-            <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
-              <div className="order-2 lg:order-1">
-                <h3 className="text-2xl font-bold md:text-4xl">Seguran\u00E7a Total (Patenteada)</h3>
-                <p className="mt-6 text-lg text-muted-foreground">
-                  Equipado com o Conjunto \u00DAnico de Seguran\u00E7a Skymsen. Sensores e travas de seguran\u00E7a na tampa interrompem o motor instantaneamente ao ser aberta, garantindo conformidade total com a NR-12.
-                </p>
-                <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl border border-border p-4 bg-background">
-                    <div className="font-bold">Sensor Magn\u00E9tico</div>
-                    <div className="text-xs text-muted-foreground mt-1">Interrup\u00E7\u00E3o imediata do ciclo.</div>
-                  </div>
-                  <div className="rounded-xl border border-border p-4 bg-background">
-                    <div className="font-bold">Trava Mec\u00E2nica</div>
-                    <div className="text-xs text-muted-foreground mt-1">Impossibilita acesso \u00E0s partes móveis.</div>
-                  </div>
-                </div>
-              </div>
-              <motion.div 
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="order-1 lg:order-2 relative aspect-video overflow-hidden rounded-3xl border border-border bg-background shadow-2xl"
-              >
-                <img src={HS98_IMAGES.img7} alt="Sistema de seguran\u00E7a" className="h-full w-full object-cover" />
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* GALLERY SECTION */}
-      <section className="py-24 border-y border-border">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex flex-col items-center text-center mb-16">
-            <h2 className="text-3xl font-bold">Galeria HS-98</h2>
-            <div className="mt-2 h-1 w-20 bg-accent rounded-full" />
-          </div>
-
-          <div className="grid gap-8 lg:grid-cols-12">
-            <div className="lg:col-span-8">
-              <div className="relative aspect-square overflow-hidden rounded-3xl border border-border bg-card">
-                <img 
-                  src={HS98_GALLERY[activeImage].src} 
-                  alt={HS98_GALLERY[activeImage].alt}
-                  className="h-full w-full object-contain p-12 transition-all duration-500"
-                />
-                <div className="absolute bottom-6 left-6 right-6 flex justify-center">
-                  <div className="rounded-full bg-black/50 px-4 py-2 text-xs text-white backdrop-blur-md">
-                    {HS98_GALLERY[activeImage].alt}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 lg:col-span-4 lg:grid-cols-1">
-              {HS98_GALLERY.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveImage(idx)}
-                  className={`relative aspect-square overflow-hidden rounded-xl border-2 transition-all ${activeImage === idx ? "border-accent" : "border-transparent opacity-60 hover:opacity-100"}`}
-                >
-                  <img src={img.src} alt="" className="h-full w-full object-contain p-4" />
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* TECH SPECS GRID */}
-      <section className="py-24 bg-card/10">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-16 lg:grid-cols-3">
-            <div className="lg:col-span-1">
-              <h2 className="text-4xl font-bold">Especifica\u00E7\u00F5es <br /> T\u00E9cnicas</h2>
-              <p className="mt-6 text-muted-foreground">
-                Dados oficiais para planejamento de infraestrutura e engenharia de alimentos.
-              </p>
-              <div className="mt-10 flex flex-col gap-4">
-                <div className="flex items-center gap-3 text-sm text-foreground">
-                  <ShieldCheck className="size-5 text-accent" /> Certifica\u00E7\u00E3o INMETRO / UL
-                </div>
-                <div className="flex items-center gap-3 text-sm text-foreground">
-                  <Wrench className="size-5 text-accent" /> Assist\u00EAncia em todo o Brasil
-                </div>
-                <div className="flex items-center gap-3 text-sm text-foreground">
-                  <Truck className="size-5 text-accent" /> Log\u00EDstica Especializada
-                </div>
-              </div>
-            </div>
-            <div className="lg:col-span-2">
-              <div className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2">
-                {HS98_SPECS.map(s => (
-                  <div key={s.label} className="bg-background p-6">
-                    <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{s.label}</div>
-                    <div className="mt-2 text-lg font-medium text-foreground">{s.value}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CHECKOUT SECTION */}
       <div id="checkout">
-        <CheckoutSection 
+        <CheckoutSection
           product={{
             id: product.slug,
             name: product.name,
             image: HS98_IMAGES.main,
             price: HS98_PRICE.amount,
             installments: HS98_PRICE.installments,
-            pixDiscount: HS98_PRICE.pixDiscountPct
+            pixDiscount: HS98_PRICE.pixDiscountPct,
           }}
         />
       </div>
 
-      {/* CTA BOTTOM */}
-      <section className="py-24 border-t border-border">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <h2 className="text-3xl font-bold md:text-5xl">Impulsione seu PDV agora</h2>
-          <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-            N\u00E3o perca margem com quebra de carne ou apresenta\u00E7\u00E3o ruim. O HS-98 \u00E9 o investimento que se paga na primeira temporada de alta.
-          </p>
-          <div className="mt-12 flex justify-center gap-4">
-            <Button size="lg" className="rounded-full px-12 py-8 text-xl font-bold">
-              Falar com Especialista
-            </Button>
-          </div>
-        </div>
-      </section>
+      <Faq />
+      <FinalCta />
     </div>
   );
 }
