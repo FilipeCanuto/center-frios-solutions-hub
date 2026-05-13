@@ -40,19 +40,19 @@ export const PA7_PRICE = {
 export const PA7_HIGHLIGHTS = [
   {
     title: "Até 250 kg/h",
-    desc: "Capacidade contínua para cozinhas que não podem parar nos horários de pico.",
+    desc: "Capacidade contínua de processamento — sustenta a produção das cozinhas que não podem parar nos horários de pico.",
   },
   {
-    title: "07 discos inclusos",
-    desc: "Corta, rala, fatia e desfia hortifrúti, queijos e proteínas com uniformidade profissional.",
+    title: "07 discos com suporte",
+    desc: "Fatiadores E1 e E3, raladores V, Z3, Z5 e Z8 e julienne H7 acompanham o equipamento, prontos para uso.",
   },
   {
-    title: "Inox AISI 304",
-    desc: "Construção robusta, fácil higienização e resistência ao uso intensivo diário.",
+    title: "Sensor de segurança",
+    desc: "Trava na tampa interrompe o motor automaticamente — operação segura em conformidade com a NR-12.",
   },
   {
-    title: "Conforme NR-12",
-    desc: "Sistema de segurança com chave geral e proteções para operação tranquila.",
+    title: "Bivolt 127/220 V",
+    desc: "Chave seletora integrada permite instalar em qualquer unidade da rede sem necessidade de transformador.",
   },
 ];
 
@@ -62,36 +62,81 @@ export const PA7_SHOWCASE = [
     eyebrow: "Engenharia robusta",
     title: "Construído para regime contínuo",
     body:
-      "Estrutura monobloco em aço inox AISI 304 e motor calibrado para operar horas a fio sem perda de performance — o equipamento ideal para restaurantes, refeitórios e redes em alta produção.",
+      "Estrutura em aço inox com câmara injetada e motor de 0,5 HP-CV calibrado para 600 W de potência nominal a 440 rpm — performance estável em horas seguidas de operação.",
   },
   {
     image: img20,
-    eyebrow: "Acesso rápido",
-    title: "Higienização em minutos",
+    eyebrow: "Higienização rápida",
+    title: "Tampa removível, limpeza sem ferramentas",
     body:
-      "Câmara de processamento com abertura ampla e acabamento sanitário. Troca de discos e limpeza profunda sem ferramentas — atende aos requisitos da RDC 216.",
+      "Câmara de processamento com tampa removível e bocal extra largo. Troca de discos e limpeza profunda em segundos — atende aos requisitos sanitários da RDC 216.",
   },
   {
     image: img14,
     eyebrow: "Versatilidade",
-    title: "Sete cortes profissionais em um só equipamento",
+    title: "Fatia, rala e corta em julienne",
     body:
-      "Discos para fatiar, ralar grosso e fino, cortar em cubos, desfiar e raspar. Substitui múltiplos equipamentos no pré-preparo, ganha espaço e padroniza o resultado.",
+      "Disco de 203 mm com bocal extra largo e empurrador cilíndrico em movimento único de alimentação. Fatia, rala fino e grosso e corta em palitos — e ainda aceita grades de cubo opcionais.",
+  },
+];
+
+export const PA7_INCLUDED_DISCS = [
+  { code: "E1", group: "Fatiador", desc: "1 mm" },
+  { code: "E3", group: "Fatiador", desc: "3 mm" },
+  { code: "V", group: "Ralador fino", desc: "Queijo, coco" },
+  { code: "Z3", group: "Ralador", desc: "3 mm" },
+  { code: "Z5", group: "Ralador", desc: "5 mm" },
+  { code: "Z8", group: "Ralador", desc: "8 mm" },
+  { code: "H7", group: "Julienne", desc: "7 × 7 mm" },
+];
+
+export const PA7_USE_CASES = [
+  {
+    icon: "Pizza",
+    name: "Pizzaria",
+    discs: ["E1", "E3", "V", "Z8"],
+    desc: "Fatias finas de tomate, calabresa e cebola, e queijos ralados na medida certa.",
+  },
+  {
+    icon: "Beef",
+    name: "Hamburgueria",
+    discs: ["E2", "E3", "E8", "H10", "W3"],
+    desc: "Cebola caramelizada, picles, alface e batata em palitos para acompanhamentos premium.",
+  },
+  {
+    icon: "Salad",
+    name: "Buffet livre",
+    discs: ["E2", "E3", "E5", "GC8 PRO", "H10", "Z8"],
+    desc: "Saladas variadas, cubos uniformes para vinagrete e raspas decorativas em alta produção.",
+  },
+  {
+    icon: "Carrot",
+    name: "Seleta de legumes",
+    discs: ["E1", "E3", "KC10", "KC14", "W3", "Z5"],
+    desc: "Mix de legumes em cubos médios e grandes, com cortes ondulados e raladuras finas.",
   },
 ];
 
 export const PA7_FAQ = [
   {
-    q: "O equipamento é compatível com 127 V e 220 V?",
-    a: "Sim. O PA7 Pro Skymsen está disponível nas duas tensões. Confirme a tensão da sua operação no momento do pedido.",
+    q: "O equipamento é bivolt?",
+    a: "Sim. O PA7 Pro Skymsen é bivolt (127/220 V) com chave seletora integrada — basta posicionar a chave na tensão da sua unidade antes de ligar.",
   },
   {
     q: "Quais discos vêm inclusos?",
-    a: "São 07 discos inclusos para fatiar, ralar (grosso/fino), cortar em cubos, desfiar e raspar — atendendo as principais necessidades do pré-preparo profissional.",
+    a: "Acompanha 07 discos com suporte: E1 e E3 (fatiadores 1 e 3 mm), V (ralador fino), Z3, Z5 e Z8 (raladores 3, 5 e 8 mm) e H7 (julienne 7 × 7 mm).",
+  },
+  {
+    q: "É possível cortar em cubos?",
+    a: "Sim. Combinando uma grade de cubo opcional (GC8, GC10, GC14 ou GC20 PRO) com um disco fatiador, o PA7 Pro corta em cubos uniformes — ideal para vinagrete, seleta de legumes e frutas.",
+  },
+  {
+    q: "Qual é a capacidade real?",
+    a: "Produção aproximada de 250 kg/h, com motor de 0,5 HP-CV (600 W) a 440 rpm. Disco de 203 mm de diâmetro e bocal extra largo aceleram a alimentação.",
   },
   {
     q: "Qual é a garantia?",
-    a: "12 meses de garantia de fábrica. A Center Frios oferece suporte técnico próprio em campo para acionamentos durante o período de garantia.",
+    a: "12 meses de garantia de fábrica Skymsen. A Center Frios oferece suporte técnico próprio em campo durante e após o período de garantia.",
   },
   {
     q: "Vocês emitem nota fiscal e atendem CNPJ?",
@@ -99,11 +144,11 @@ export const PA7_FAQ = [
   },
   {
     q: "Como funciona a entrega?",
-    a: "Entregamos em todo o Brasil com transportadoras parceiras. O prazo e o valor do frete são calculados pelo CEP no checkout.",
+    a: "Entregamos em todo o Brasil com transportadoras parceiras. Prazo e valor do frete são calculados pelo CEP no checkout. Peso bruto: 29,70 kg.",
   },
   {
     q: "Posso parcelar?",
-    a: "Sim. O checkout aceita cartão de crédito em até 12x, além de PIX (com desconto), boleto e transferência bancária.",
+    a: "Sim. O checkout aceita cartão de crédito em até 12x sem juros, além de PIX (com desconto), boleto e transferência bancária.",
   },
 ];
 
