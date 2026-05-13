@@ -91,16 +91,19 @@ export function Pa7ProLanding() {
                   PA7 Pro Skymsen
                 </span>
               </h1>
+              <p className="mt-3 text-base font-medium uppercase tracking-[0.18em] text-accent">
+                O melhor que a sua cozinha merece
+              </p>
               <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                Alta performance no preparo de alimentos em larga escala. Velocidade, precisão e
-                durabilidade no pré-preparo diário das cozinhas que não podem parar.
+                Cortes precisos e sem esforço, alta produtividade e grande variedade de cortes —
+                agora também em cubos e palitos (julienne).
               </p>
 
               <ul className="mt-6 grid gap-2.5">
                 {[
-                  "Capacidade contínua de até 250 kg/h",
-                  "07 discos profissionais inclusos",
-                  "Construção em aço inox AISI 304 — conforme NR-12",
+                  "Produção contínua de até 250 kg/h · 600 W · 440 rpm",
+                  "07 discos com suporte inclusos (fatiadores, raladores e julienne)",
+                  "Aço inox, sensor de segurança na tampa e bivolt 127/220 V",
                 ].map((b) => (
                   <li key={b} className="flex items-start gap-2.5 text-sm text-foreground">
                     <Check className="mt-0.5 size-4 shrink-0 text-accent" />
