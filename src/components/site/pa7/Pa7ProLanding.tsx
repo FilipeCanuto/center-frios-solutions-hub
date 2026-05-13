@@ -2,10 +2,15 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowLeft,
+  Beef,
+  Carrot,
   Check,
   ChevronRight,
+  Disc3,
   Gauge,
+  Pizza,
   Power,
+  Salad,
   ShieldCheck,
   Sparkles,
   Truck,
@@ -22,12 +27,15 @@ import {
   PA7_GALLERY,
   PA7_HIGHLIGHTS,
   PA7_IMAGES,
+  PA7_INCLUDED_DISCS,
   PA7_PRICE,
   PA7_SHOWCASE,
+  PA7_USE_CASES,
 } from "@/data/pa7";
 import { getProduct } from "@/data/site";
 
-const HIGHLIGHT_ICONS = [Gauge, Sparkles, ShieldCheck, Power];
+const HIGHLIGHT_ICONS = [Gauge, Disc3, ShieldCheck, Power];
+const USE_CASE_ICONS = { Pizza, Beef, Salad, Carrot } as const;
 
 export function Pa7ProLanding() {
   const product = getProduct("processador-pa7-pro-skymsen")!;
