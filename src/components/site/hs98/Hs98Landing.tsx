@@ -375,14 +375,11 @@ function Comparison() {
     <section className="border-b border-border py-28">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-14 max-w-2xl">
-          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-            04 — Comparativo
-          </span>
-          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
             Moedor comum vs. HS-98 Skymsen.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            O mesmo lote de carne, dois resultados diferentes no balcão.
+            Mesmo lote de carne. Dois resultados no balcão.
           </p>
         </div>
 
