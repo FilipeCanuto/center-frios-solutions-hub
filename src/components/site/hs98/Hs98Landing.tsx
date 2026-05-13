@@ -257,10 +257,7 @@ function Showcase() {
     <section className="border-b border-border bg-card/30 py-28">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-20 max-w-2xl">
-          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-            03 — Engenharia
-          </span>
-          <h2 className="mt-3 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+          <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
             Engenharia em cada detalhe.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
