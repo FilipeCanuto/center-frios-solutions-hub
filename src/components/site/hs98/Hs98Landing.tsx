@@ -218,17 +218,12 @@ function Highlights() {
     <section className="border-b border-border py-24">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-accent">
-              02 — Por dentro
-            </span>
-            <h2 className="mt-3 max-w-xl text-balance text-4xl font-semibold tracking-tight md:text-5xl">
-              Quatro decisões de engenharia que mudam seu PDV.
-            </h2>
-          </div>
+          <h2 className="max-w-xl text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+            Quatro decisões que mudam o sábado de manhã.
+          </h2>
           <p className="max-w-sm text-sm text-muted-foreground">
-            Cada componente foi escolhido para suportar o regime mais duro do
-            varejo brasileiro: o sábado de manhã.
+            Cada componente foi escolhido para suportar o regime mais duro
+            do varejo brasileiro: pico de movimento, sem margem pra parada.
           </p>
         </div>
 
