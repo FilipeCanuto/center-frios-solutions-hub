@@ -1,42 +1,74 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion, useSpring, useMotionValue } from "framer-motion";
 
 export function MouseSpotlight() {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const mouseX = useMotionValue(-1000);
+  const mouseY = useMotionValue(-1000);
 
-  const springConfig = { damping: 25, stiffness: 150 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
+  const smoothX = useSpring(mouseX, { damping: 30, stiffness: 180, mass: 0.6 });
+  const smoothY = useSpring(mouseY, { damping: 30, stiffness: 180, mass: 0.6 });
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const onMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    const onLeave = () => {
+      mouseX.set(-1000);
+      mouseY.set(-1000);
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("mouseleave", onLeave);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseleave", onLeave);
+    };
   }, [mouseX, mouseY]);
 
   return (
-    <motion.div
-      style={{
-        left: smoothX,
-        top: smoothY,
-        translateX: "-50%",
-        translateY: "-50%",
-      }}
-      className="pointer-events-none fixed z-[9999] h-[400px] w-[600px] opacity-40 mix-blend-soft-light transition-opacity duration-500"
-    >
-      <div 
-        className="h-full w-full"
+    <>
+      {/* Wide ambient halo — soft */}
+      <motion.div
+        aria-hidden
         style={{
-          background: "radial-gradient(ellipse at center, rgba(200, 220, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 25%, transparent 70%)",
-          filter: "blur(40px)",
-          transform: "rotate(-15deg) scaleX(1.5)",
+          left: smoothX,
+          top: smoothY,
+          translateX: "-50%",
+          translateY: "-50%",
         }}
-      />
-    </motion.div>
+        className="pointer-events-none fixed z-[9998] h-[720px] w-[720px] mix-blend-screen"
+      >
+        <div
+          className="h-full w-full rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle at center, color-mix(in oklab, var(--accent) 55%, transparent) 0%, color-mix(in oklab, var(--accent) 18%, transparent) 30%, transparent 65%)",
+            filter: "blur(30px)",
+            opacity: 0.85,
+          }}
+        />
+      </motion.div>
+
+      {/* Tight core — sharper, follows tighter */}
+      <motion.div
+        aria-hidden
+        style={{
+          left: mouseX,
+          top: mouseY,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        className="pointer-events-none fixed z-[9999] h-[260px] w-[260px] mix-blend-screen"
+      >
+        <div
+          className="h-full w-full rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle at center, color-mix(in oklab, var(--accent) 75%, white 10%) 0%, color-mix(in oklab, var(--accent) 30%, transparent) 40%, transparent 70%)",
+            filter: "blur(14px)",
+          }}
+        />
+      </motion.div>
+    </>
   );
 }
