@@ -1,85 +1,168 @@
-import main from "@/assets/products/hs-98/Hs98 (1).png";
-import img3 from "@/assets/products/hs-98/Hs98 (3).png";
-import img5 from "@/assets/products/hs-98/Hs98 (5).png";
+import main from "@/assets/products/hs-98/homogeneizador foto principal.png";
+import ambient1 from "@/assets/products/hs-98/homogeneizador inserido em um ambiente de cozinha industrial.png";
+import ambient2 from "@/assets/products/hs-98/homogeneizador inserido em um ambiente de cozinha industrial 2.png";
 import topView from "@/assets/products/hs-98/Hs98 (6) vista superior completa.png";
-import img7 from "@/assets/products/hs-98/Hs98 (7).png";
 import sideView from "@/assets/products/hs-98/Hs98 (8) vista lateral.png";
-import img9 from "@/assets/products/hs-98/Hs98 (9).png";
-import pedal from "@/assets/products/hs-98/pedal.png";
+import rearView from "@/assets/products/hs-98/Hs98 (10)vista traseira.png";
+import bocal from "@/assets/products/hs-98/Hs98 (14) bocal.png";
 import internal from "@/assets/products/hs-98/vista-interna.png";
+import pedal from "@/assets/products/hs-98/pedal.png";
+import detail7 from "@/assets/products/hs-98/Hs98 (7).png";
 
 export const HS98_IMAGES = {
   main,
-  img3,
-  img5,
+  ambient1,
+  ambient2,
   topView,
-  img7,
   sideView,
-  img9,
-  pedal,
+  rearView,
+  bocal,
   internal,
+  pedal,
+  detail7,
 };
 
 export const HS98_GALLERY = [
-  { src: main, alt: "Moedor HS-98 Skymsen — vista principal" },
-  { src: topView, alt: "Moedor HS-98 Skymsen — vista superior completa" },
-  { src: sideView, alt: "Moedor HS-98 Skymsen — vista lateral" },
-  { src: internal, alt: "Moedor HS-98 Skymsen — vista interna da ca\u00E7amba" },
-  { src: pedal, alt: "Moedor HS-98 Skymsen — pedal de acionamento" },
+  { src: main, alt: "HS-98 — vista editorial" },
+  { src: ambient1, alt: "HS-98 instalado em cozinha industrial" },
+  { src: ambient2, alt: "HS-98 em operação no ambiente de produção" },
+  { src: internal, alt: "Caçamba interna em aço inox" },
+  { src: bocal, alt: "Boca e caracol em inox microfundido" },
+  { src: topView, alt: "Vista superior completa" },
+  { src: sideView, alt: "Vista lateral" },
+  { src: rearView, alt: "Vista traseira" },
+  { src: pedal, alt: "Pedal de acionamento" },
 ];
 
 export const HS98_PRICE = {
-  amount: 32900, // Pre\u00E7o base estimado para visual
+  amount: 32900,
   installments: 12,
   pixDiscountPct: 5,
 };
 
+export const HS98_PROOF = [
+  { value: "900", unit: "kg/h", label: "Produção contínua" },
+  { value: "31", unit: "kg", label: "Por ciclo na caçamba" },
+  { value: "3", unit: "CV", label: "Motor industrial" },
+  { value: "12", unit: "meses", label: "Garantia em campo" },
+];
+
 export const HS98_HIGHLIGHTS = [
   {
-    title: "At\u00E9 900 kg/h",
-    desc: "Alta produtividade para grandes opera\u00E7\u00F5es — ideal para venda no auto servi\u00E7o.",
+    title: "Até 900 kg/h",
+    desc: "Produtividade real para alta demanda — pensada para o pico do auto serviço, sem perda de cadência.",
   },
   {
     title: "100% Inox",
-    desc: "Constru\u00E7\u00E3o robusta com boca e caracol em inox microfundido para durabilidade extrema.",
+    desc: "Boca e caracol em inox microfundido. Estrutura preparada para regime contínuo nos sete dias da semana.",
   },
   {
-    title: "Homogeneiza\u00E7\u00E3o",
-    desc: "Mistura e mói simultaneamente, reduzindo a gordura aparente e melhorando a apresenta\u00E7\u00E3o.",
+    title: "Homogeneização",
+    desc: "Mói e mistura no mesmo ciclo. A gordura é redistribuída e a carne ganha aquele vermelho que vende sozinho.",
   },
   {
     title: "Motor 3 CV",
-    desc: "Pot\u00EAncia bruta para processar grandes volumes sem perda de performance.",
+    desc: "Torque bruto para processar grandes volumes sem aquecer, sem patinar e sem comprometer a textura.",
   },
 ];
 
 export const HS98_FEATURES = {
   productivity: [
-    "Melhora a apresenta\u00E7\u00E3o do produto final",
-    "Reduz a gordura aparente da carne",
-    "Opera\u00E7\u00E3o autom\u00E1tica (operador livre)",
-    "Processa at\u00E9 900 kg/h"
+    "Melhora a apresentação no balcão e na bandeja",
+    "Reduz a gordura aparente, valoriza o corte",
+    "Operação automática — libera o operador",
+    "Processa até 900 kg/h em regime contínuo",
   ],
   durability: [
-    "Constru\u00E7\u00E3o 100% em a\u00E7o inox",
+    "Construção 100% em aço inox",
     "Boca e caracol em inox microfundido",
-    "Cavalete com gaveta para caixas",
-    "Motor potente de 3 CV"
+    "Cavalete com gaveta para caixas plásticas",
+    "Motor industrial de 3 CV refrigerado",
   ],
   safety: [
-    "Painel de controle intuitivo",
-    "Sensor de seguran\u00E7a na tampa",
-    "Trava de seguran\u00E7a mec\u00E2nica",
-    "Ca\u00E7amba de 41 L / 31 kg"
-  ]
+    "Painel de controle intuitivo e selado",
+    "Sensor de segurança magnético na tampa",
+    "Trava mecânica de bloqueio das partes móveis",
+    "Caçamba 41 L / 31 kg por ciclo",
+  ],
 };
 
 export const HS98_SPECS = [
-  { label: "Produ\u00E7\u00E3o aproximada", value: "At\u00E9 900 kg/h" },
-  { label: "Capacidade da ca\u00E7amba", value: "41 L / 31 kg" },
-  { label: "Pot\u00EAncia motor", value: "3 CV" },
-  { label: "Tens\u00E3o", value: "220V ou 380V (Trif\u00E1sico)" },
+  { label: "Produção aproximada", value: "Até 900 kg/h" },
+  { label: "Capacidade da caçamba", value: "41 L / 31 kg" },
+  { label: "Potência do motor", value: "3 CV" },
+  { label: "Tensão", value: "220 V ou 380 V (Trifásico)" },
   { label: "Consumo", value: "2,58 kWh" },
-  { label: "Peso L\u00EDquido", value: "183 kg" },
-  { label: "Dimens\u00F5es (A\u00D7L\u00D7P)", value: "1.300 \u00D7 520 \u00D7 1.200 mm" },
+  { label: "Peso líquido", value: "183 kg" },
+  { label: "Dimensões (A×L×P)", value: "1.300 × 520 × 1.200 mm" },
+  { label: "Conformidade", value: "NR-12 · INMETRO" },
 ];
+
+export const HS98_COMPARISON = [
+  {
+    point: "Apresentação no balcão",
+    common: "Carne com aspecto esbranquiçado, gordura visível",
+    hs98: "Vermelho uniforme, gordura distribuída na massa",
+  },
+  {
+    point: "Quebra por má apresentação",
+    common: "5% a 12% do lote rebaixado para promoção",
+    hs98: "Aproveitamento próximo de 100% do lote",
+  },
+  {
+    point: "Tempo de operação",
+    common: "Operador parado abastecendo e empurrando",
+    hs98: "Operação automática, operador livre para o atendimento",
+  },
+  {
+    point: "Volume processado",
+    common: "Até 250 kg/h em moedores convencionais",
+    hs98: "Até 900 kg/h sem perder textura",
+  },
+  {
+    point: "Segurança e fiscalização",
+    common: "Adaptações improvisadas para passar na NR-12",
+    hs98: "Conjunto de segurança patenteado, conformidade total",
+  },
+];
+
+export const HS98_ROI = {
+  headline: "Quanto custa não ter um HS-98 no seu PDV?",
+  body: "Em um açougue que processa 200 kg de carne por dia, uma quebra média de apenas 6% por má apresentação representa cerca de R$ 11.000 por mês jogados fora. O HS-98 paga a si mesmo em menos de uma temporada de alta.",
+  bullets: [
+    "Recupera margem perdida em quebra de carne",
+    "Aumenta o giro de produto no balcão refrigerado",
+    "Libera o operador para vender, não para empurrar carne",
+    "Reduz reclamação de cliente sobre aspecto e textura",
+  ],
+};
+
+export const HS98_FAQ = [
+  {
+    q: "O HS-98 atende a NR-12?",
+    a: "Sim. O equipamento é entregue com o Conjunto Único de Segurança Skymsen — sensor magnético na tampa e trava mecânica — em conformidade total com a NR-12. Documentação técnica acompanha a nota.",
+  },
+  {
+    q: "Qual a diferença real para um moedor comum?",
+    a: "O HS-98 mói e homogeneíza no mesmo ciclo. Isso elimina o aspecto de carne branca, distribui a gordura uniformemente e entrega um produto pronto para o auto serviço — algo que um moedor convencional não faz, mesmo passando duas vezes.",
+  },
+  {
+    q: "Preciso de instalação especial?",
+    a: "Sim, ponto trifásico (220 V ou 380 V) e área refrigerada. Nossa equipe técnica envia o memorial descritivo de infraestrutura antes da entrega para que tudo esteja pronto no dia.",
+  },
+  {
+    q: "Qual o prazo de entrega e como funciona a assistência?",
+    a: "Entregamos em até 7 dias úteis para capitais e até 12 dias úteis para o interior. Assistência técnica autorizada Skymsen em todo o Brasil, com peças originais em estoque na Center Frios.",
+  },
+  {
+    q: "Vocês emitem nota fiscal e aceitam compra para CNPJ?",
+    a: "Sempre. Toda operação é com NF-e, emissão imediata, e atendemos pessoa jurídica de qualquer porte com condições especiais para redes e franquias.",
+  },
+];
+
+export const HS98_TESTIMONIAL = {
+  quote:
+    "Trocamos três moedores comuns por um HS-98 e a quebra de carne caiu para quase zero. O cliente comenta a diferença na vitrine — esse equipamento se pagou em quatro meses.",
+  author: "Comprador técnico",
+  role: "Rede de supermercados, Nordeste",
+};
