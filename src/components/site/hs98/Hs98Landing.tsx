@@ -278,28 +278,6 @@ function Highlights() {
                 do varejo brasileiro: pico de movimento, sem margem pra parada.
               </p>
 
-              <div className="relative mt-10 aspect-square w-full max-w-[440px]">
-                <div
-                  aria-hidden
-                  className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent)_22%,transparent),transparent_70%)] blur-2xl"
-                />
-                <div className="relative h-full w-full overflow-hidden rounded-[2rem] border border-border bg-gradient-to-br from-card to-background">
-                  <div
-                    aria-hidden
-                    className="absolute inset-0 opacity-80"
-                    style={{
-                      background:
-                        "radial-gradient(ellipse at 50% 60%, color-mix(in oklab, var(--accent) 14%, transparent), transparent 70%)",
-                    }}
-                  />
-                  <img
-                    src={HS98_IMAGES.heroMain}
-                    alt="Moedor Homogeneizador HS-98 Skymsen — vista principal"
-                    loading="lazy"
-                    className="relative h-full w-full object-contain p-8 drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
-                  />
-                </div>
-              </div>
             </div>
           </div>
 
