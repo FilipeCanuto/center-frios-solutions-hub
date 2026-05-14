@@ -1,11 +1,11 @@
 import ambientButchers from "@/assets/products/hs-98/ambient-butchers.png";
 import ambientKitchen from "@/assets/products/hs-98/ambient-kitchen.png";
-import threeQuarter from "@/assets/products/hs-98/Hs98 (1).png?url";
-import switchImg from "@/assets/products/hs-98/Hs98 (2).png?url";
-import front from "@/assets/products/hs-98/Hs98 (3).png?url";
-import side from "@/assets/products/hs-98/Hs98 (8) vista lateral.png?url";
-import rearLogo from "@/assets/products/hs-98/Hs98 (11).png?url";
-import bocal from "@/assets/products/hs-98/Hs98 (14) bocal.png?url";
+import threeQuarter from "@/assets/products/hs-98/three-quarter-pedal.png";
+import switchImg from "@/assets/products/hs-98/switch-locked.png";
+import front from "@/assets/products/hs-98/front-clean.png";
+import side from "@/assets/products/hs-98/side-clean.png";
+import rearLogo from "@/assets/products/hs-98/rear-logo.png";
+import bocal from "@/assets/products/hs-98/bocal-detail.png";
 import internal from "@/assets/products/hs-98/internal-clean.png";
 
 export const HS98_IMAGES = {
