@@ -50,7 +50,7 @@ export const HS98_PROOF = [
 
 export const HS98_HIGHLIGHTS = [
   {
-    title: "900 kg/h sem pausa",
+    title: "900 kg/h Sem Pausa",
     desc: "Aguenta o sábado de manhã inteiro. Sem superaquecer, sem parar a fila do balcão.",
   },
   {
