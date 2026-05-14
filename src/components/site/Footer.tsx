@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Mail, MapPin, Phone } from "lucide-react";
 import { CONTACT } from "@/data/site";
-import logo from "@/assets/logo.png";
+import { Logo } from "./Logo";
 
 export function Footer() {
   return (
@@ -9,11 +9,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-4">
         <div className="md:col-span-2">
           <Link to="/" className="flex items-center">
-            <img 
-              src={logo} 
-              alt="CENTERFRIOS" 
-              className="h-10 w-auto object-contain" 
-            />
+            <Logo size="md" />
           </Link>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
             Equipamentos de alta performance para refrigeração comercial e

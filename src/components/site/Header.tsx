@@ -2,8 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { QuoteDialog } from "./QuoteDialog";
+import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.png";
 
 const NAV = [
   { to: "/produtos", label: "Produtos" },
@@ -20,15 +20,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Link to="/" className="flex items-center">
-          <img
-            src={logo}
-            alt="CENTERFRIOS"
-            className="h-10 w-auto object-contain"
-            style={{
-              filter:
-                "drop-shadow(0 0 1px color-mix(in oklab, var(--foreground) 55%, transparent)) drop-shadow(0 0 6px color-mix(in oklab, var(--accent) 30%, transparent))",
-            }}
-          />
+          <Logo size="md" />
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">
