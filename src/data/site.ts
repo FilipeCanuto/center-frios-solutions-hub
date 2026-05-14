@@ -1,6 +1,6 @@
 import heroImg from "@/assets/hero-equipamentos.jpg";
 import pa7 from "@/assets/products/pa7-pro/main.png";
-import hs98 from "@/assets/products/hs-98/Hs98 (1).png";
+import hs98 from "@/assets/products/hs-98/homogeneizador foto principal.png";
 import amp40 from "@/assets/produto-amp40.jpg";
 import climatizador from "@/assets/produto-climatizador.jpg";
 import segSupermercados from "@/assets/seg-supermercados.jpg";

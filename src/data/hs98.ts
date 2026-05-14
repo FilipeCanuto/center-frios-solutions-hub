@@ -1,3 +1,4 @@
+import heroMain from "@/assets/products/hs-98/homogeneizador foto principal.png";
 import ambientButchers from "@/assets/products/hs-98/ambient-butchers.png";
 import ambientKitchen from "@/assets/products/hs-98/ambient-kitchen.png";
 import threeQuarter from "@/assets/products/hs-98/three-quarter-pedal.png";
@@ -9,8 +10,9 @@ import bocal from "@/assets/products/hs-98/bocal-detail.png";
 import internal from "@/assets/products/hs-98/internal-clean.png";
 
 export const HS98_IMAGES = {
-  main: ambientButchers,
-  hero: ambientButchers,
+  main: heroMain,
+  hero: heroMain,
+  heroMain,
   ambientButchers,
   ambientKitchen,
   threeQuarter,
