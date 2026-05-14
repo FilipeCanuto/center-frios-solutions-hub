@@ -117,11 +117,49 @@ function Hero() {
           </p>
         </div>
 
-        {/* Hero visual */}
+        {/* Hero visual — premium studio composition */}
         <div className="relative lg:col-span-6">
-          <div className="relative mx-auto aspect-square w-full max-w-[560px]">
-            {/* halo */}
-            <div className="absolute inset-0 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent)_25%,transparent),transparent_70%)] blur-2xl" />
+          <div className="relative mx-auto aspect-square w-full max-w-[580px]">
+            {/* rotating conic spotlight behind product */}
+            <div
+              aria-hidden
+              className="absolute inset-[6%] rounded-full opacity-60 mix-blend-screen"
+              style={{
+                background:
+                  "conic-gradient(from 0deg, transparent 0deg, color-mix(in oklab, var(--accent) 40%, transparent) 80deg, transparent 180deg, color-mix(in oklab, #3b82f6 30%, transparent) 260deg, transparent 360deg)",
+                animation: "spin 28s linear infinite",
+                filter: "blur(36px)",
+              }}
+            />
+            {/* warm halo */}
+            <div
+              aria-hidden
+              className="absolute inset-0 rounded-full blur-3xl"
+              style={{
+                background:
+                  "radial-gradient(closest-side, color-mix(in oklab, var(--accent) 32%, transparent), transparent 70%)",
+              }}
+            />
+            {/* cool rim halo */}
+            <div
+              aria-hidden
+              className="absolute inset-[10%] rounded-full opacity-70 blur-2xl"
+              style={{
+                background:
+                  "radial-gradient(closest-side, color-mix(in oklab, #3b82f6 22%, transparent), transparent 70%)",
+              }}
+            />
+
+            {/* concentric pedestal rings */}
+            <div
+              aria-hidden
+              className="absolute inset-[4%] rounded-full border border-white/10"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-[14%] rounded-full border border-white/[0.06]"
+            />
+
             {/* product */}
             <motion.img
               initial={{ opacity: 0, y: 30, scale: 0.96 }}
@@ -129,34 +167,45 @@ function Hero() {
               transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
               src={HS98_IMAGES.main}
               alt="Moedor Homogeneizador HS-98 Skymsen"
-              className="relative z-10 h-full w-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.6)]"
+              className="relative z-10 h-full w-full object-contain"
+              style={{
+                filter:
+                  "drop-shadow(0 24px 28px rgba(0,0,0,0.55)) drop-shadow(0 8px 12px rgba(0,0,0,0.4))",
+              }}
               loading="eager"
               fetchPriority="high"
             />
-            {/* floor reflection */}
-            <img
-              src={HS98_IMAGES.main}
-              alt=""
+
+            {/* contact shadow ellipse */}
+            <div
               aria-hidden
-              className="pointer-events-none absolute left-0 right-0 top-[68%] mx-auto h-[40%] w-full object-contain opacity-25"
+              className="pointer-events-none absolute bottom-[6%] left-1/2 h-[8%] w-[60%] -translate-x-1/2 rounded-[50%]"
               style={{
-                transform: "scaleY(-1)",
-                maskImage:
-                  "linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 80%)",
-                WebkitMaskImage:
-                  "linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 80%)",
-                filter: "blur(2px)",
+                background:
+                  "radial-gradient(ellipse at center, rgba(0,0,0,0.55), transparent 70%)",
+                filter: "blur(8px)",
               }}
             />
           </div>
 
-          {/* floating chip */}
-          <div className="absolute -bottom-2 left-2 hidden items-center gap-3 rounded-2xl border border-border bg-card/80 px-4 py-3 backdrop-blur-xl md:flex">
-            <div className="size-2 animate-pulse rounded-full bg-emerald-400" />
-            <div className="text-xs">
-              <div className="font-semibold">Pronta entrega</div>
+          {/* floating chip — pronta entrega */}
+          <div className="absolute -bottom-2 left-2 z-20 flex items-center gap-3 rounded-2xl border border-accent/30 bg-card/70 px-4 py-3 shadow-xl shadow-black/30 backdrop-blur-xl">
+            <div className="relative grid place-items-center">
+              <div className="absolute size-3 animate-ping rounded-full bg-emerald-400/60" />
+              <div className="relative size-2 rounded-full bg-emerald-400" />
+            </div>
+            <div className="text-xs leading-tight">
+              <div className="font-semibold text-foreground">Pronta entrega</div>
               <div className="text-muted-foreground">7 dias úteis · Brasil todo</div>
             </div>
+          </div>
+
+          {/* floating badge — compliance */}
+          <div className="absolute -top-2 right-2 z-20 hidden items-center gap-2 rounded-full border border-white/10 bg-background/60 px-3.5 py-2 shadow-xl shadow-black/30 backdrop-blur-xl md:flex">
+            <ShieldCheck className="size-3.5 text-accent" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-foreground">
+              NR-12 · INMETRO
+            </span>
           </div>
         </div>
       </div>
@@ -229,28 +278,6 @@ function Highlights() {
                 do varejo brasileiro: pico de movimento, sem margem pra parada.
               </p>
 
-              <div className="relative mt-10 aspect-square w-full max-w-[440px]">
-                <div
-                  aria-hidden
-                  className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent)_22%,transparent),transparent_70%)] blur-2xl"
-                />
-                <div className="relative h-full w-full overflow-hidden rounded-[2rem] border border-border bg-gradient-to-br from-card to-background">
-                  <div
-                    aria-hidden
-                    className="absolute inset-0 opacity-80"
-                    style={{
-                      background:
-                        "radial-gradient(ellipse at 50% 60%, color-mix(in oklab, var(--accent) 14%, transparent), transparent 70%)",
-                    }}
-                  />
-                  <img
-                    src={HS98_IMAGES.heroMain}
-                    alt="Moedor Homogeneizador HS-98 Skymsen — vista principal"
-                    loading="lazy"
-                    className="relative h-full w-full object-contain p-8 drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
-                  />
-                </div>
-              </div>
             </div>
           </div>
 

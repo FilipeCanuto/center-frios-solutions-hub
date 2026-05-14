@@ -1,39 +1,48 @@
-## Diagnóstico de imagens na página /produtos/moeder-homogeneizador-hs-98
+## Objetivo
 
-Auditoria do que está montado hoje vs. o que existe em `src/assets/products/hs-98/`:
+Elevar a apresentação do produto na Hero da landing do HS-98 para algo claramente premium, e reverter a seção "Quatro decisões que mudam o sábado de manhã" ao layout anterior (sem imagem na coluna esquerda), que tinha melhor ritmo visual.
 
-| Local | Imagem atual | Problema |
-|---|---|---|
-| Hero (produto principal + reflexo no chão) | `ambient-butchers.png` (cena de açougue com pessoas) | Foto ambiente sendo usada como **shot limpo do produto**. O reflexo "espelhado no chão" fica com pessoas de cabeça para baixo — visualmente quebrado. |
-| Reflexo do chão no Hero | `ambient-butchers.png` (mesma) | Idem — não é uma silhueta limpa do equipamento. |
-| Card do catálogo `/produtos` | `Hs98 (1).png` (nome técnico, sem padrão) | Não é o shot escolhido como "foto principal" da linha. |
-| Thumb do checkout (CheckoutSection) | `HS98_IMAGES.main` = `ambient-butchers.png` | Mesma foto ambiente — não funciona em miniatura 64x64 (vira mancha). |
-| Seção "Quatro decisões que mudam o sábado de manhã" (Highlights) | (sem imagem) | Bloco 100% texto, quebra o ritmo visual entre Manifesto e Showcase. |
+Escopo: apenas `src/components/site/hs98/Hs98Landing.tsx`. Sem mudanças em dados, rotas, copy ou outras seções.
 
-A imagem correta `homogeneizador foto principal.png` já existe em `src/assets/products/hs-98/` mas não está sendo importada em lugar nenhum.
+---
 
-## Mudanças propostas
+## 1. Hero — apresentação Premium do homogeneizador
 
-### 1. `src/data/hs98.ts`
-- Adicionar `import heroMain from "@/assets/products/hs-98/homogeneizador foto principal.png"`.
-- Em `HS98_IMAGES`: trocar `main` e `hero` para apontar para `heroMain` (mantendo `ambientButchers` disponível para a seção Showcase / Manifesto, onde a cena com pessoas faz sentido).
+Hoje a foto do produto fica "solta" sobre um halo simples + reflexo no chão pouco convincente. Vou trocar por uma composição em camadas tipo "studio shot" que a faça respirar e parecer cara.
 
-Resultado: o Hero passa a exibir o produto limpo, e o reflexo no chão fica coerente. Como o checkout usa `HS98_IMAGES.main`, a thumb do checkout passa a mostrar a foto principal automaticamente — sem alterar `Hs98Landing.tsx`.
+Mudanças na coluna direita do Hero:
 
-### 2. `src/data/site.ts`
-- Trocar o import `import hs98 from "@/assets/products/hs-98/Hs98 (1).png"` para apontar para `homogeneizador foto principal.png`.
+- **Pedestal/palco circular**: anel duplo concêntrico em `border-white/10` + glow radial mais denso em `--accent`, criando a sensação de produto sobre um spotlight de showroom.
+- **Spotlight cônico atrás do produto**: gradiente cônico suave girando lentamente (28s) — alinhado com a estética que já existe no fundo do Hero, mas localizado atrás da máquina.
+- **Halo principal mais rico**: dois radial-gradients sobrepostos (accent quente + azul frio no rim), em vez do halo único atual. Reforça o efeito cinematográfico já presente no fundo do Hero.
+- **Drop shadow do produto**: sombra mais profunda e direcional (não só um blur centralizado), aumentando a sensação de peso/material.
+- **Reflexo no chão**: substituído por uma "elipse de contato" sutil (gradiente radial achatado embaixo do produto). O reflexo invertido atual deixa a peça com aspecto duplicado e pouco elegante; uma sombra de contato dá ancoragem sem competir.
+- **Floating chip "Pronta entrega"**: redesenhado em vidro mais limpo (border accent leve, micro-texto bem hierarquizado) e revelado também no mobile como bolha menor, para reforçar o "premium pronto pra sair".
+- **Selo flutuante adicional** no canto oposto: pequeno badge "NR-12 · INMETRO" em estilo glass, reforçando autoridade técnica sem poluir.
+- **Animação de entrada**: a imagem entra com leve scale + fade (já existe), mas o halo/spotlight também ganham `animate-pulse` muito sutil para dar "vida" sem distrair.
 
-Resultado: o card do catálogo `/produtos` que abre a landing do HS-98 passa a usar a foto principal, alinhado com hero e checkout (mesma identidade em todos os pontos de entrada).
+Tudo continua usando tokens semânticos (`--accent`, `--border`, `--card`, `--background`, `--foreground`, `--muted-foreground`). Sem cores hardcoded fora do que já existe no arquivo.
 
-### 3. `src/components/site/hs98/Hs98Landing.tsx` — seção `Highlights`
-Adicionar uma coluna de imagem estratégica do produto ao lado dos 4 cards "Quatro decisões…", transformando o bloco em um layout de 12 colunas:
+---
 
-- Coluna esquerda (5/12, sticky no desktop): título + parágrafo de apoio + foto do `homogeneizador foto principal.png` em moldura arredondada com halo do accent (mesmo tratamento do hero), dando peso visual ao "porquê" das 4 decisões.
-- Coluna direita (7/12): grid de 2x2 com os 4 cards (em vez do grid 1x4 atual), preservando o conteúdo e o efeito de underline accent no hover.
+## 2. "Quatro decisões que mudam o sábado de manhã" — reverter
 
-Mobile: stack normal (imagem em cima, depois os 4 cards um abaixo do outro).
+Reverter a coluna esquerda (`lg:col-span-5`) ao estado anterior à última iteração: apenas título + parágrafo de apoio, **sem o bloco de imagem do produto**. A coluna direita (cards 2x2) continua igual.
+
+Resultado: o ritmo visual volta ao que estava — bloco textual respirando à esquerda, grade de cards densa à direita. A imagem do produto continua presente em peso máximo no Hero (agora redesenhado) e na galeria abaixo, então não há perda de presença visual do equipamento.
+
+---
 
 ## Fora de escopo
-- Não toco em `Hs98Gallery` (já usa imagens corretas).
-- Não toco em `Showcase` (`internal-clean.png` e `switch-locked.png` estão corretos para os contextos).
-- Sem mudanças de cópia, preço, dados ou rotas.
+
+- Não muda `Showcase`, `Manifesto`, galeria, checkout, FAQ, copy, preço, dados ou rotas.
+- Não muda `src/data/hs98.ts` nem `src/data/site.ts` (mudanças anteriores ficam como estão).
+- Sem novos assets — usa apenas as imagens já importadas.
+
+## Detalhes técnicos
+
+Arquivo único editado: `src/components/site/hs98/Hs98Landing.tsx`.
+- `Hero()`: substituir o bloco `{/* Hero visual */}` (linhas ~120–161) pela nova composição de pedestal + spotlight + dois floating chips.
+- `Highlights()`: dentro de `lg:col-span-5 > .lg:sticky`, remover o `<div className="relative mt-10 aspect-square ...">...</div>` (linhas ~232–253). Manter `<h2>` e `<p>`.
+
+Sem novas dependências. `framer-motion` já está em uso no arquivo.
