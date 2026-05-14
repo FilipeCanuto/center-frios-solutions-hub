@@ -1,46 +1,36 @@
-import hero from "@/assets/products/hs-98/hero.png";
-import front from "@/assets/products/hs-98/front.png";
-import threeQuarter from "@/assets/products/hs-98/three-quarter.png";
-import top from "@/assets/products/hs-98/top.png";
-import side from "@/assets/products/hs-98/side.png";
-import rear from "@/assets/products/hs-98/rear.png";
-import bocal from "@/assets/products/hs-98/bocal.png";
-import switchImg from "@/assets/products/hs-98/switch.png";
-import pedal from "@/assets/products/hs-98/pedal-clean.png";
+import ambientButchers from "@/assets/products/hs-98/ambient-butchers.png";
+import ambientKitchen from "@/assets/products/hs-98/ambient-kitchen.png";
+import threeQuarter from "@/assets/products/hs-98/Hs98 (1).png?url";
+import switchImg from "@/assets/products/hs-98/Hs98 (2).png?url";
+import front from "@/assets/products/hs-98/Hs98 (3).png?url";
+import side from "@/assets/products/hs-98/Hs98 (8) vista lateral.png?url";
+import rearLogo from "@/assets/products/hs-98/Hs98 (11).png?url";
+import bocal from "@/assets/products/hs-98/Hs98 (14) bocal.png?url";
 import internal from "@/assets/products/hs-98/internal-clean.png";
 
 export const HS98_IMAGES = {
-  main: hero,
-  hero,
-  front,
+  main: ambientButchers,
+  hero: ambientButchers,
+  ambientButchers,
+  ambientKitchen,
   threeQuarter,
-  top,
+  front,
   side,
-  rear,
   bocal,
-  switch: switchImg,
-  pedal,
   internal,
-  // legacy aliases (not referenced in components anymore)
-  ambient1: threeQuarter,
-  ambient2: front,
-  topView: top,
-  sideView: side,
-  rearView: rear,
-  detail7: bocal,
+  switch: switchImg,
+  rearLogo,
 };
 
 export const HS98_GALLERY = [
-  { src: hero, alt: "HS-98 vista 3/4 com pedal de acionamento" },
-  { src: front, alt: "Vista frontal — painel selado e moedor frontal" },
-  { src: threeQuarter, alt: "Perspectiva lateral 3/4 — corpo em inox" },
-  { src: side, alt: "Vista lateral — caçamba e cavalete reforçado" },
-  { src: top, alt: "Vista superior — caçamba aberta para abastecimento" },
-  { src: rear, alt: "Vista traseira — botão de emergência e ventilação" },
-  { src: bocal, alt: "Boca e caracol microfundido em inox" },
-  { src: internal, alt: "Caçamba interna 41 L — pás homogeneizadoras" },
-  { src: switchImg, alt: "Chave geral com bloqueio e selo de segurança" },
-  { src: pedal, alt: "Pedal industrial — operação hands-free" },
+  { src: ambientKitchen, alt: "HS-98 em cozinha industrial — chef ao fundo, bandejas de carne moída em primeiro plano" },
+  { src: threeQuarter, alt: "Vista 3/4 do HS-98 com pedal de acionamento hands-free" },
+  { src: front, alt: "Vista frontal — painel selado IP54 e moedor centralizado" },
+  { src: side, alt: "Vista lateral — perfil completo do conjunto em inox AISI 304" },
+  { src: bocal, alt: "Boca e caracol microfundido em inox — saída do produto" },
+  { src: internal, alt: "Caçamba interna 41 L — pás homogeneizadoras à mostra" },
+  { src: switchImg, alt: "Chave geral com trava mecânica e selo de segurança NR-12" },
+  { src: rearLogo, alt: "Vista traseira — cavalete reforçado, pedal industrial e logo Skymsen" },
 ];
 
 export const HS98_PRICE = {
