@@ -92,7 +92,7 @@ function SolucoesPage() {
               atendimento ágil. Confie em quem entende do seu setor.
             </p>
             <Button asChild size="lg" className="mt-6 rounded-full">
-              <Link to="/contato">Fale com nossa equipe</Link>
+              <Link to="/contato">Fale com nosso time</Link>
             </Button>
           </div>
         </div>
