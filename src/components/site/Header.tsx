@@ -2,8 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { QuoteDialog } from "./QuoteDialog";
+import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.png";
 
 const NAV = [
   { to: "/produtos", label: "Produtos" },
