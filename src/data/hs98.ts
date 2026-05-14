@@ -29,7 +29,7 @@ export const HS98_GALLERY = [
   { src: threeQuarter, alt: "Vista 3/4 do HS-98 com pedal de acionamento hands-free" },
   { src: front, alt: "Vista frontal — painel selado IP54 e moedor centralizado" },
   { src: side, alt: "Vista lateral — perfil completo do conjunto em inox AISI 304" },
-  { src: bocal, alt: "Boca e caracol microfundido em inox — saída do produto" },
+  { src: bocal, alt: "Boca e caracol Microfundido em inox — saída do produto" },
   { src: internal, alt: "Caçamba interna 41 L — pás homogeneizadoras à mostra" },
   { src: switchImg, alt: "Chave geral com trava mecânica e selo de segurança NR-12" },
   { src: rearLogo, alt: "Vista traseira — cavalete reforçado, pedal industrial e logo Skymsen" },
@@ -76,7 +76,7 @@ export const HS98_FEATURES = {
   ],
   durability: [
     "Construção 100% em aço inox AISI 304",
-    "Boca e caracol em inox microfundido",
+    "Boca e caracol em inox Microfundido",
     "Cavalete com gaveta para caixas plásticas",
     "Motor industrial 3 CV refrigerado",
   ],
@@ -84,7 +84,7 @@ export const HS98_FEATURES = {
     "Painel selado IP54, intuitivo e firme",
     "Sensor magnético na tampa — para na hora",
     "Trava mecânica de bloqueio das partes móveis",
-    "Caçamba 41 L · 31 kg por ciclo",
+    "Caçamba 41 L · 31 kg per ciclo",
   ],
 };
 
