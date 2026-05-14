@@ -86,7 +86,7 @@ function SolucoesPage() {
               Por que a Center Frios?
             </h3>
             <p className="mt-3 max-w-3xl text-muted-foreground">
-              O cliente Center Frios não pode parar — qualquer falha em
+              O cliente CENTERFRIOS não pode parar — qualquer falha em
               equipamento representa prejuízo direto. Por isso construímos uma
               estrutura completa: técnicos próprios, peças em estoque e
               atendimento ágil. Confie em quem entende do seu setor.
