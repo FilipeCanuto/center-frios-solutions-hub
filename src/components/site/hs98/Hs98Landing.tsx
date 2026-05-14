@@ -196,7 +196,7 @@ function Hero() {
             </div>
             <div className="text-xs leading-tight">
               <div className="font-semibold text-foreground">Pronta entrega</div>
-              <div className="text-muted-foreground">7 dias úteis · Brasil todo</div>
+              <div className="text-muted-foreground">Para todo o Brasil</div>
             </div>
           </div>
 
