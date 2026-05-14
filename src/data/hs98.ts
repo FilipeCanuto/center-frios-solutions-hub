@@ -58,7 +58,7 @@ export const HS98_HIGHLIGHTS = [
     desc: "Boca e caracol em inox de fundição. Resistem ao osso, ao tendão e ao ano todo de uso pesado.",
   },
   {
-    title: "Mói + homogeneíza",
+    title: "Mói + Homogeneíza",
     desc: "Um ciclo só. A gordura entra na massa, a carne sai vermelha. O cliente decide pelo olho.",
   },
   {
