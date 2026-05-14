@@ -217,34 +217,65 @@ function Highlights() {
   return (
     <section className="border-b border-border py-24">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
-          <h2 className="max-w-xl text-balance text-4xl font-semibold tracking-tight md:text-5xl">
-            Quatro decisões que mudam o sábado de manhã.
-          </h2>
-          <p className="max-w-sm text-sm text-muted-foreground">
-            Cada componente foi escolhido para suportar o regime mais duro
-            do varejo brasileiro: pico de movimento, sem margem pra parada.
-          </p>
-        </div>
-
-        <div className="grid gap-px overflow-hidden rounded-3xl border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
-          {HS98_HIGHLIGHTS.map((h, idx) => (
-            <div
-              key={h.title}
-              className="group relative bg-background p-8 transition-colors hover:bg-card"
-            >
-              <div className="text-xs font-bold tabular-nums text-muted-foreground">
-                0{idx + 1}
-              </div>
-              <h3 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
-                {h.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {h.desc}
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-14">
+          {/* Coluna imagem + título */}
+          <div className="lg:col-span-5">
+            <div className="lg:sticky lg:top-24">
+              <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+                Quatro decisões que mudam o sábado de manhã.
+              </h2>
+              <p className="mt-5 max-w-md text-sm text-muted-foreground md:text-base">
+                Cada componente foi escolhido para suportar o regime mais duro
+                do varejo brasileiro: pico de movimento, sem margem pra parada.
               </p>
-              <div className="absolute bottom-0 left-0 h-px w-0 bg-accent transition-all duration-500 group-hover:w-full" />
+
+              <div className="relative mt-10 aspect-square w-full max-w-[440px]">
+                <div
+                  aria-hidden
+                  className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent)_22%,transparent),transparent_70%)] blur-2xl"
+                />
+                <div className="relative h-full w-full overflow-hidden rounded-[2rem] border border-border bg-gradient-to-br from-card to-background">
+                  <div
+                    aria-hidden
+                    className="absolute inset-0 opacity-80"
+                    style={{
+                      background:
+                        "radial-gradient(ellipse at 50% 60%, color-mix(in oklab, var(--accent) 14%, transparent), transparent 70%)",
+                    }}
+                  />
+                  <img
+                    src={HS98_IMAGES.heroMain}
+                    alt="Moedor Homogeneizador HS-98 Skymsen — vista principal"
+                    loading="lazy"
+                    className="relative h-full w-full object-contain p-8 drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
+                  />
+                </div>
+              </div>
             </div>
-          ))}
+          </div>
+
+          {/* Coluna cards 2x2 */}
+          <div className="lg:col-span-7">
+            <div className="grid gap-px overflow-hidden rounded-3xl border border-border bg-border sm:grid-cols-2">
+              {HS98_HIGHLIGHTS.map((h, idx) => (
+                <div
+                  key={h.title}
+                  className="group relative bg-background p-8 transition-colors hover:bg-card"
+                >
+                  <div className="text-xs font-bold tabular-nums text-muted-foreground">
+                    0{idx + 1}
+                  </div>
+                  <h3 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
+                    {h.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    {h.desc}
+                  </p>
+                  <div className="absolute bottom-0 left-0 h-px w-0 bg-accent transition-all duration-500 group-hover:w-full" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
