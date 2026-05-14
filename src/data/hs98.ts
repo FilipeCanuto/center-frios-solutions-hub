@@ -54,7 +54,7 @@ export const HS98_HIGHLIGHTS = [
     desc: "Aguenta o sábado de manhã inteiro. Sem superaquecer, sem parar a fila do balcão.",
   },
   {
-    title: "Inox microfundido",
+    title: "Inox Microfundido",
     desc: "Boca e caracol em inox de fundição. Resistem ao osso, ao tendão e ao ano todo de uso pesado.",
   },
   {
