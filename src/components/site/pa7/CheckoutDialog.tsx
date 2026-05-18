@@ -430,15 +430,6 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                       <PayCta onClick={fakePay} loading={submitting} label="Confirmar pedido por TED" />
                     </TabsContent>
 
-                    <TabsContent value="credit" className="mt-5">
-                      <CardForm installments={12} subtotal={subtotal + shipping} />
-                      <PayCta onClick={fakePay} loading={submitting} label="Pagar com crédito" />
-                    </TabsContent>
-
-                    <TabsContent value="debit" className="mt-5">
-                      <CardForm installments={1} subtotal={subtotal + shipping} />
-                      <PayCta onClick={fakePay} loading={submitting} label="Pagar com débito" />
-                    </TabsContent>
                   </Tabs>
 
                   <div className="flex items-center justify-between gap-3">
