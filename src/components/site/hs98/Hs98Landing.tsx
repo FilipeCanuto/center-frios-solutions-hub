@@ -724,7 +724,7 @@ function FinalCta() {
 
 /* ──────────────────────────────────────────────────────── PAGE */
 export function Hs98Landing() {
-  const product = getProduct("moeder-homogeneizador-hs-98")!;
+  const product = getProduct("moedor-homogeneizador-hs-98")!;
 
   return (
     <div className="bg-background text-foreground">

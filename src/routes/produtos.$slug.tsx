@@ -49,7 +49,7 @@ function ProductPage() {
     return <Pa7ProLanding />;
   }
 
-  if (product.slug === "moeder-homogeneizador-hs-98") {
+  if (product.slug === "moedor-homogeneizador-hs-98") {
     return <Hs98Landing />;
   }
 

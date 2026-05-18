@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -12,6 +14,12 @@ import appCss from "../styles.css?url";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
+import { ComingSoon } from "@/components/site/ComingSoon";
+import {
+  isPublicPath,
+  PREVIEW_KEY,
+  PREVIEW_STORAGE_KEY,
+} from "@/lib/visibility";
 
 import { Toaster } from "@/components/ui/sonner";
 
@@ -134,15 +142,58 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <main className="flex-1">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-      <WhatsAppButton />
+      <VisibilityGate>
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-1">
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+        <WhatsAppButton />
+      </VisibilityGate>
       <Toaster richColors position="top-center" />
     </QueryClientProvider>
   );
+}
+
+/**
+ * Mostra <ComingSoon /> para visitantes externos em rotas fora da allowlist.
+ * Admins liberam o site inteiro acessando qualquer URL com ?preview=<PREVIEW_KEY>;
+ * isso grava uma flag no localStorage. Para sair do modo preview: ?preview=off.
+ */
+function VisibilityGate({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
+  const [previewUnlocked, setPreviewUnlocked] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const preview = params.get("preview");
+      if (preview === PREVIEW_KEY) {
+        localStorage.setItem(PREVIEW_STORAGE_KEY, "1");
+      } else if (preview === "off") {
+        localStorage.removeItem(PREVIEW_STORAGE_KEY);
+      }
+      setPreviewUnlocked(localStorage.getItem(PREVIEW_STORAGE_KEY) === "1");
+    } catch {
+      // localStorage indisponível (SSR/Cookies bloqueados) — segue como visitante.
+    }
+    setHydrated(true);
+  }, []);
+
+  const allowed = isPublicPath(pathname);
+
+  // Antes da hidratação, renderiza o conteúdo real para a rota pública (PA7/HS-98)
+  // ou a ComingSoon nas demais — evita flash e mantém SSR coerente.
+  if (!hydrated) {
+    return allowed ? <>{children}</> : <ComingSoon />;
+  }
+
+  if (allowed || previewUnlocked) {
+    return <>{children}</>;
+  }
+
+  return <ComingSoon />;
 }
