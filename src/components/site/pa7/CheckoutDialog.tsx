@@ -572,48 +572,6 @@ function PayCta({
   );
 }
 
-function CardForm({ installments, subtotal }: { installments: number; subtotal: number }) {
-  const options = Array.from({ length: installments }, (_, i) => i + 1);
-  return (
-    <div className="grid gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-      <div className="grid gap-2">
-        <Label htmlFor="card_number">Número do cartão</Label>
-        <Input id="card_number" placeholder="0000 0000 0000 0000" inputMode="numeric" />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="card_name">Nome impresso no cartão</Label>
-        <Input id="card_name" placeholder="Como impresso" />
-      </div>
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div className="grid gap-2">
-          <Label htmlFor="card_exp">Validade</Label>
-          <Input id="card_exp" placeholder="MM/AA" />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="card_cvv">CVV</Label>
-          <Input id="card_cvv" placeholder="000" inputMode="numeric" />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="card_inst">Parcelas</Label>
-          <select
-            id="card_inst"
-            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
-          >
-            {options.map((n) => (
-              <option key={n} value={n} className="bg-background text-foreground">
-                {n}x de {(subtotal / n).toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}{" "}
-                sem juros
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function QrPlaceholder() {
   // SVG decorativo — não é um QR real
