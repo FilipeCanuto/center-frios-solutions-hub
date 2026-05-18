@@ -343,7 +343,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                   <h2 className="text-xl font-semibold text-foreground">Forma de pagamento</h2>
 
                   <Tabs defaultValue="pix" className="w-full">
-                    <TabsList className="grid w-full grid-cols-5">
+                    <TabsList className="grid w-full grid-cols-3">
                       <TabsTrigger value="pix">
                         <QrCode className="mr-1.5 size-4" />
                         PIX
@@ -355,14 +355,6 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                       <TabsTrigger value="ted">
                         <Landmark className="mr-1.5 size-4" />
                         TED
-                      </TabsTrigger>
-                      <TabsTrigger value="credit">
-                        <CreditCard className="mr-1.5 size-4" />
-                        Crédito
-                      </TabsTrigger>
-                      <TabsTrigger value="debit">
-                        <CreditCard className="mr-1.5 size-4" />
-                        Débito
                       </TabsTrigger>
                     </TabsList>
 
