@@ -14,17 +14,36 @@ export const Route = createFileRoute("/produtos/$slug")({
     if (!product) throw notFound();
     return { product };
   },
-  head: ({ loaderData }) => {
+  head: ({ params, loaderData }) => {
     const p = loaderData?.product;
     if (!p) return { meta: [{ title: "Produto — Center Frios" }] };
     const title = `${p.name} — Center Frios`;
+    const url = `https://ofertas.centerfrios.com/produtos/${params.slug}`;
     return {
       meta: [
         { title },
         { name: "description", content: p.tagline },
         { property: "og:title", content: title },
         { property: "og:description", content: p.tagline },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
         ...(p.image ? [{ property: "og:image", content: p.image }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: p.name,
+            description: p.tagline,
+            ...(p.image ? { image: p.image } : {}),
+            ...(p.category ? { category: p.category } : {}),
+            brand: { "@type": "Brand", name: "Center Frios" },
+            url,
+          }),
+        },
       ],
     };
   },
