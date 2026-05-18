@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -12,6 +14,12 @@ import appCss from "../styles.css?url";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
+import { ComingSoon } from "@/components/site/ComingSoon";
+import {
+  isPublicPath,
+  PREVIEW_KEY,
+  PREVIEW_STORAGE_KEY,
+} from "@/lib/visibility";
 
 import { Toaster } from "@/components/ui/sonner";
 
