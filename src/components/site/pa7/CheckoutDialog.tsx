@@ -6,7 +6,6 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
-  CreditCard,
   Landmark,
   Loader2,
   Lock,
