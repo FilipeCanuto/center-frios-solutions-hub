@@ -14,10 +14,10 @@ Transformar a Landing Page do Processador PA7 PRO em uma experiência de alta co
 
 ### Bloco 2 — Landing Page PA7 PRO Premium (UI/UX)
 
-- [ ] **T-002**: Implementar animações de entrada e scroll (Framer Motion) no `Pa7ProLanding.tsx`.
-- [ ] **T-003**: Refinar design system (gradientes, tipografia e espaçamentos) para nível premium.
-- [ ] **T-004**: Criar componente `CheckoutSection` com opções de pagamento (PIX, Cartão, etc).
-- [ ] **T-005**: Integrar `CheckoutSection` ao final da Landing Page.
+- [x] **T-002**: Implementar animações de entrada e scroll (Framer Motion) no `Pa7ProLanding.tsx` (Hero, Destaques, Showcase e Discos) (Concluído).
+- [x] **T-003**: Refinar design system (gradientes HSL, espaçamentos amplos de 24/32 e tipografia) para nível premium executivo (Concluído).
+- [x] **T-004**: Criar componente `CheckoutSection` com opções de pagamento (PIX, Cartão, etc) (Concluído).
+- [x] **T-005**: Integrar `CheckoutSection` ao final da Landing Page (Concluído).
 
 ### Bloco 3 — Validação & Ajustes
 

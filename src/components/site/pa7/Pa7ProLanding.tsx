@@ -50,6 +50,26 @@ export function Pa7ProLanding() {
     currency: "BRL",
   });
 
+  // Framer Motion Animation Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: [0.215, 0.61, 0.355, 1] },
+    },
+  };
+
   return (
     <>
       {/* HERO */}
@@ -59,13 +79,17 @@ export function Pa7ProLanding() {
         transition={{ duration: 0.8 }}
         className="relative overflow-hidden border-b border-white/5"
       >
-        <div aria-hidden className="pointer-events-none absolute inset-0 tech-grid opacity-40" />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[420px]"
+          className="pointer-events-none absolute inset-0 tech-grid opacity-30 animate-pulse"
+          style={{ animationDuration: "10s" }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[500px]"
           style={{
             background:
-              "radial-gradient(60% 50% at 50% 0%, color-mix(in oklab, var(--brand-blue) 24%, transparent), transparent 70%)",
+              "radial-gradient(80% 50% at 50% 0%, color-mix(in oklab, var(--brand-blue) 26%, transparent), transparent 70%)",
           }}
         />
 
@@ -78,56 +102,91 @@ export function Pa7ProLanding() {
           </Link>
 
           <div className="mt-8 grid gap-12 lg:grid-cols-2 lg:gap-16">
-            <Gallery items={PA7_GALLERY} />
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <Gallery items={PA7_GALLERY} />
+            </motion.div>
 
-            <div className="flex flex-col justify-center">
-              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur">
-                <span className="size-1.5 rounded-full bg-accent" />
-                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={containerVariants}
+              className="flex flex-col justify-center"
+            >
+              <motion.div
+                variants={itemVariants}
+                className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur"
+              >
+                <span className="size-1.5 rounded-full bg-accent animate-pulse" />
+                <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
                   Skymsen · Linha Profissional
                 </span>
-              </div>
+              </motion.div>
 
-              <h1 className="mt-5 text-balance text-4xl font-semibold leading-tight tracking-tight text-foreground md:text-5xl">
+              <motion.h1
+                variants={itemVariants}
+                className="mt-5 text-balance text-4xl font-semibold leading-[1.1] tracking-tight text-foreground md:text-5xl lg:text-6xl"
+              >
                 Processador de Alimentos{" "}
                 <span className="bg-gradient-to-r from-foreground to-accent bg-clip-text text-transparent">
                   PA7 Pro Skymsen
                 </span>
-              </h1>
-              <p className="mt-3 text-base font-medium uppercase tracking-[0.18em] text-accent">
+              </motion.h1>
+              <motion.p
+                variants={itemVariants}
+                className="mt-3 text-base font-medium uppercase tracking-[0.18em] text-accent"
+              >
                 O melhor que a sua cozinha merece
-              </p>
-              <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+              </motion.p>
+              <motion.p
+                variants={itemVariants}
+                className="mt-4 text-lg leading-relaxed text-muted-foreground"
+              >
                 Cortes precisos e sem esforço, alta produtividade e grande variedade de cortes —
                 agora também em cubos e palitos (julienne).
-              </p>
+              </motion.p>
 
-              <ul className="mt-6 grid gap-2.5">
+              <motion.ul variants={itemVariants} className="mt-6 grid gap-3">
                 {[
                   "Produção contínua de até 250 kg/h · 600 W · 440 rpm",
                   "07 discos com suporte inclusos (fatiadores, raladores e julienne)",
                   "Aço inox, sensor de segurança na tampa e bivolt 127/220 V",
                 ].map((b) => (
                   <li key={b} className="flex items-start gap-2.5 text-sm text-foreground">
-                    <Check className="mt-0.5 size-4 shrink-0 text-accent" />
-                    {b}
+                    <div className="mt-1 flex size-5 shrink-0 items-center justify-center rounded-full bg-accent/10 border border-accent/20 text-accent">
+                      <Check className="size-3" />
+                    </div>
+                    <span className="ml-1">{b}</span>
                   </li>
                 ))}
-              </ul>
+              </motion.ul>
 
-              <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl">
-                <div className="flex items-end justify-between gap-4">
+              <motion.div
+                variants={itemVariants}
+                className="mt-7 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.01] p-6 backdrop-blur-xl relative overflow-hidden group shadow-[0_8px_30px_rgba(0,0,0,0.2)]"
+              >
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute -right-12 -top-12 size-36 rounded-full opacity-10 blur-2xl transition-opacity duration-700 group-hover:opacity-20"
+                  style={{
+                    background: "radial-gradient(circle, var(--accent) 50%, transparent)",
+                  }}
+                />
+                <div className="flex items-end justify-between gap-4 relative z-10">
                   <div>
                     <p className="text-[11px] font-semibold uppercase tracking-widest text-accent">
                       À vista no PIX
                     </p>
-                    <p className="mt-1 text-3xl font-semibold text-foreground md:text-4xl">
+                    <p className="mt-1 text-3xl font-semibold text-foreground md:text-4xl tracking-tight">
                       {(PA7_PRICE.amount * 0.95).toLocaleString("pt-BR", {
                         style: "currency",
                         currency: "BRL",
                       })}
                     </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-1.5 text-sm text-muted-foreground">
                       ou {totalBRL} em até{" "}
                       <strong className="text-foreground">
                         {PA7_PRICE.installments}x de {installment}
@@ -137,28 +196,36 @@ export function Pa7ProLanding() {
                   </div>
                 </div>
 
-                <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row relative z-10">
                   <Button
                     size="lg"
-                    className="w-full rounded-full sm:w-auto sm:flex-1"
+                    className="w-full rounded-full sm:w-auto sm:flex-1 font-semibold shadow-lg shadow-accent/20 group/btn"
                     onClick={() => setOpen(true)}
                   >
                     Comprar agora
+                    <ChevronRight className="ml-1 size-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
                   </Button>
                   <Button
                     asChild
                     size="lg"
                     variant="outline"
-                    className="w-full rounded-full sm:w-auto"
+                    className="w-full rounded-full sm:w-auto font-semibold"
                   >
-                    <a href="https://wa.me/558232232497" target="_blank" rel="noreferrer">
+                    <a
+                      href="https://wa.me/558232232497?text=Olá! Tenho interesse no Processador PA7 Pro Skymsen."
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       Falar com especialista
                     </a>
                   </Button>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="mt-6 grid grid-cols-2 gap-2 text-xs text-muted-foreground sm:grid-cols-4">
+              <motion.div
+                variants={itemVariants}
+                className="mt-6 grid grid-cols-2 gap-2 text-xs text-muted-foreground sm:grid-cols-4"
+              >
                 {[
                   { icon: ShieldCheck, label: "NR-12" },
                   { icon: Wrench, label: "Garantia 12m" },
@@ -167,41 +234,59 @@ export function Pa7ProLanding() {
                 ].map(({ icon: Icon, label }) => (
                   <div
                     key={label}
-                    className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2"
+                    className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.04]"
                   >
-                    <Icon className="size-4 text-accent" /> {label}
+                    <Icon
+                      className="size-4 text-accent animate-pulse"
+                      style={{ animationDuration: "3s" }}
+                    />{" "}
+                    {label}
                   </div>
                 ))}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </motion.section>
 
       {/* HIGHLIGHTS */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="border-b border-white/5 py-20 md:py-24"
-      >
+      <section className="relative overflow-hidden border-b border-white/5 py-20 md:py-28">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+            className="mx-auto max-w-2xl text-center"
+          >
+            <motion.span
+              variants={itemVariants}
+              className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent"
+            >
               Por que o PA7 Pro
-            </span>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+            </motion.span>
+            <motion.h2
+              variants={itemVariants}
+              className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl"
+            >
               Engenharia profissional em cada detalhe
-            </h2>
-          </div>
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            </motion.h2>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={containerVariants}
+            className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          >
             {PA7_HIGHLIGHTS.map((h, i) => {
               const Icon = HIGHLIGHT_ICONS[i];
               return (
-                <div
+                <motion.div
                   key={h.title}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.06]"
+                  variants={itemVariants}
+                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-accent/40 hover:bg-white/[0.06] hover:shadow-[0_12px_30px_rgba(0,0,0,0.3)]"
                 >
                   <div
                     aria-hidden
@@ -211,15 +296,21 @@ export function Pa7ProLanding() {
                         "radial-gradient(circle, color-mix(in oklab, var(--brand-blue) 60%, transparent), transparent 70%)",
                     }}
                   />
-                  <Icon className="size-7 text-accent" />
-                  <h3 className="mt-4 text-lg font-semibold text-foreground">{h.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{h.desc}</p>
-                </div>
+                  <div className="relative z-10 flex size-12 items-center justify-center rounded-xl bg-white/[0.03] border border-white/10 text-accent transition-all duration-300 group-hover:scale-110 group-hover:bg-accent group-hover:text-accent-foreground">
+                    <Icon className="size-6" />
+                  </div>
+                  <h3 className="relative z-10 mt-5 text-lg font-semibold text-foreground transition-colors group-hover:text-accent">
+                    {h.title}
+                  </h3>
+                  <p className="relative z-10 mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {h.desc}
+                  </p>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
-      </motion.section>
+      </section>
 
       {/* SHOWCASE */}
       {PA7_SHOWCASE.map((item, i) => (
@@ -227,34 +318,55 @@ export function Pa7ProLanding() {
       ))}
 
       {/* INCLUDED DISCS */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="relative overflow-hidden border-t border-white/5 py-20 md:py-24"
-      >
+      <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--brand-blue)_8%,transparent),transparent_80%)] opacity-50"
+        />
+
         <div className="relative mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+            className="mx-auto max-w-2xl text-center"
+          >
+            <motion.span
+              variants={itemVariants}
+              className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent"
+            >
               Já vem completo
-            </span>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+            </motion.span>
+            <motion.h2
+              variants={itemVariants}
+              className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl"
+            >
               07 discos com suporte inclusos
-            </h2>
-            <p className="mt-3 text-base text-muted-foreground">
-              Pronto para fatiar, ralar e cortar em palitos desde o primeiro dia. Disco de 203 mm de
-              diâmetro, fixados em suporte para troca rápida.
-            </p>
-          </div>
-          <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-7">
+            </motion.h2>
+            <motion.p variants={itemVariants} className="mt-3 text-base text-muted-foreground">
+              Pronto para fatiar, ralar e cortar em palitos desde o primeiro dia. Discos de 203 mm
+              de diâmetro, fixados em suporte para troca rápida.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={containerVariants}
+            className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-7"
+          >
             {PA7_INCLUDED_DISCS.map((d) => (
-              <div
+              <motion.div
                 key={d.code}
-                className="group relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-white/[0.07]"
+                variants={itemVariants}
+                className="group relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
               >
-                <div
-                  className="relative grid size-16 place-items-center rounded-full border border-white/15 bg-gradient-to-br from-white/[0.08] to-white/[0.02] shadow-inner"
+                <motion.div
+                  whileHover={{ rotate: 180 }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
+                  className="relative grid size-16 place-items-center rounded-full border border-white/15 bg-gradient-to-br from-white/[0.08] to-white/[0.02] shadow-inner transition-transform duration-300 group-hover:scale-105"
                   aria-hidden
                 >
                   <div
@@ -267,20 +379,28 @@ export function Pa7ProLanding() {
                   <span className="relative text-base font-bold tracking-tight text-foreground">
                     {d.code}
                   </span>
-                </div>
-                <p className="mt-3 text-[11px] font-semibold uppercase tracking-widest text-accent">
+                </motion.div>
+                <p className="mt-4 text-[11px] font-semibold uppercase tracking-widest text-accent">
                   {d.group}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">{d.desc}</p>
-              </div>
+                <p className="mt-1 text-center text-xs text-muted-foreground leading-relaxed">
+                  {d.desc}
+                </p>
+              </motion.div>
             ))}
-          </div>
-          <p className="mt-8 text-center text-xs text-muted-foreground">
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="mt-8 text-center text-xs text-muted-foreground"
+          >
             Grades de cubo (GC8, GC10, GC14 e GC20 PRO) e discos adicionais disponíveis sob
             consulta.
-          </p>
+          </motion.p>
         </div>
-      </motion.section>
+      </section>
 
       {/* SPECS */}
       <motion.section
@@ -308,32 +428,46 @@ export function Pa7ProLanding() {
       </motion.section>
 
       {/* USE CASES */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="border-t border-white/5 py-20 md:py-24"
-      >
+      <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+            className="mx-auto max-w-2xl text-center"
+          >
+            <motion.span
+              variants={itemVariants}
+              className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent"
+            >
               Ideal para o seu negócio
-            </span>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+            </motion.span>
+            <motion.h2
+              variants={itemVariants}
+              className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl"
+            >
               Os cortes certos para cada operação
-            </h2>
-            <p className="mt-3 text-base text-muted-foreground">
+            </motion.h2>
+            <motion.p variants={itemVariants} className="mt-3 text-base text-muted-foreground">
               Combinações de discos recomendadas pela Skymsen para os principais segmentos.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={containerVariants}
+            className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          >
             {PA7_USE_CASES.map((u) => {
               const Icon = USE_CASE_ICONS[u.icon as keyof typeof USE_CASE_ICONS];
               return (
-                <div
+                <motion.div
                   key={u.name}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.07]"
+                  variants={itemVariants}
+                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
                 >
                   <div
                     aria-hidden
@@ -343,29 +477,35 @@ export function Pa7ProLanding() {
                         "radial-gradient(circle, color-mix(in oklab, var(--brand-blue) 55%, transparent), transparent 70%)",
                     }}
                   />
-                  <Icon className="size-7 text-accent" />
-                  <h3 className="mt-4 text-lg font-semibold text-foreground">{u.name}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{u.desc}</p>
-                  <div className="mt-4 flex flex-wrap gap-1.5">
+                  <div className="relative z-10 flex size-12 items-center justify-center rounded-xl bg-white/[0.03] border border-white/10 text-accent transition-all duration-300 group-hover:scale-110 group-hover:bg-accent group-hover:text-accent-foreground">
+                    <Icon className="size-6" />
+                  </div>
+                  <h3 className="relative z-10 mt-5 text-lg font-semibold text-foreground transition-colors group-hover:text-accent">
+                    {u.name}
+                  </h3>
+                  <p className="relative z-10 mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {u.desc}
+                  </p>
+                  <div className="relative z-10 mt-5 flex flex-wrap gap-1.5">
                     {u.discs.map((d) => (
                       <span
                         key={d}
-                        className="rounded-md border border-white/10 bg-white/[0.05] px-2 py-0.5 text-[11px] font-semibold text-foreground"
+                        className="rounded-md border border-white/10 bg-white/[0.05] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-foreground transition-colors duration-300 group-hover:border-accent/30 group-hover:bg-accent/10 group-hover:text-accent"
                       >
                         {d}
                       </span>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
-      </motion.section>
+      </section>
 
       {/* APPLICATIONS */}
       {product.applications && (
-        <section className="border-t border-white/5 py-20 md:py-24">
+        <section className="border-t border-white/5 py-20 md:py-28">
           <div className="mx-auto max-w-5xl px-6">
             <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
               Onde já está em operação
