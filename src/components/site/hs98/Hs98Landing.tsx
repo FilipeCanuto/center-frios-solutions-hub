@@ -428,7 +428,7 @@ function FinalCta() {
             className="rounded-full px-8 py-7 text-base font-semibold shadow-lg shadow-accent/30"
           >
             <a
-              href="https://wa.me/558232232497?text=Olá! Quero falar com um especialista da Center Frios sobre o HS-98."
+              href="https://wa.me/558232232497?text=Olá! Quero falar com um especialista da Center Frios sobre os homogeneizadores Skymsen HS-22 e HS-98."
               target="_blank"
               rel="noreferrer"
             >
