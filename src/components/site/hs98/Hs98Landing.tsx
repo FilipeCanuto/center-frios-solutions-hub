@@ -58,7 +58,6 @@ function Manifesto() {
   );
 }
 
-
 /* ──────────────────────────────────────────────────────── SHOWCASE */
 function Showcase() {
   return (

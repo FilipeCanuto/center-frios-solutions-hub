@@ -30,24 +30,18 @@ export function ComingSoon() {
           Estamos preparando algo novo
         </h1>
         <p className="mt-4 max-w-xl text-base text-muted-foreground md:text-lg">
-          O novo site da Center Frios está sendo finalizado. Por enquanto, você
-          pode conferir os equipamentos em destaque ou falar direto com a gente.
+          O novo site da Center Frios está sendo finalizado. Por enquanto, você pode conferir os
+          equipamentos em destaque ou falar direto com a gente.
         </p>
 
         <div className="mt-10 grid w-full gap-3 sm:grid-cols-2">
           <Button asChild size="lg" className="rounded-full">
-            <Link
-              to="/produtos/$slug"
-              params={{ slug: "processador-pa7-pro-skymsen" }}
-            >
+            <Link to="/produtos/$slug" params={{ slug: "processador-pa7-pro-skymsen" }}>
               Processador PA7 Pro <ArrowRight className="ml-1 size-4" />
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="rounded-full">
-            <Link
-              to="/produtos/$slug"
-              params={{ slug: "moedor-homogeneizador-hs-98" }}
-            >
+            <Link to="/produtos/$slug" params={{ slug: "moedor-homogeneizador-hs-98" }}>
               Moedor HS-98 <ArrowRight className="ml-1 size-4" />
             </Link>
           </Button>

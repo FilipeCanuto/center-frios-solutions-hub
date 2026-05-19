@@ -8,6 +8,10 @@ import img14 from "@/assets/products/pa7-pro/14.png";
 import img19 from "@/assets/products/pa7-pro/19.png";
 import img20 from "@/assets/products/pa7-pro/20.png";
 import img23 from "@/assets/products/pa7-pro/23.png";
+import img24 from "@/assets/products/pa7-pro/24.png";
+import img27 from "@/assets/products/pa7-pro/27.png";
+import bivolt from "@/assets/products/pa7-pro/bivolt.png";
+import trava from "@/assets/products/pa7-pro/trava.png";
 
 export const PA7_IMAGES = {
   main,
@@ -20,14 +24,25 @@ export const PA7_IMAGES = {
   img19,
   img20,
   img23,
+  img24,
+  img27,
+  bivolt,
+  trava,
 };
 
 export const PA7_GALLERY = [
-  { src: main, alt: "PA7 Pro Skymsen — vista lateral com bocal de alimentação" },
-  { src: img06, alt: "PA7 Pro Skymsen — vista frontal com tampa fechada" },
-  { src: img10, alt: "PA7 Pro Skymsen — perfil mostrando saída de processamento" },
-  { src: img14, alt: "PA7 Pro Skymsen — visão superior do bocal e cuba inox" },
-  { src: img20, alt: "PA7 Pro Skymsen — câmara de processamento aberta" },
+  { src: main, alt: "PA7 Pro Skymsen — Vista lateral com bocal de alimentação" },
+  { src: img06, alt: "PA7 Pro Skymsen — Vista frontal com tampa fechada em inox" },
+  { src: img10, alt: "PA7 Pro Skymsen — Perfil mostrando saída de processamento" },
+  { src: img14, alt: "PA7 Pro Skymsen — Visão superior do bocal largo e empurrador" },
+  { src: img20, alt: "PA7 Pro Skymsen — Câmara de processamento aberta com disco" },
+  {
+    src: trava,
+    alt: "PA7 Pro Skymsen — Detalhe do sensor de segurança magnético na tampa (NR-12)",
+  },
+  { src: bivolt, alt: "PA7 Pro Skymsen — Chave seletora bivolt (127/220 V) sob o equipamento" },
+  { src: img24, alt: "PA7 Pro Skymsen — Vista isométrica de alta definição" },
+  { src: img27, alt: "PA7 Pro Skymsen — Perfil lateral de operação" },
 ];
 
 export const PA7_PRICE = {

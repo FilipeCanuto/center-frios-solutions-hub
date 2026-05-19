@@ -69,8 +69,7 @@ export const HS98_HIGHLIGHTS = [
 
 export const HS98_NICKNAME = "O Gigante da Produção";
 
-export const HS98_AUDIENCE =
-  "Grandes supermercados, hipermercados e frigoríficos";
+export const HS98_AUDIENCE = "Grandes supermercados, hipermercados e frigoríficos";
 
 export const HS98_DIFF =
   "Construção pesada 100% Inox com cavalete de piso — feita para não parar nunca";

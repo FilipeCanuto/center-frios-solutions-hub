@@ -1,14 +1,39 @@
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Play, ShieldCheck, Flame, Cpu, ArrowRight } from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { HS98_IMAGES } from "@/data/hs98";
 
 export function Hs98TabuleiroSection() {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isIntersecting, setIsIntersecting] = useState(false);
 
-  // YouTube Shorts embed URL
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsIntersecting(true);
+          observer.disconnect();
+        }
+      },
+      {
+        rootMargin: "250px", // Trigger when visual container is 250px near the screen viewport
+        threshold: 0.05,
+      },
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  // YouTube Shorts embed URL (fully optimized for looping silent playback)
   const videoId = "aM7KOywnBBU";
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1&rel=0`;
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&playsinline=1&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1`;
 
   return (
     <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-background via-card/10 to-background py-24 md:py-32">
@@ -108,13 +133,13 @@ export function Hs98TabuleiroSection() {
           </div>
 
           {/* Right Column - Premium Vertical Video Player (YouTube Shorts Format) */}
-          <div className="lg:col-span-5 flex justify-center">
+          <div className="lg:col-span-5 flex justify-center" ref={containerRef}>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true, margin: "-100px" }}
-              className="relative aspect-[9/16] w-full max-w-[340px] overflow-hidden rounded-[32px] border border-white/10 bg-black/60 shadow-[0_20px_50px_rgba(0,0,0,0.5)] shadow-black/60 transition-transform duration-500 hover:scale-[1.02]"
+              className="relative aspect-[9/16] w-full max-w-[340px] overflow-hidden rounded-[32px] border border-white/10 bg-black shadow-[0_20px_50px_rgba(0,0,0,0.5)] shadow-black/60 transition-transform duration-500 hover:scale-[1.02]"
             >
               {/* Premium Phone-like Frame Notch */}
               <div className="absolute inset-x-0 top-0 z-20 flex justify-center py-3">
@@ -122,40 +147,46 @@ export function Hs98TabuleiroSection() {
               </div>
 
               {/* Dynamic Video Embed or Poster */}
-              {!isPlaying ? (
-                <div
-                  className="group absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center p-6 text-center"
-                  onClick={() => setIsPlaying(true)}
-                >
-                  {/* Background overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/80 transition-opacity duration-300 group-hover:opacity-90" />
+              {!isIntersecting ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                  {/* Poster Image */}
+                  <img
+                    src={HS98_IMAGES.ambientKitchen}
+                    alt="Demonstração Homogeneizador"
+                    className="absolute inset-0 h-full w-full object-cover opacity-45 blur-[1px]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/80" />
 
-                  {/* Play Button Pulsing Glow */}
-                  <div className="relative z-10 flex size-20 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:bg-accent/90">
-                    <div className="absolute -inset-2 animate-pulse rounded-full bg-accent/20" />
-                    <Play className="ml-1 size-8 fill-current" />
-                  </div>
-
-                  <span className="relative z-10 mt-6 text-xs font-bold uppercase tracking-[0.2em] text-white">
-                    Ver demonstração real
-                  </span>
-                  <span className="relative z-10 mt-2 text-sm font-semibold text-white/70">
-                    Clique para iniciar o player do evento
-                  </span>
-
-                  {/* Visual indication of Short */}
-                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-black/50 border border-white/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-md">
-                    Skymsen HS-22 ao vivo
+                  {/* Pulsing visual indicator */}
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="flex size-14 items-center justify-center rounded-full bg-accent/20 border border-accent/40 text-accent animate-pulse">
+                      <Play className="ml-0.5 size-6 fill-current animate-bounce" />
+                    </div>
+                    <span className="mt-4 text-xs font-bold uppercase tracking-[0.2em] text-white">
+                      Carregando demonstração...
+                    </span>
+                    <span className="mt-1 text-[10px] text-white/50 animate-pulse">
+                      Entrando no campo de visão
+                    </span>
                   </div>
                 </div>
               ) : (
-                <iframe
-                  src={embedUrl}
-                  title="Demonstração Homogeneizador Skymsen"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="h-full w-full object-cover"
-                />
+                <div className="relative h-full w-full">
+                  {/* Embedded looping silent YouTube Shorts video */}
+                  <iframe
+                    src={embedUrl}
+                    title="Demonstração Homogeneizador Skymsen"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="h-full w-full object-cover scale-[1.02]"
+                    style={{ border: "none" }}
+                  />
+
+                  {/* Visual indication of Short inside screen */}
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-black/60 border border-white/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-md pointer-events-none">
+                    Skymsen HS-22 ao vivo
+                  </div>
+                </div>
               )}
 
               {/* Decorative edge highlights */}

@@ -38,8 +38,8 @@ export function ModelBifurcation() {
             <span className="text-accent">Quanto a sua operação processa?</span>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
-            Mesma tecnologia patenteada Skymsen. Muda só o porte. Escolha pela
-            sua demanda real — não pelo que o vendedor quer empurrar.
+            Mesma tecnologia patenteada Skymsen. Muda só o porte. Escolha pela sua demanda real —
+            não pelo que o vendedor quer empurrar.
           </p>
         </div>
 
@@ -58,15 +58,9 @@ export function ModelBifurcation() {
           </div>
           <div className="relative mt-3 h-3 overflow-hidden rounded-full border border-border bg-background">
             {/* HS-22 fill (0 → 60%) */}
-            <div
-              className="absolute inset-y-0 left-0 bg-accent/40"
-              style={{ width: "60%" }}
-            />
+            <div className="absolute inset-y-0 left-0 bg-accent/40" style={{ width: "60%" }} />
             {/* HS-98 fill (60% → 90%) */}
-            <div
-              className="absolute inset-y-0 bg-accent"
-              style={{ left: "60%", width: "30%" }}
-            />
+            <div className="absolute inset-y-0 bg-accent" style={{ left: "60%", width: "30%" }} />
           </div>
           <div className="mt-3 flex justify-between text-xs">
             <div>
@@ -117,8 +111,8 @@ export function ModelBifurcation() {
         {/* Decision microcopy */}
         <p className="mx-auto mt-12 max-w-2xl text-balance text-center text-base font-medium text-muted-foreground md:text-lg">
           Processa até 600 kg/h?{" "}
-          <span className="font-semibold text-foreground">Escolha o HS-22.</span>{" "}
-          Precisa de força bruta para quase 1 tonelada/h?{" "}
+          <span className="font-semibold text-foreground">Escolha o HS-22.</span> Precisa de força
+          bruta para quase 1 tonelada/h?{" "}
           <span className="font-semibold text-accent">Vá de HS-98.</span>
         </p>
       </div>

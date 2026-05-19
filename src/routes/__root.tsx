@@ -15,11 +15,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 import { ComingSoon } from "@/components/site/ComingSoon";
-import {
-  isPublicPath,
-  PREVIEW_KEY,
-  PREVIEW_STORAGE_KEY,
-} from "@/lib/visibility";
+import { isPublicPath, PREVIEW_KEY, PREVIEW_STORAGE_KEY } from "@/lib/visibility";
 
 import { Toaster } from "@/components/ui/sonner";
 

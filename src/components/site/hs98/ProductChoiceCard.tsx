@@ -46,8 +46,7 @@ export function ProductChoiceCard({
   const [open, setOpen] = useState(false);
   const featured = side === "right";
 
-  const pixPrice =
-    price && (price.amount * (1 - price.pixDiscountPct / 100));
+  const pixPrice = price && price.amount * (1 - price.pixDiscountPct / 100);
 
   return (
     <motion.article
@@ -56,16 +55,12 @@ export function ProductChoiceCard({
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.6, delay: side === "left" ? 0 : 0.1 }}
       className={`relative flex flex-col overflow-hidden rounded-3xl border bg-card/40 backdrop-blur-xl ${
-        featured
-          ? "border-accent/50 shadow-2xl shadow-accent/10"
-          : "border-border"
+        featured ? "border-accent/50 shadow-2xl shadow-accent/10" : "border-border"
       }`}
     >
       {featured && (
         <div className="absolute right-5 top-5 z-20">
-          <Badge className="rounded-full bg-accent text-accent-foreground">
-            Mais vendido
-          </Badge>
+          <Badge className="rounded-full bg-accent text-accent-foreground">Mais vendido</Badge>
         </div>
       )}
 
@@ -87,9 +82,7 @@ export function ProductChoiceCard({
           <div className="mt-1 text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
             {modelTag}
           </div>
-          <div className="mt-1 text-sm font-medium text-muted-foreground">
-            {nickname}
-          </div>
+          <div className="mt-1 text-sm font-medium text-muted-foreground">{nickname}</div>
         </div>
       </div>
 
@@ -120,9 +113,7 @@ export function ProductChoiceCard({
             <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
               Diferencial exclusivo
             </div>
-            <p className="mt-1 text-sm font-medium leading-snug text-foreground">
-              {diff}
-            </p>
+            <p className="mt-1 text-sm font-medium leading-snug text-foreground">{diff}</p>
           </div>
         </div>
 

@@ -27,9 +27,7 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:url", content: "https://ofertas.centerfrios.com/" },
     ],
-    links: [
-      { rel: "canonical", href: "https://ofertas.centerfrios.com/" },
-    ],
+    links: [{ rel: "canonical", href: "https://ofertas.centerfrios.com/" }],
   }),
   component: HomePage,
 });

@@ -81,7 +81,9 @@ URL mantida: `/produtos/moedor-homogeneizador-hs-98` (preserva SEO já indexado 
 ## Detalhes técnicos
 
 ### Dados (`src/data/hs22.ts` — NOVO)
+
 Espelha `hs98.ts`:
+
 - `HS22_IMAGES` (hero, ambient, transparent-lid, front, side, internal)
 - `HS22_PRICE` — **bloqueador: preciso do valor do HS-22**. Vou
   implementar com `null` e ocultar o preço no card até você informar
@@ -91,20 +93,23 @@ Espelha `hs98.ts`:
 - `HS22_DIFF` + `HS98_DIFF` (string curta de "Diferencial Exclusivo").
 
 ### Dados (`src/data/hs98.ts`)
+
 - Atualizar copy de `HS98_HIGHLIGHTS` p/ os 3 pilares universais
   (Mãos Livres / Segurança de Aço / Ritual do Lucro).
 - Adicionar `HS98_DIFF = "Construção 100% inox cavalete piso"`.
 
 ### Imagens HS-22 (geração via IA — placeholder)
+
 3 renders salvos em `src/assets/products/hs-22/`:
+
 - `hero.png` — vista 3/4, tampa policarbonato transparente visível,
   fundo neutro estúdio, paleta consistente com fotos HS-98.
 - `ambient.png` — bancada de açougue gourmet, máquina menor sobre
   mesa, vermelho de carne moída em destaque.
 - `transparent-lid.png` — close da tampa transparente mostrando carne
   sendo homogeneizada por dentro (diferencial-chave).
-Gerados com `imagegen--generate_image` (premium para fidelidade). Trocamos
-pelas reais quando você enviar.
+  Gerados com `imagegen--generate_image` (premium para fidelidade). Trocamos
+  pelas reais quando você enviar.
 
 ### Componentes
 
@@ -124,6 +129,7 @@ com `product` prop).
 
 **EDIT** `src/components/site/pa7/CheckoutDialog.tsx`
 Parametrizar por produto:
+
 - aceitar prop `product: { name, slug, price, installments, pixDiscountPct, image }`
 - fallback para defaults do PA7 quando não passado (não quebra a página do PA7)
 - mensagens (WhatsApp, copy do PIX/boleto) usam `product.name`
@@ -133,8 +139,10 @@ Reordena seções conforme nova arquitetura. Remove o CheckoutSection
 único do HS-98 (vira parte do card de escolha do HS-98 na bifurcação).
 
 ### SEO / metadata
+
 Em `src/routes/produtos.$slug.tsx` (head do slug `moedor-homogeneizador-hs-98`),
 ajustar:
+
 - `<title>`: "Homogeneizadores Skymsen HS-22 e HS-98 — Center Frios"
 - `description`: hard copy sobre fim do encalhe + escolha de capacidade.
 - og:image continua sendo a foto principal do HS-98 (visual mais forte).

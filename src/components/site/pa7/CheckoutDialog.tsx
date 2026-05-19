@@ -425,7 +425,6 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                         label="Confirmar pedido por TED"
                       />
                     </TabsContent>
-
                   </Tabs>
 
                   <div className="flex items-center justify-between gap-3">
@@ -557,8 +556,6 @@ function PayCta({
     </Button>
   );
 }
-
-
 
 function QrPlaceholder() {
   // SVG decorativo — não é um QR real
