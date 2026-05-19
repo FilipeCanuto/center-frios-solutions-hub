@@ -17,14 +17,20 @@ export const Route = createFileRoute("/produtos/$slug")({
   head: ({ params, loaderData }) => {
     const p = loaderData?.product;
     if (!p) return { meta: [{ title: "Produto — Center Frios" }] };
-    const title = `${p.name} — Center Frios`;
+    const isHs = params.slug === "moedor-homogeneizador-hs-98";
+    const title = isHs
+      ? "Homogeneizadores Skymsen HS-22 e HS-98 — Center Frios"
+      : `${p.name} — Center Frios`;
+    const description = isHs
+      ? "Acabe com o encalhe de carne pálida na vitrine. Tecnologia de homogeneização Skymsen — escolha entre HS-22 (600 kg/h) e HS-98 (900 kg/h)."
+      : p.tagline;
     const url = `https://ofertas.centerfrios.com/produtos/${params.slug}`;
     return {
       meta: [
         { title },
-        { name: "description", content: p.tagline },
+        { name: "description", content: description },
         { property: "og:title", content: title },
-        { property: "og:description", content: p.tagline },
+        { property: "og:description", content: description },
         { property: "og:type", content: "product" },
         { property: "og:url", content: url },
         ...(p.image ? [{ property: "og:image", content: p.image }] : []),
