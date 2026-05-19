@@ -1,75 +1,157 @@
 ## Objetivo
 
-Manter `ofertas.centerfrios.com` no ar, mas com **acesso externo liberado apenas** para:
+Transformar a landing atual do HS-98 numa **landing da tecnologia de homogeneização Skymsen**, que vende o método (não o modelo) e termina obrigando o cliente a escolher entre **HS-22** (médio porte) ou **HS-98** (grande porte) no checkout.
 
-- `/produtos/processador-pa7-pro-skymsen`
-- `/produtos/moeder-homogeneizador-hs-98 (editar para: /produtos/moedor-homogeneizador-hs-98)`
+URL mantida: `/produtos/moedor-homogeneizador-hs-98` (preserva SEO já indexado e a entrada da allowlist do gate de visibilidade — não preciso mexer em `visibility.ts` nem em `robots.txt`).
 
-Qualquer outra rota (Home, catálogo, segmentos, contato, blog, etc.), inclusive ao clicar na logo, mostra uma tela de **"Em breve"** em vez do conteúdo real — sem precisar tirar o site do ar nem mexer no domínio.
+---
 
-Você (admin) continua conseguindo navegar normalmente em todas as páginas para editar.
+## Nova arquitetura da página
 
-## Abordagem recomendada
+```text
+1. HERO universal
+   "Carne pálida não vende. Funcionário preso no moedor não dá lucro."
+   Promessa: homogeneização Skymsen — vermelho de vitrine + mãos livres.
+   Visual: composição cinematográfica com as DUAS máquinas lado a lado
+           (HS-22 menor à esq., HS-98 maior à dir.) sobre o halo conic.
+   CTAs: "Escolher minha máquina" (âncora #bifurcacao) + WhatsApp.
+   Barra de prova: 900 kg/h · NR-12 · Pedal hands-free · 12 meses garantia.
 
-Criar um **gate de visibilidade no `__root.tsx**` com uma allowlist de rotas públicas + um "modo preview" para você.
+2. MANIFESTO (mantém o atual, com copy ajustada p/ "tecnologia", não modelo)
+   "Não é um moedor. É a diferença entre vender a R$ 39,90 ou rebaixar
+    para R$ 29,90 às seis da tarde."
 
-### Como funciona
+3. BENEFÍCIOS UNIVERSAIS (3 pilares — valem para HS-22 e HS-98)
+   a) Operação Mãos Livres — pedal dobra velocidade de embandejamento.
+   b) Segurança de Aço — NR-12, sensores magnéticos, zero processo.
+   c) O Ritual do Lucro — moer → caçamba → homogeneizar → padrão internacional.
+   Substitui o atual Highlights 2x2; vira grid 3 colunas com ícone+copy hard.
 
-1. **Allowlist de rotas públicas** (hardcoded no código):
-  ```
-   /produtos/processador-pa7-pro-skymsen
-   /produtos/moeder-homogeneizador-hs-98
-  ```
-   Quando quiser liberar mais alguma página, eu só adiciono à lista.
-2. **Visitante externo** em qualquer rota fora da allowlist (inclusive `/`, clicar na logo, `/produtos`, `/contato`, etc.) → vê uma página **"Site em construção — em breve"** com:
-  - Logo Center Frios
-  - Mensagem curta
-  - 2 botões: "Ver PA7 Pro" e "Ver HS-98"
-  - Link de WhatsApp
-3. **Você (admin)** acessa `/` (ou qualquer rota) com `?preview=<chave>` uma única vez — isso grava um cookie/`localStorage` (`cf_preview=1`) e libera tudo no seu navegador permanentemente, até você limpar. Não interfere em SEO porque o gate roda no cliente após a hidratação.
-4. **SEO / indexação**:
-  - `robots.txt` passa a permitir só as duas páginas liberadas (`Disallow: /` + `Allow` específico para PA7 e HS-98).
-  - `sitemap.xml` (se existir, ou criamos) lista apenas as duas URLs.
-  - As duas páginas-alvo mantêm `head()` com title/description próprios (já têm).
+4. RITUAL VISUAL (mantém Showcase asymmetric 7/5 reescrito)
+   2 blocos com imagens HS-98 ambient (cozinha + interna) explicando
+   "vermelho uniforme" e "ciclo automático sem operador parado".
+   Copy reescrita para falar da TECNOLOGIA, não do modelo HS-98.
 
-### Por que não usar autenticação / "private publish"
+5. ROI / DOR ECONÔMICA (mantém estrutura atual, copy reforçada)
+   "Quanto custa NÃO ter homogeneização?" — cálculo de quebra.
 
-- "Private publish" no Lovable exigiria login Lovable para qualquer visitante — derrubaria também o acesso público às páginas PA7 e HS-98, que é justamente o que você quer manter aberto.
-- Auth real (Supabase) seria exagero para um gate temporário de visibilidade.
+6. COMPARATIVO (mantém — moedor comum vs. homogeneizador Skymsen,
+   não mais "comum vs HS-98")
+
+7. ===== BIFURCAÇÃO ===== #bifurcacao
+   Headline: "Duas máquinas. Uma decisão. Quanto a sua operação processa?"
+   Subhead: medidor visual de capacidade (régua 0 → 1.000 kg/h) mostrando
+            zona HS-22 (até 600) e zona HS-98 (até 900).
+   Dois cards lado a lado, edge-to-edge, com selo de "Diferencial Exclusivo":
+
+   ┌─ HS-22 ──────────────┐   ┌─ HS-98 ──────────────┐
+   │ [foto HS-22 c/ tampa │   │ [foto HS-98 inox     │
+   │  policarbonato       │   │  cavalete piso]      │
+   │  transparente]       │   │                      │
+   │ "O MONSTRO COMPACTO" │   │ "O GIGANTE DA        │
+   │                      │   │  PRODUÇÃO"           │
+   │ Açougues gourmet e   │   │ Grandes supermercados│
+   │ supermercados médios │   │ e frigoríficos       │
+   │                      │   │                      │
+   │ 600 kg/h · 22 L      │   │ 900 kg/h · 41 L      │
+   │ 16 kg/ciclo · boca 22│   │ 31 kg/ciclo · boca 98│
+   │                      │   │                      │
+   │ ✦ Tampa policarbonato│   │ ✦ Construção 100%    │
+   │   transparente —     │   │   inox cavalete      │
+   │   vê textura em      │   │   piso, regime       │
+   │   tempo real         │   │   contínuo sem parar │
+   │                      │   │                      │
+   │ R$ XX.XXX            │   │ R$ 32.900            │
+   │ [Comprar HS-22]      │   │ [Comprar HS-98]      │
+   └──────────────────────┘   └──────────────────────┘
+
+   Microcopy abaixo: "Processa até 600 kg/h? HS-22.
+                     Precisa de quase 1 tonelada/h? HS-98."
+
+8. CHECKOUT por modelo
+   Cada botão "Comprar" abre o CheckoutDialog atual (PIX/Boleto/TED)
+   com o modelo, preço e parcelas certos. Hoje o CheckoutDialog é
+   ditado pelas constantes do PA7; vou parametrizá-lo por produto.
+
+9. FAQ + Footer CTA (mantém; copy revisada para "linha HS Skymsen").
+```
+
+---
 
 ## Detalhes técnicos
 
-Arquivos afetados:
+### Dados (`src/data/hs22.ts` — NOVO)
+Espelha `hs98.ts`:
+- `HS22_IMAGES` (hero, ambient, transparent-lid, front, side, internal)
+- `HS22_PRICE` — **bloqueador: preciso do valor do HS-22**. Vou
+  implementar com `null` e ocultar o preço no card até você informar
+  (o card cai automaticamente para "Solicitar orçamento" via QuoteDialog).
+- `HS22_SPECS`: 600 kg/h · caçamba 22 L · 16 kg/ciclo · boca 22 ·
+  motor (deixar genérico até você confirmar CV/V) · tampa policarbonato.
+- `HS22_DIFF` + `HS98_DIFF` (string curta de "Diferencial Exclusivo").
 
-- `**src/routes/__root.tsx**` — adicionar componente `VisibilityGate` que:
-  - lê `useLocation().pathname`
-  - checa allowlist
-  - checa `localStorage.getItem('cf_preview') === '1'` (e seta a partir de `?preview=...`)
-  - se bloqueado, renderiza `<ComingSoon />` em vez do `<Outlet />`
-- `**src/components/site/ComingSoon.tsx**` (novo) — tela "em breve" com logo + 2 CTAs (PA7 / HS-98) + WhatsApp, usando os tokens do design system.
-- `**src/components/site/Header.tsx**` — logo continua linkando para `/`, mas no modo bloqueado o `__root` substitui o conteúdo pela `ComingSoon`, então clicar na logo cai naturalmente nela. (Sem mexer no Header.)
-- `**public/robots.txt**` — restringir indexação a `/produtos/processador-pa7-pro-skymsen` e `/produtos/moeder-homogeneizador-hs-98`.
-- `**src/routes/sitemap[.]xml.ts**` (novo) — sitemap só com as duas URLs apontando para `https://ofertas.centerfrios.com`.
+### Dados (`src/data/hs98.ts`)
+- Atualizar copy de `HS98_HIGHLIGHTS` p/ os 3 pilares universais
+  (Mãos Livres / Segurança de Aço / Ritual do Lucro).
+- Adicionar `HS98_DIFF = "Construção 100% inox cavalete piso"`.
 
-### Chave de preview
+### Imagens HS-22 (geração via IA — placeholder)
+3 renders salvos em `src/assets/products/hs-22/`:
+- `hero.png` — vista 3/4, tampa policarbonato transparente visível,
+  fundo neutro estúdio, paleta consistente com fotos HS-98.
+- `ambient.png` — bancada de açougue gourmet, máquina menor sobre
+  mesa, vermelho de carne moída em destaque.
+- `transparent-lid.png` — close da tampa transparente mostrando carne
+  sendo homogeneizada por dentro (diferencial-chave).
+Gerados com `imagegen--generate_image` (premium para fidelidade). Trocamos
+pelas reais quando você enviar.
 
-Vou gerar uma chave aleatória (ex.: `cf-2026-xyz`). Você abre uma vez:
+### Componentes
 
-```
-https://ofertas.centerfrios.com/?preview=cf-2026-xyz
-```
+**NOVO** `src/components/site/hs98/TechHero.tsx`
+Hero universal substituindo o atual focado em HS-98.
 
-A partir daí, seu navegador vê o site inteiro. Para sair do modo preview: `?preview=off`.
+**NOVO** `src/components/site/hs98/UniversalBenefits.tsx`
+3 pilares com ícones (Footprints/pedal, ShieldCheck, Workflow).
 
-## Fluxo para liberar páginas no futuro
+**NOVO** `src/components/site/hs98/ModelBifurcation.tsx`
+Régua de capacidade + dois ProductChoiceCard.
 
-Você me diz "libera a Home" ou "libera /contato" → eu adiciono o caminho na allowlist e atualizo `robots.txt` + sitemap. Sem deploy manual; só republicar.
+**NOVO** `src/components/site/hs98/ProductChoiceCard.tsx`
+Card de escolha (imagem hero, nome, apelido, specs em chips,
+diferencial exclusivo, preço opcional, CTA → abre CheckoutDialog
+com `product` prop).
 
-## Confirmações antes de implementar
+**EDIT** `src/components/site/pa7/CheckoutDialog.tsx`
+Parametrizar por produto:
+- aceitar prop `product: { name, slug, price, installments, pixDiscountPct, image }`
+- fallback para defaults do PA7 quando não passado (não quebra a página do PA7)
+- mensagens (WhatsApp, copy do PIX/boleto) usam `product.name`
 
-1. Confirma a allowlist inicial exatamente como acima (só PA7 e HS-98)?
-2. OK usar um `?preview=<chave>` + `localStorage` como porta dos fundos (sem login)? Ou prefere que eu sempre te peça pra trocar a chave manualmente quando quiser revogar?
-3. A tela "Em breve" pode mostrar os dois CTAs (PA7 e HS-98) ou você prefere uma tela neutra só com "em breve" + WhatsApp?  
-  
-  
-(Lembre-se que, o usuário precisa navegar livremente dentro da página do PA7 PRO e do HS-98)
+**EDIT** `src/components/site/hs98/Hs98Landing.tsx`
+Reordena seções conforme nova arquitetura. Remove o CheckoutSection
+único do HS-98 (vira parte do card de escolha do HS-98 na bifurcação).
+
+### SEO / metadata
+Em `src/routes/produtos.$slug.tsx` (head do slug `moedor-homogeneizador-hs-98`),
+ajustar:
+- `<title>`: "Homogeneizadores Skymsen HS-22 e HS-98 — Center Frios"
+- `description`: hard copy sobre fim do encalhe + escolha de capacidade.
+- og:image continua sendo a foto principal do HS-98 (visual mais forte).
+
+Não precisa alterar `robots.txt` nem `sitemap.xml` — URL é a mesma.
+
+---
+
+## Itens em aberto (preciso confirmar antes do build)
+
+1. **Preço do HS-22** — sem isso o card HS-22 fica com CTA "Solicitar
+   orçamento" em vez de checkout direto. Tudo bem assim como provisório?
+2. **Imagens reais do HS-22** — sigo com renders IA. Quando você enviar
+   as fotos reais, troco em um turno só.
+3. **Especs extras do HS-22** (motor CV, tensão, peso) — uso valores
+   genéricos "consultar" ou você confirma? Posso pesquisar no site
+   oficial Skymsen se preferir.
+
+Posso prosseguir com a implementação assumindo placeholders nos 3 itens
+acima, ou prefere me passar os dados antes?
