@@ -48,23 +48,35 @@ export const HS98_PROOF = [
   { value: "12", unit: "meses", label: "Garantia em campo" },
 ];
 
+// Três pilares universais — valem para HS-22 e HS-98.
 export const HS98_HIGHLIGHTS = [
   {
-    title: "900 kg/h Sem Pausa",
-    desc: "Aguenta o sábado de manhã inteiro. Sem superaquecer, sem parar a fila do balcão.",
+    title: "Operação Mãos Livres",
+    desc: "Acionamento por pedal. O açougueiro dobra a velocidade de embandejamento — duas mãos na carne, nenhuma no botão.",
   },
   {
-    title: "Inox Microfundido",
-    desc: "Boca e caracol em inox de fundição. Resistem ao osso, ao tendão e ao ano todo de uso pesado.",
+    title: "Segurança de Aço",
+    desc: "100% dentro da NR-12. Sensores magnéticos travam o motor ao abrir a tampa. Zero risco de processo trabalhista.",
   },
   {
-    title: "Mói + Homogeneíza",
-    desc: "Um ciclo só. A gordura entra na massa, a carne sai vermelha. O cliente decide pelo olho.",
+    title: "O Ritual do Lucro",
+    desc: "Moer, devolver à caçamba, homogeneizar e extrair carne de padrão internacional. Vermelho de vitrine, ciclo após ciclo.",
   },
-  {
-    title: "Motor 3 CV",
-    desc: "Torque industrial. Não patina, não esquenta, não compromete a textura do produto.",
-  },
+];
+
+export const HS98_NICKNAME = "O Gigante da Produção";
+
+export const HS98_AUDIENCE =
+  "Grandes supermercados, hipermercados e frigoríficos";
+
+export const HS98_DIFF =
+  "Construção pesada 100% Inox com cavalete de piso — feita para não parar nunca";
+
+export const HS98_QUICK_SPECS = [
+  { label: "Produção", value: "900 kg/h" },
+  { label: "Caçamba", value: "41 L · 31 kg" },
+  { label: "Bocal", value: "Boca 98" },
+  { label: "Motor", value: "3 CV trifásico" },
 ];
 
 export const HS98_FEATURES = {
