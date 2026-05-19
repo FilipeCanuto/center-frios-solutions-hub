@@ -169,7 +169,7 @@ export const PRODUCTS: Product[] = [
     ],
   },
   {
-    slug: "moeder-homogeneizador-hs-98",
+    slug: "moedor-homogeneizador-hs-98",
     name: "Moedor Homogeneizador HS-98 Skymsen",
     category: "Processamento de Carnes",
     tagline: "Mais que um moedor de carne.",
@@ -346,7 +346,7 @@ export const PRODUCTS: Product[] = [
 
 export const FEATURED_PRODUCT_SLUGS = [
   "processador-pa7-pro-skymsen",
-  "moeder-homogeneizador-hs-98",
+  "moedor-homogeneizador-hs-98",
   "abridora-de-massa-amp40",
   "climatizador-tudo-brisa",
 ];

@@ -6,7 +6,6 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
-  CreditCard,
   Landmark,
   Loader2,
   Lock,
@@ -332,7 +331,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                   <h2 className="text-xl font-semibold text-foreground">Forma de pagamento</h2>
 
                   <Tabs defaultValue="pix" className="w-full">
-                    <TabsList className="grid w-full grid-cols-5">
+                    <TabsList className="grid w-full grid-cols-3">
                       <TabsTrigger value="pix">
                         <QrCode className="mr-1.5 size-4" />
                         PIX
@@ -344,14 +343,6 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                       <TabsTrigger value="ted">
                         <Landmark className="mr-1.5 size-4" />
                         TED
-                      </TabsTrigger>
-                      <TabsTrigger value="credit">
-                        <CreditCard className="mr-1.5 size-4" />
-                        Crédito
-                      </TabsTrigger>
-                      <TabsTrigger value="debit">
-                        <CreditCard className="mr-1.5 size-4" />
-                        Débito
                       </TabsTrigger>
                     </TabsList>
 
@@ -435,15 +426,6 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                       />
                     </TabsContent>
 
-                    <TabsContent value="credit" className="mt-5">
-                      <CardForm installments={12} subtotal={subtotal + shipping} />
-                      <PayCta onClick={fakePay} loading={submitting} label="Pagar com crédito" />
-                    </TabsContent>
-
-                    <TabsContent value="debit" className="mt-5">
-                      <CardForm installments={1} subtotal={subtotal + shipping} />
-                      <PayCta onClick={fakePay} loading={submitting} label="Pagar com débito" />
-                    </TabsContent>
                   </Tabs>
 
                   <div className="flex items-center justify-between gap-3">
@@ -576,49 +558,7 @@ function PayCta({
   );
 }
 
-function CardForm({ installments, subtotal }: { installments: number; subtotal: number }) {
-  const options = Array.from({ length: installments }, (_, i) => i + 1);
-  return (
-    <div className="grid gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-      <div className="grid gap-2">
-        <Label htmlFor="card_number">Número do cartão</Label>
-        <Input id="card_number" placeholder="0000 0000 0000 0000" inputMode="numeric" />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="card_name">Nome impresso no cartão</Label>
-        <Input id="card_name" placeholder="Como impresso" />
-      </div>
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div className="grid gap-2">
-          <Label htmlFor="card_exp">Validade</Label>
-          <Input id="card_exp" placeholder="MM/AA" />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="card_cvv">CVV</Label>
-          <Input id="card_cvv" placeholder="000" inputMode="numeric" />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="card_inst">Parcelas</Label>
-          <select
-            id="card_inst"
-            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
-          >
-            {options.map((n) => (
-              <option key={n} value={n} className="bg-background text-foreground">
-                {n}x de{" "}
-                {(subtotal / n).toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}{" "}
-                sem juros
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-    </div>
-  );
-}
+
 
 function QrPlaceholder() {
   // SVG decorativo — não é um QR real

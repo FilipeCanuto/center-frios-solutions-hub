@@ -11,20 +11,24 @@ import { FEATURED_PRODUCT_SLUGS, IMAGES, SEGMENTS, getProductsBySlugs } from "@/
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Center Frios — Equipamentos de Alta Performance para Gastronomia" },
+      { title: "Center Frios — Equipamentos para Gastronomia" },
       {
         name: "description",
         content:
-          "Soluções em refrigeração comercial e equipamentos de alta performance para supermercados, restaurantes, redes, cozinhas industriais e hotéis.",
+          "Refrigeração comercial e equipamentos de alta performance para supermercados, restaurantes, redes, cozinhas industriais e hotéis.",
       },
       {
         property: "og:title",
-        content: "Center Frios — Equipamentos de Alta Performance",
+        content: "Center Frios — Equipamentos para Gastronomia",
       },
       {
         property: "og:description",
         content: "Para o seu negócio não parar. Acredite em quem entende do seu setor.",
       },
+      { property: "og:url", content: "https://ofertas.centerfrios.com/" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://ofertas.centerfrios.com/" },
     ],
   }),
   component: HomePage,

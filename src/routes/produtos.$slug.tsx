@@ -14,17 +14,42 @@ export const Route = createFileRoute("/produtos/$slug")({
     if (!product) throw notFound();
     return { product };
   },
-  head: ({ loaderData }) => {
+  head: ({ params, loaderData }) => {
     const p = loaderData?.product;
     if (!p) return { meta: [{ title: "Produto — Center Frios" }] };
-    const title = `${p.name} — Center Frios`;
+    const isHs = params.slug === "moedor-homogeneizador-hs-98";
+    const title = isHs
+      ? "Homogeneizadores Skymsen HS-22 e HS-98 — Center Frios"
+      : `${p.name} — Center Frios`;
+    const description = isHs
+      ? "Acabe com o encalhe de carne pálida na vitrine. Tecnologia de homogeneização Skymsen — escolha entre HS-22 (600 kg/h) e HS-98 (900 kg/h)."
+      : p.tagline;
+    const url = `https://ofertas.centerfrios.com/produtos/${params.slug}`;
     return {
       meta: [
         { title },
-        { name: "description", content: p.tagline },
+        { name: "description", content: description },
         { property: "og:title", content: title },
-        { property: "og:description", content: p.tagline },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
         ...(p.image ? [{ property: "og:image", content: p.image }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: p.name,
+            description: p.tagline,
+            ...(p.image ? { image: p.image } : {}),
+            ...(p.category ? { category: p.category } : {}),
+            brand: { "@type": "Brand", name: "Center Frios" },
+            url,
+          }),
+        },
       ],
     };
   },
@@ -49,7 +74,7 @@ function ProductPage() {
     return <Pa7ProLanding />;
   }
 
-  if (product.slug === "moeder-homogeneizador-hs-98") {
+  if (product.slug === "moedor-homogeneizador-hs-98") {
     return <Hs98Landing />;
   }
 
