@@ -471,32 +471,17 @@ function FinalCta() {
 
 /* ──────────────────────────────────────────────────────── PAGE */
 export function Hs98Landing() {
-  const product = getProduct("moedor-homogeneizador-hs-98")!;
-
   return (
     <div className="bg-background text-foreground">
-      <Hero />
+      <TechHero />
       <Manifesto />
-      <Highlights />
+      <UniversalBenefits />
       <Showcase />
       <Comparison />
       <Hs98Gallery />
       <RoiBlock />
       <Specs />
-
-      <div id="checkout">
-        <CheckoutSection
-          product={{
-            id: product.slug,
-            name: product.name,
-            image: HS98_IMAGES.main,
-            price: HS98_PRICE.amount,
-            installments: HS98_PRICE.installments,
-            pixDiscount: HS98_PRICE.pixDiscountPct,
-          }}
-        />
-      </div>
-
+      <ModelBifurcation />
       <Faq />
       <FinalCta />
     </div>
