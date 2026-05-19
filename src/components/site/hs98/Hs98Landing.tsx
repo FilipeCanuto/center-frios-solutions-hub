@@ -18,22 +18,19 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   HS98_IMAGES,
-  HS98_HIGHLIGHTS,
   HS98_FEATURES,
   HS98_SPECS,
-  HS98_PRICE,
-  HS98_PROOF,
   HS98_COMPARISON,
   HS98_ROI,
   HS98_FAQ,
   HS98_TESTIMONIAL,
 } from "@/data/hs98";
-import { getProduct } from "@/data/site";
-import { CheckoutSection } from "@/components/site/pa7/CheckoutSection";
 import { Hs98Gallery } from "@/components/site/hs98/Hs98Gallery";
+import { TechHero } from "@/components/site/hs98/TechHero";
+import { UniversalBenefits } from "@/components/site/hs98/UniversalBenefits";
+import { ModelBifurcation } from "@/components/site/hs98/ModelBifurcation";
 
 /* ──────────────────────────────────────────────────────────── HERO */
 function Hero() {
