@@ -181,10 +181,10 @@ function Comparison() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-14 max-w-2xl">
           <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
-            Moedor comum vs. HS-98 Skymsen.
+            Moedor comum vs. Homogeneizador Skymsen.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Mesmo lote de carne. Dois resultados no balcão.
+            Mesmo lote de carne. Dois resultados no balcão — vale para HS-22 e HS-98.
           </p>
         </div>
 
@@ -195,7 +195,7 @@ function Comparison() {
               <TrendingDown className="size-4 text-muted-foreground" /> Moedor comum
             </div>
             <div className="col-span-4 flex items-center gap-2 bg-accent/10 p-5 text-accent">
-              <TrendingUp className="size-4" /> HS-98 Skymsen
+              <TrendingUp className="size-4" /> Linha HS Skymsen
             </div>
           </div>
           {HS98_COMPARISON.map((row, i) => (
@@ -295,7 +295,7 @@ function RoiBlock() {
               </div>
               <div>
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Com HS-98
+                  Com homogeneizador
                 </div>
                 <div className="mt-1 text-4xl font-semibold tabular-nums text-accent">
                   &lt; 1%
@@ -315,8 +315,8 @@ function RoiBlock() {
               size="lg"
               className="mt-8 w-full rounded-full py-6 text-base font-semibold"
             >
-              <a href="#checkout">
-                Garantir o meu HS-98
+              <a href="#bifurcacao">
+                Escolher minha máquina
                 <ArrowRight className="ml-2 size-5" />
               </a>
             </Button>
