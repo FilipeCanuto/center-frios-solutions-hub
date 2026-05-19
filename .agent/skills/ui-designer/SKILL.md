@@ -29,6 +29,7 @@ description: >
 ## OUTPUT ESPERADO
 
 Sempre entregue:
+
 - Componente funcional e completo
 - Responsividade confirmada (mobile + desktop)
 - Zero erros de console

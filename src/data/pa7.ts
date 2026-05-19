@@ -61,22 +61,19 @@ export const PA7_SHOWCASE = [
     image: img06,
     eyebrow: "Engenharia robusta",
     title: "Construído para regime contínuo",
-    body:
-      "Estrutura em aço inox com câmara injetada e motor de 0,5 HP-CV calibrado para 600 W de potência nominal a 440 rpm — performance estável em horas seguidas de operação.",
+    body: "Estrutura em aço inox com câmara injetada e motor de 0,5 HP-CV calibrado para 600 W de potência nominal a 440 rpm — performance estável em horas seguidas de operação.",
   },
   {
     image: img20,
     eyebrow: "Higienização rápida",
     title: "Tampa removível, limpeza sem ferramentas",
-    body:
-      "Câmara de processamento com tampa removível e bocal extra largo. Troca de discos e limpeza profunda em segundos — atende aos requisitos sanitários da RDC 216.",
+    body: "Câmara de processamento com tampa removível e bocal extra largo. Troca de discos e limpeza profunda em segundos — atende aos requisitos sanitários da RDC 216.",
   },
   {
     image: img14,
     eyebrow: "Versatilidade",
     title: "Fatia, rala e corta em julienne",
-    body:
-      "Disco de 203 mm com bocal extra largo e empurrador cilíndrico em movimento único de alimentação. Fatia, rala fino e grosso e corta em palitos — e ainda aceita grades de cubo opcionais.",
+    body: "Disco de 203 mm com bocal extra largo e empurrador cilíndrico em movimento único de alimentação. Fatia, rala fino e grosso e corta em palitos — e ainda aceita grades de cubo opcionais.",
   },
 ];
 

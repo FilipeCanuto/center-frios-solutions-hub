@@ -97,7 +97,10 @@ function ContatoPage() {
               <Phone className="mt-1 size-5 text-accent" />
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">Telefone</p>
-                <a href={CONTACT.phoneHref} className="text-base font-medium text-foreground hover:text-accent">
+                <a
+                  href={CONTACT.phoneHref}
+                  className="text-base font-medium text-foreground hover:text-accent"
+                >
                   {CONTACT.phone}
                 </a>
               </div>
@@ -106,7 +109,12 @@ function ContatoPage() {
               <MessageCircle className="mt-1 size-5 text-accent" />
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">WhatsApp</p>
-                <a href={CONTACT.whatsappHref} target="_blank" rel="noreferrer" className="text-base font-medium text-foreground hover:text-accent">
+                <a
+                  href={CONTACT.whatsappHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-base font-medium text-foreground hover:text-accent"
+                >
                   {CONTACT.phone}
                 </a>
               </div>
@@ -115,7 +123,10 @@ function ContatoPage() {
               <Mail className="mt-1 size-5 text-accent" />
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">E-mail</p>
-                <a href={CONTACT.emailHref} className="text-base font-medium text-foreground hover:text-accent break-all">
+                <a
+                  href={CONTACT.emailHref}
+                  className="text-base font-medium text-foreground hover:text-accent break-all"
+                >
                   {CONTACT.email}
                 </a>
               </div>
@@ -123,7 +134,9 @@ function ContatoPage() {
             <li className="flex items-start gap-3">
               <MapPin className="mt-1 size-5 text-accent" />
               <div>
-                <p className="text-xs uppercase tracking-widest text-muted-foreground">Localização</p>
+                <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Localização
+                </p>
                 <p className="text-base font-medium text-foreground">{CONTACT.city}</p>
               </div>
             </li>

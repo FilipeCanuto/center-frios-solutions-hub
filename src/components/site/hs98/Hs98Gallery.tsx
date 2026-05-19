@@ -132,7 +132,8 @@ export function Hs98Gallery() {
                     <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-3">
                       <div className="rounded-2xl border border-border/60 bg-background/80 px-4 py-2 backdrop-blur-md">
                         <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
-                          {String(idx + 1).padStart(2, "0")} / {String(HS98_GALLERY.length).padStart(2, "0")}
+                          {String(idx + 1).padStart(2, "0")} /{" "}
+                          {String(HS98_GALLERY.length).padStart(2, "0")}
                         </div>
                         <div className="mt-0.5 text-sm font-semibold text-foreground">
                           {img.alt}
@@ -236,9 +237,7 @@ export function Hs98Gallery() {
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setLightbox((i) =>
-                i === null ? null : (i + 1) % HS98_GALLERY.length,
-              );
+              setLightbox((i) => (i === null ? null : (i + 1) % HS98_GALLERY.length));
             }}
             className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full border border-border bg-card p-3 text-foreground hover:bg-accent hover:text-accent-foreground"
             aria-label="Próxima"
@@ -252,7 +251,8 @@ export function Hs98Gallery() {
             onClick={(e) => e.stopPropagation()}
           />
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-border bg-card px-5 py-2 text-xs text-foreground">
-            {String((lightbox ?? 0) + 1).padStart(2, "0")} / {String(HS98_GALLERY.length).padStart(2, "0")} · {currentLightbox.alt}
+            {String((lightbox ?? 0) + 1).padStart(2, "0")} /{" "}
+            {String(HS98_GALLERY.length).padStart(2, "0")} · {currentLightbox.alt}
           </div>
         </div>
       )}

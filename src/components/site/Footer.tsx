@@ -12,8 +12,8 @@ export function Footer() {
             <Logo size="md" />
           </Link>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            Equipamentos de alta performance para refrigeração comercial e
-            gastronomia profissional. Acredite em quem entende do seu setor.
+            Equipamentos de alta performance para refrigeração comercial e gastronomia profissional.
+            Acredite em quem entende do seu setor.
           </p>
         </div>
 
@@ -22,10 +22,26 @@ export function Footer() {
             Navegação
           </h4>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><Link to="/produtos" className="hover:text-accent">Produtos</Link></li>
-            <li><Link to="/segmentos" className="hover:text-accent">Segmentos</Link></li>
-            <li><Link to="/solucoes" className="hover:text-accent">Soluções</Link></li>
-            <li><Link to="/contato" className="hover:text-accent">Contato</Link></li>
+            <li>
+              <Link to="/produtos" className="hover:text-accent">
+                Produtos
+              </Link>
+            </li>
+            <li>
+              <Link to="/segmentos" className="hover:text-accent">
+                Segmentos
+              </Link>
+            </li>
+            <li>
+              <Link to="/solucoes" className="hover:text-accent">
+                Soluções
+              </Link>
+            </li>
+            <li>
+              <Link to="/contato" className="hover:text-accent">
+                Contato
+              </Link>
+            </li>
           </ul>
         </div>
 

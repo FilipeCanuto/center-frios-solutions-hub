@@ -5,11 +5,7 @@ import { SpecGrid } from "./SpecGrid";
 
 export function ProductCard({ product }: { product: Product }) {
   return (
-    <Link
-      to="/produtos/$slug"
-      params={{ slug: product.slug }}
-      className="group flex flex-col"
-    >
+    <Link to="/produtos/$slug" params={{ slug: product.slug }} className="group flex flex-col">
       <div className="mb-6 aspect-square w-full overflow-hidden rounded-2xl bg-card outline outline-1 -outline-offset-1 outline-border">
         {product.image ? (
           <img

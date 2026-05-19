@@ -15,12 +15,7 @@ import {
   Truck,
   Wallet,
 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -132,9 +127,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent
-        className="max-h-[92vh] gap-0 overflow-hidden border-white/10 bg-background p-0 sm:max-w-5xl"
-      >
+      <DialogContent className="max-h-[92vh] gap-0 overflow-hidden border-white/10 bg-background p-0 sm:max-w-5xl">
         <DialogTitle className="sr-only">Checkout — {product.name}</DialogTitle>
         <DialogDescription className="sr-only">
           Finalize sua compra do {product.name}.
@@ -271,11 +264,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                     </div>
                     <div className="grid gap-2 sm:col-span-2">
                       <Label htmlFor="complement">Complemento</Label>
-                      <Input
-                        id="complement"
-                        name="complement"
-                        defaultValue={address?.complement}
-                      />
+                      <Input id="complement" name="complement" defaultValue={address?.complement} />
                     </div>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-3">
@@ -401,7 +390,11 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                           </div>
                         </div>
                       </div>
-                      <PayCta onClick={fakePay} loading={submitting} label="Confirmar pedido com PIX" />
+                      <PayCta
+                        onClick={fakePay}
+                        loading={submitting}
+                        label="Confirmar pedido com PIX"
+                      />
                     </TabsContent>
 
                     <TabsContent value="boleto" className="mt-5">
@@ -435,7 +428,11 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                           <dd>{PA7_BANK.cnpj}</dd>
                         </dl>
                       </div>
-                      <PayCta onClick={fakePay} loading={submitting} label="Confirmar pedido por TED" />
+                      <PayCta
+                        onClick={fakePay}
+                        loading={submitting}
+                        label="Confirmar pedido por TED"
+                      />
                     </TabsContent>
 
                     <TabsContent value="credit" className="mt-5">
@@ -472,17 +469,13 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                   </div>
                   <h2 className="text-2xl font-semibold text-foreground">Pedido recebido!</h2>
                   <p className="max-w-md text-sm text-muted-foreground">
-                    Estamos finalizando a integração com nossa plataforma de pagamento. Um
-                    consultor da Center Frios entrará em contato pelo WhatsApp{" "}
-                    <strong className="text-foreground">{identity?.phone}</strong> para
-                    confirmar e liberar o pedido.
+                    Estamos finalizando a integração com nossa plataforma de pagamento. Um consultor
+                    da Center Frios entrará em contato pelo WhatsApp{" "}
+                    <strong className="text-foreground">{identity?.phone}</strong> para confirmar e
+                    liberar o pedido.
                   </p>
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-                    <Button
-                      asChild
-                      className="rounded-full"
-                      size="lg"
-                    >
+                    <Button asChild className="rounded-full" size="lg">
                       <a href="https://wa.me/558232232497" target="_blank" rel="noreferrer">
                         Falar pelo WhatsApp
                       </a>
@@ -536,9 +529,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                 <p className="text-[11px] uppercase tracking-widest text-muted-foreground">
                   Total no PIX
                 </p>
-                <p className="mt-1 text-2xl font-semibold text-foreground">
-                  {formatBRL(totalPix)}
-                </p>
+                <p className="mt-1 text-2xl font-semibold text-foreground">{formatBRL(totalPix)}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Ou {formatBRL(total)} em até 12x sem juros no cartão.
                 </p>
@@ -573,12 +564,7 @@ function PayCta({
   label: string;
 }) {
   return (
-    <Button
-      onClick={onClick}
-      disabled={loading}
-      size="lg"
-      className="mt-5 w-full rounded-full"
-    >
+    <Button onClick={onClick} disabled={loading} size="lg" className="mt-5 w-full rounded-full">
       {loading ? (
         <>
           <Loader2 className="mr-2 size-4 animate-spin" /> Processando…
@@ -619,7 +605,8 @@ function CardForm({ installments, subtotal }: { installments: number; subtotal: 
           >
             {options.map((n) => (
               <option key={n} value={n} className="bg-background text-foreground">
-                {n}x de {(subtotal / n).toLocaleString("pt-BR", {
+                {n}x de{" "}
+                {(subtotal / n).toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
                 })}{" "}
@@ -640,16 +627,24 @@ function QrPlaceholder() {
       {Array.from({ length: 21 * 21 }).map((_, i) => {
         const x = i % 21;
         const y = Math.floor(i / 21);
-        const corner =
-          (x < 7 && y < 7) || (x > 13 && y < 7) || (x < 7 && y > 13);
+        const corner = (x < 7 && y < 7) || (x > 13 && y < 7) || (x < 7 && y > 13);
         const seed = (x * 31 + y * 17) % 7;
         const fill = corner
-          ? (x === 0 || x === 6 || x === 14 || x === 20 || y === 0 || y === 6 || y === 14 || y === 20 ||
-              (x >= 2 && x <= 4 && y >= 2 && y <= 4) ||
-              (x >= 16 && x <= 18 && y >= 2 && y <= 4) ||
-              (x >= 2 && x <= 4 && y >= 16 && y <= 18))
+          ? x === 0 ||
+            x === 6 ||
+            x === 14 ||
+            x === 20 ||
+            y === 0 ||
+            y === 6 ||
+            y === 14 ||
+            y === 20 ||
+            (x >= 2 && x <= 4 && y >= 2 && y <= 4) ||
+            (x >= 16 && x <= 18 && y >= 2 && y <= 4) ||
+            (x >= 2 && x <= 4 && y >= 16 && y <= 18)
           : seed < 3;
-        return fill ? <rect key={i} x={x} y={y} width={1} height={1} fill="#0a0a0a" /> : null;
+        return fill ? (
+          <rect key={i} x={x} y={y} width={1} height={1} fill="var(--color-foreground)" />
+        ) : null;
       })}
     </svg>
   );

@@ -74,9 +74,7 @@ export function Header() {
             <div className="mt-3">
               <QuoteDialog
                 source="header-mobile"
-                trigger={
-                  <Button className="w-full rounded-full">Solicite Orçamento</Button>
-                }
+                trigger={<Button className="w-full rounded-full">Solicite Orçamento</Button>}
               />
             </div>
           </nav>

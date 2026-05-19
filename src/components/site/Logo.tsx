@@ -23,12 +23,7 @@ interface LogoProps {
  * Mantém o contorno premium (drop-shadow azul + glow ouro) consistente
  * em qualquer aplicação. Use a prop `size` para escalar.
  */
-export function Logo({
-  size = "md",
-  className,
-  plain = false,
-  alt = "CENTERFRIOS",
-}: LogoProps) {
+export function Logo({ size = "md", className, plain = false, alt = "CENTERFRIOS" }: LogoProps) {
   return (
     <img
       src={logo}

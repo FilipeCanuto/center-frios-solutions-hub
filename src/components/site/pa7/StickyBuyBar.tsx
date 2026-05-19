@@ -30,9 +30,7 @@ export function StickyBuyBar({ name, image, price, onBuy }: Props) {
             <img src={image} alt="" className="h-full w-full object-contain p-1" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-medium text-muted-foreground md:text-sm">
-              {name}
-            </p>
+            <p className="truncate text-xs font-medium text-muted-foreground md:text-sm">{name}</p>
             <p className="text-sm font-semibold text-foreground md:text-base">
               R$ {price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               <span className="ml-2 text-[11px] font-normal text-muted-foreground">

@@ -9,9 +9,7 @@ export function Gallery({ items }: { items: Item[] }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div
-        className="group relative aspect-square overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-xl"
-      >
+      <div className="group relative aspect-square overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-xl">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-60"

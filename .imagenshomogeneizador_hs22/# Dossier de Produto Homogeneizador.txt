@@ -1,0 +1,31 @@
+# Dossier de Produto: Homogeneizador de Carne Skymsen HS-22CC
+
+## 1. Visão Geral e Promessa do Produto
+O Homogeneizador de carnes da Skymsen é a solução ideal para açougues, supermercados e estabelecimentos que buscam aumentar a produtividade e a qualidade na moagem de carnes. [cite_start]O equipamento mistura e moe grandes quantidades de carne, aumentando a produtividade, tornando a carne mais homogênea e reduzindo a gordura aparente[cite: 2]. [cite_start]Com uma caçamba com capacidade de 16 kg [cite: 25] [cite_start](volume de 22 L [cite: 31]), este equipamento oferece alta eficiência, transformando carnes comuns em produtos de aspecto premium em segundos[cite: 8].
+
+## 2. Argumentos de Vendas e Diferenciais (Hard Copy Context)
+* [cite_start]**Automação que Libera Mão de Obra:** Sua operação automática torna o processo mais rápido e seguro[cite: 10]. [cite_start]O equipamento deixa o operador livre para outras atividades[cite: 28], otimizando o custo operacional do negócio.
+* [cite_start]**Operação "Mãos Livres":** Possui pedal de acionamento em ambos modelos[cite: 18], o que facilita o embandejamento direto no bocal, dobrando a velocidade da operação.
+* [cite_start]**Valor Agregado na Vitrine:** O sistema de homogeneização agrega valor ao produto, sendo indispensável para venda no auto serviço[cite: 10]. [cite_start]Ele melhora a apresentação do produto [cite: 27] [cite_start]e reduz a gordura aparente[cite: 28], microdistribuindo as partículas para uma cor mais atrativa.
+* [cite_start]**Transparência e Controle:** Possui tampa transparente para visualização interna [cite: 19] feita em policarbonato, permitindo o acompanhamento em tempo real da textura da carne.
+* [cite_start]**Durabilidade Extrema:** Construção em aço inox [cite: 21][cite_start], incluindo boca e caracol em inox microfundido[cite: 22], garantindo vedação superior e facilidade de higienização.
+* [cite_start]**Segurança Blindada (NR-12):** Conta com um conjunto único de segurança [cite: 12] [cite_start]que é patenteado [cite: 13][cite_start], além de sensor de segurança na tampa[cite: 24].
+
+## 3. Acessórios e Garantia
+* [cite_start]**Inclusos na caixa:** Discos de 3 e 5 mm inclusos [cite: 28] [cite_start]e suporte para bandeja incluso[cite: 20].
+* [cite_start]**Vendido separadamente:** Disco 8 mm vendido separadamente[cite: 14].
+* [cite_start]**Garantia:** O equipamento possui 1 ano de garantia[cite: 15, 16].
+
+## 4. Especificações Técnicas (Ficha Técnica)
+* [cite_start]**Modelo:** HS-22CC [cite: 31]
+* **Tensão elétrica / frequência / fases:** 220 V / 60 Hz / 1 | 220 V / 60 Hz / 3 | [cite_start]380 V / 60 Hz / 3 [cite: 31]
+* [cite_start]**Potência nominal:** 1472-246 W [cite: 31]
+* [cite_start]**Potência do motor:** 2-0,33 HP-CV [cite: 31]
+* [cite_start]**Consumo:** 1.72 KW/h [cite: 31]
+* [cite_start]**Dimensões (AxLxP):** 1.255 x 480 x 990 mm [cite: 31]
+* [cite_start]**Dimensões da embalagem (AxLxP):** 1.460 x 579 x 1.154 mm [cite: 31]
+* [cite_start]**Peso líquido / bruto:** 115 kg / 146 kg [cite: 31]
+* [cite_start]**Produção aproximada:** 600 kg/h [cite: 31]
+* [cite_start]**Capacidade da caçamba:** 22 L / 16 kg [cite: 31]
+* [cite_start]**Classificação fiscal (NCM):** 84385000 [cite: 31]
+* [cite_start]**EAN-13:** 7895707705494 / 7895707707054 / 7895707705470 [cite: 31]

@@ -61,9 +61,7 @@ function SegmentoPage() {
           <h1 className="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
             {segment.name}
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-            {segment.description}
-          </p>
+          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">{segment.description}</p>
         </div>
       </section>
 

@@ -4,6 +4,7 @@ description: Preparar e executar deploy para produção com todos os gates de qu
 ---
 
 Execute sequencialmente:
+
 1. qa-guardian → todos os testes passando?
 2. security-reviewer → código seguro para produção?
 3. Se ambos aprovarem → deploy-specialist executa o deploy

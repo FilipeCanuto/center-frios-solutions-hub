@@ -1,4 +1,4 @@
-import heroMain from "@/assets/products/hs-98/homogeneizador foto principal.png";
+import heroMain from "@/assets/products/hs-98/hero.png";
 import ambientButchers from "@/assets/products/hs-98/ambient-butchers.png";
 import ambientKitchen from "@/assets/products/hs-98/ambient-kitchen.png";
 import threeQuarter from "@/assets/products/hs-98/three-quarter-pedal.png";
@@ -25,7 +25,10 @@ export const HS98_IMAGES = {
 };
 
 export const HS98_GALLERY = [
-  { src: ambientKitchen, alt: "HS-98 em cozinha industrial — chef ao fundo, bandejas de carne moída em primeiro plano" },
+  {
+    src: ambientKitchen,
+    alt: "HS-98 em cozinha industrial — chef ao fundo, bandejas de carne moída em primeiro plano",
+  },
   { src: threeQuarter, alt: "Vista 3/4 do HS-98 com pedal de acionamento hands-free" },
   { src: front, alt: "Vista frontal — painel selado IP54 e moedor centralizado" },
   { src: side, alt: "Vista lateral — perfil completo do conjunto em inox AISI 304" },

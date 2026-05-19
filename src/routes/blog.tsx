@@ -27,9 +27,8 @@ function BlogPage() {
             Blog Center Frios
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            Estamos preparando conteúdo técnico sobre equipamentos, eficiência
-            energética, normas sanitárias e tendências do setor alimentício.
-            Volte em breve.
+            Estamos preparando conteúdo técnico sobre equipamentos, eficiência energética, normas
+            sanitárias e tendências do setor alimentício. Volte em breve.
           </p>
         </div>
       </section>

@@ -68,28 +68,20 @@ function SolucoesPage() {
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {SOLUCOES.map((s) => (
-              <div
-                key={s.title}
-                className="rounded-2xl border border-border bg-card p-6"
-              >
+              <div key={s.title} className="rounded-2xl border border-border bg-card p-6">
                 <s.icon className="size-7 text-accent" />
-                <h3 className="mt-4 text-lg font-semibold text-foreground">
-                  {s.title}
-                </h3>
+                <h3 className="mt-4 text-lg font-semibold text-foreground">{s.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{s.desc}</p>
               </div>
             ))}
           </div>
 
           <div className="mt-16 rounded-2xl border border-border bg-card p-8 md:p-12">
-            <h3 className="text-2xl font-semibold text-foreground">
-              Por que a Center Frios?
-            </h3>
+            <h3 className="text-2xl font-semibold text-foreground">Por que a Center Frios?</h3>
             <p className="mt-3 max-w-3xl text-muted-foreground">
-              O cliente CENTERFRIOS não pode parar — qualquer falha em
-              equipamento representa prejuízo direto. Por isso construímos uma
-              estrutura completa: técnicos próprios, peças em estoque e
-              atendimento ágil. Confie em quem entende do seu setor.
+              O cliente CENTERFRIOS não pode parar — qualquer falha em equipamento representa
+              prejuízo direto. Por isso construímos uma estrutura completa: técnicos próprios, peças
+              em estoque e atendimento ágil. Confie em quem entende do seu setor.
             </p>
             <Button asChild size="lg" className="mt-6 rounded-full">
               <Link to="/contato">Fale com nosso time</Link>

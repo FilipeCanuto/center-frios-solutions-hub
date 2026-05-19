@@ -149,9 +149,7 @@ function ProductPage() {
           <div className="mx-auto max-w-5xl px-6">
             <div className="flex items-center gap-3">
               <ShieldCheck className="size-6 text-accent" />
-              <h2 className="text-2xl font-semibold text-foreground">
-                Normas e conformidade
-              </h2>
+              <h2 className="text-2xl font-semibold text-foreground">Normas e conformidade</h2>
             </div>
             <ul className="mt-6 space-y-2">
               {product.compliance.map((c: string) => (

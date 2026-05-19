@@ -53,16 +53,13 @@ export function Pa7ProLanding() {
   return (
     <>
       {/* HERO */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
         className="relative overflow-hidden border-b border-white/5"
       >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 tech-grid opacity-40"
-        />
+        <div aria-hidden className="pointer-events-none absolute inset-0 tech-grid opacity-40" />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-[420px]"
@@ -182,7 +179,7 @@ export function Pa7ProLanding() {
       </motion.section>
 
       {/* HIGHLIGHTS */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -230,7 +227,7 @@ export function Pa7ProLanding() {
       ))}
 
       {/* INCLUDED DISCS */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -246,8 +243,8 @@ export function Pa7ProLanding() {
               07 discos com suporte inclusos
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
-              Pronto para fatiar, ralar e cortar em palitos desde o primeiro dia. Disco de 203 mm
-              de diâmetro, fixados em suporte para troca rápida.
+              Pronto para fatiar, ralar e cortar em palitos desde o primeiro dia. Disco de 203 mm de
+              diâmetro, fixados em suporte para troca rápida.
             </p>
           </div>
           <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-7">
@@ -286,7 +283,7 @@ export function Pa7ProLanding() {
       </motion.section>
 
       {/* SPECS */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -311,7 +308,7 @@ export function Pa7ProLanding() {
       </motion.section>
 
       {/* USE CASES */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -395,7 +392,7 @@ export function Pa7ProLanding() {
       <FaqPa7 />
 
       {/* CHECKOUT SECTION */}
-      <CheckoutSection 
+      <CheckoutSection
         product={{
           id: product.slug,
           name: product.name,
@@ -403,7 +400,7 @@ export function Pa7ProLanding() {
           price: PA7_PRICE.amount,
           installments: PA7_PRICE.installments,
           pixDiscount: 5,
-          subtitle: "Linha Industrial · Bivolt"
+          subtitle: "Linha Industrial · Bivolt",
         }}
       />
 

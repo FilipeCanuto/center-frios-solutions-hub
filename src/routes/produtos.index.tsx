@@ -26,9 +26,7 @@ function ProdutosPage() {
 
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <h2 className="mb-10 text-xl font-semibold text-foreground">
-            Linha em destaque
-          </h2>
+          <h2 className="mb-10 text-xl font-semibold text-foreground">Linha em destaque</h2>
           <div className="grid gap-10 md:grid-cols-3">
             {detailed.map((p) => (
               <ProductCard key={p.slug} product={p} />
@@ -44,10 +42,7 @@ function ProdutosPage() {
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {others.map((p) => (
-              <div
-                key={p.slug}
-                className="rounded-xl border border-border bg-card p-6"
-              >
+              <div key={p.slug} className="rounded-xl border border-border bg-card p-6">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
                   {p.category}
                 </span>

@@ -41,6 +41,7 @@ COMMIT;
 ## OUTPUT ESPERADO
 
 Sempre entregue:
+
 - Schema/migration com rollback
 - Queries testadas com resultado esperado
 - Políticas RLS validadas (usuário autenticado e não autenticado)

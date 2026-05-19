@@ -79,11 +79,7 @@ export const SEGMENTS: Segment[] = [
       "Reposição rápida de peças críticas",
     ],
     image: segRedes,
-    recommendedProducts: [
-      "processador-pa7-pro-skymsen",
-      "forno-de-lastro",
-      "balcao-refrigerado",
-    ],
+    recommendedProducts: ["processador-pa7-pro-skymsen", "forno-de-lastro", "balcao-refrigerado"],
   },
   {
     slug: "cozinhas-industriais",
@@ -97,11 +93,7 @@ export const SEGMENTS: Segment[] = [
       "Operação contínua sem queda de performance",
     ],
     image: segCozinhas,
-    recommendedProducts: [
-      "processador-pa7-pro-skymsen",
-      "masseira-espiral",
-      "camara-fria-modular",
-    ],
+    recommendedProducts: ["processador-pa7-pro-skymsen", "masseira-espiral", "camara-fria-modular"],
   },
   {
     slug: "hoteis",
@@ -115,11 +107,7 @@ export const SEGMENTS: Segment[] = [
       "Eficiência energética para reduzir custo operacional",
     ],
     image: segHoteis,
-    recommendedProducts: [
-      "balcao-refrigerado",
-      "climatizador-tudo-brisa",
-      "fritadeira-industrial",
-    ],
+    recommendedProducts: ["balcao-refrigerado", "climatizador-tudo-brisa", "fritadeira-industrial"],
   },
 ];
 
@@ -185,8 +173,10 @@ export const PRODUCTS: Product[] = [
     name: "Moedor Homogeneizador HS-98 Skymsen",
     category: "Processamento de Carnes",
     tagline: "Mais que um moedor de carne.",
-    description: "Mistura e mói simultaneamente, aumentando a produtividade e qualidade do auto serviço.",
-    longDescription: "Ideal para grandes produções com capacidade de até 900 kg/h. Operação automática que libera o operador e sistema de homogeneização que reduz a gordura aparente, agregando valor final ao produto.",
+    description:
+      "Mistura e mói simultaneamente, aumentando a produtividade e qualidade do auto serviço.",
+    longDescription:
+      "Ideal para grandes produções com capacidade de até 900 kg/h. Operação automática que libera o operador e sistema de homogeneização que reduz a gordura aparente, agregando valor final ao produto.",
     image: hs98,
     highlight: true,
     detailed: true,

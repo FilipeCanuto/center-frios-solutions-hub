@@ -42,6 +42,7 @@ Resultado: o ritmo visual volta ao que estava — bloco textual respirando à es
 ## Detalhes técnicos
 
 Arquivo único editado: `src/components/site/hs98/Hs98Landing.tsx`.
+
 - `Hero()`: substituir o bloco `{/* Hero visual */}` (linhas ~120–161) pela nova composição de pedestal + spotlight + dois floating chips.
 - `Highlights()`: dentro de `lg:col-span-5 > .lg:sticky`, remover o `<div className="relative mt-10 aspect-square ...">...</div>` (linhas ~232–253). Manter `<h2>` e `<p>`.
 

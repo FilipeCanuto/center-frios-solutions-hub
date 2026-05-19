@@ -6,12 +6,7 @@ import { SectionHeading } from "@/components/site/SectionHeading";
 import { SegmentCard } from "@/components/site/SegmentCard";
 import { ProductCard } from "@/components/site/ProductCard";
 import { CtaBanner } from "@/components/site/CtaBanner";
-import {
-  FEATURED_PRODUCT_SLUGS,
-  IMAGES,
-  SEGMENTS,
-  getProductsBySlugs,
-} from "@/data/site";
+import { FEATURED_PRODUCT_SLUGS, IMAGES, SEGMENTS, getProductsBySlugs } from "@/data/site";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,8 +23,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:description",
-        content:
-          "Para o seu negócio não parar. Acredite em quem entende do seu setor.",
+        content: "Para o seu negócio não parar. Acredite em quem entende do seu setor.",
       },
     ],
   }),
@@ -53,8 +47,8 @@ function HomePage() {
               <span className="text-accent">não parar</span>.
             </h1>
             <p className="mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
-              Refrigeração comercial e equipamentos robustos para quem não pode
-              parar. Acredite em quem entende do seu setor.
+              Refrigeração comercial e equipamentos robustos para quem não pode parar. Acredite em
+              quem entende do seu setor.
             </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <QuoteDialog
@@ -65,12 +59,7 @@ function HomePage() {
                   </Button>
                 }
               />
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="rounded-full"
-              >
+              <Button asChild size="lg" variant="outline" className="rounded-full">
                 <Link to="/produtos">
                   Ver catálogo <ArrowRight className="ml-2 size-4" />
                 </Link>
@@ -93,12 +82,8 @@ function HomePage() {
                 <div className="text-[10px] font-bold uppercase tracking-widest text-accent">
                   Performance
                 </div>
-                <div className="mt-1 text-2xl font-medium text-foreground">
-                  -18 °C constante
-                </div>
-                <div className="mt-1 text-xs text-muted-foreground">
-                  Recuperação térmica em 40s
-                </div>
+                <div className="mt-1 text-2xl font-medium text-foreground">-18 °C constante</div>
+                <div className="mt-1 text-xs text-muted-foreground">Recuperação térmica em 40s</div>
               </div>
             </div>
             <div className="absolute -right-2 bottom-6 hidden lg:block">
@@ -106,12 +91,8 @@ function HomePage() {
                 <div className="text-[10px] font-bold uppercase tracking-widest text-accent">
                   Eficiência
                 </div>
-                <div className="mt-1 text-2xl font-medium text-foreground">
-                  −38% kWh
-                </div>
-                <div className="mt-1 text-xs text-muted-foreground">
-                  vs. linha convencional
-                </div>
+                <div className="mt-1 text-2xl font-medium text-foreground">−38% kWh</div>
+                <div className="mt-1 text-xs text-muted-foreground">vs. linha convencional</div>
               </div>
             </div>
           </div>
@@ -122,9 +103,21 @@ function HomePage() {
       <section className="border-b border-border bg-card/40">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-px bg-border md:grid-cols-3">
           {[
-            { icon: ShieldCheck, title: "Conformidade RDC 216 / NR-12", desc: "Equipamentos prontos para auditoria sanitária." },
-            { icon: Wrench, title: "Assistência técnica própria", desc: "Suporte em campo e reposição rápida de peças." },
-            { icon: Truck, title: "Entrega e instalação", desc: "Logística e montagem com equipe especializada." },
+            {
+              icon: ShieldCheck,
+              title: "Conformidade RDC 216 / NR-12",
+              desc: "Equipamentos prontos para auditoria sanitária.",
+            },
+            {
+              icon: Wrench,
+              title: "Assistência técnica própria",
+              desc: "Suporte em campo e reposição rápida de peças.",
+            },
+            {
+              icon: Truck,
+              title: "Entrega e instalação",
+              desc: "Logística e montagem com equipe especializada.",
+            },
           ].map((item) => (
             <div key={item.title} className="flex items-start gap-4 bg-background p-6">
               <item.icon className="mt-1 size-6 text-accent" />
@@ -210,9 +203,8 @@ function HomePage() {
           </div>
 
           <p className="mx-auto mt-16 max-w-3xl text-center text-xl font-medium leading-relaxed text-foreground md:text-2xl">
-            “Nossa experiência e autoridade no mercado garantem a produtividade
-            do seu negócio. Não pare sua operação — confie nos líderes em
-            equipamentos para gastronomia.”
+            “Nossa experiência e autoridade no mercado garantem a produtividade do seu negócio. Não
+            pare sua operação — confie nos líderes em equipamentos para gastronomia.”
           </p>
         </div>
       </section>

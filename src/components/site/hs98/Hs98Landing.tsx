@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Check,
@@ -34,9 +35,12 @@ import {
 import { getProduct } from "@/data/site";
 import { CheckoutSection } from "@/components/site/pa7/CheckoutSection";
 import { Hs98Gallery } from "@/components/site/hs98/Hs98Gallery";
+import { Hs98TabuleiroSection } from "@/components/site/hs98/Hs98TabuleiroSection";
 
 /* ──────────────────────────────────────────────────────────── HERO */
 function Hero() {
+  const [imgSrc, setImgSrc] = useState(HS98_IMAGES.main);
+
   return (
     <section className="relative isolate overflow-hidden border-b border-border bg-background">
       {/* Cinematic light layers */}
@@ -70,10 +74,7 @@ function Hero() {
 
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 pb-24 pt-28 md:pb-32 md:pt-36 lg:grid-cols-12">
         <div className="lg:col-span-6">
-          <Badge
-            variant="outline"
-            className="mb-6 border-accent/40 bg-accent/10 text-accent"
-          >
+          <Badge variant="outline" className="mb-6 border-accent/40 bg-accent/10 text-accent">
             Linha Skymsen Profissional · Homogeneização contínua
           </Badge>
           <h1 className="text-balance text-5xl font-semibold leading-[1.02] tracking-tight md:text-7xl">
@@ -81,9 +82,8 @@ function Hero() {
             <span className="text-accent">Margem de volta no caixa.</span>
           </h1>
           <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
-            Moedor comum entrega carne branca e até 12% de quebra no balcão.
-            O HS-98 mói e homogeneíza no mesmo ciclo — devolve cada quilo
-            como produto que vende pelo preço cheio.
+            Moedor comum entrega carne branca e até 12% de quebra no balcão. O HS-98 mói e
+            homogeneíza no mesmo ciclo — devolve cada quilo como produto que vende pelo preço cheio.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-3">
@@ -151,10 +151,7 @@ function Hero() {
             />
 
             {/* concentric pedestal rings */}
-            <div
-              aria-hidden
-              className="absolute inset-[4%] rounded-full border border-white/10"
-            />
+            <div aria-hidden className="absolute inset-[4%] rounded-full border border-white/10" />
             <div
               aria-hidden
               className="absolute inset-[14%] rounded-full border border-white/[0.06]"
@@ -165,7 +162,10 @@ function Hero() {
               initial={{ opacity: 0, y: 30, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              src={HS98_IMAGES.main}
+              src={imgSrc}
+              onError={() => {
+                setImgSrc(HS98_IMAGES.hero);
+              }}
               alt="Moedor Homogeneizador HS-98 Skymsen"
               className="relative z-10 h-full w-full object-contain"
               style={{
@@ -181,8 +181,7 @@ function Hero() {
               aria-hidden
               className="pointer-events-none absolute bottom-[6%] left-1/2 h-[8%] w-[60%] -translate-x-1/2 rounded-[50%]"
               style={{
-                background:
-                  "radial-gradient(ellipse at center, rgba(0,0,0,0.55), transparent 70%)",
+                background: "radial-gradient(ellipse at center, rgba(0,0,0,0.55), transparent 70%)",
                 filter: "blur(8px)",
               }}
             />
@@ -214,17 +213,12 @@ function Hero() {
       <div className="border-t border-border bg-card/40 backdrop-blur">
         <div className="mx-auto grid max-w-7xl grid-cols-2 divide-border px-6 py-6 sm:grid-cols-4 sm:divide-x">
           {HS98_PROOF.map((p) => (
-            <div
-              key={p.label}
-              className="px-4 first:pl-0 sm:px-8 sm:first:pl-0"
-            >
+            <div key={p.label} className="px-4 first:pl-0 sm:px-8 sm:first:pl-0">
               <div className="flex items-baseline gap-1.5 tabular-nums">
                 <span className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
                   {p.value}
                 </span>
-                <span className="text-sm font-medium text-muted-foreground">
-                  {p.unit}
-                </span>
+                <span className="text-sm font-medium text-muted-foreground">{p.unit}</span>
               </div>
               <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
                 {p.label}
@@ -274,10 +268,9 @@ function Highlights() {
                 Quatro decisões que mudam o sábado de manhã.
               </h2>
               <p className="mt-5 max-w-md text-sm text-muted-foreground md:text-base">
-                Cada componente foi escolhido para suportar o regime mais duro
-                do varejo brasileiro: pico de movimento, sem margem pra parada.
+                Cada componente foi escolhido para suportar o regime mais duro do varejo brasileiro:
+                pico de movimento, sem margem pra parada.
               </p>
-
             </div>
           </div>
 
@@ -295,9 +288,7 @@ function Highlights() {
                   <h3 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
                     {h.title}
                   </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {h.desc}
-                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{h.desc}</p>
                   <div className="absolute bottom-0 left-0 h-px w-0 bg-accent transition-all duration-500 group-hover:w-full" />
                 </div>
               ))}
@@ -319,8 +310,7 @@ function Showcase() {
             Engenharia em cada detalhe.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Projetado para o regime contínuo das maiores indústrias e
-            supermercados do país.
+            Projetado para o regime contínuo das maiores indústrias e supermercados do país.
           </p>
         </div>
 
@@ -341,9 +331,7 @@ function Showcase() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
               <div className="absolute bottom-7 left-7">
-                <div className="text-xl font-semibold text-white">
-                  Caçamba de 41 litros
-                </div>
+                <div className="text-xl font-semibold text-white">Caçamba de 41 litros</div>
                 <div className="mt-1 max-w-xs text-sm text-white/75">
                   Capacidade para até 31 kg de carne por ciclo de processamento.
                 </div>
@@ -354,10 +342,9 @@ function Showcase() {
                 Homogeneização que valoriza o produto.
               </h3>
               <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
-                Diferente dos moedores comuns, o sistema HS mistura a carne
-                enquanto mói. A gordura é distribuída de forma uniforme,
-                eliminando aquele aspecto de "carne branca" e entregando o
-                vermelho vibrante que vende no PDV.
+                Diferente dos moedores comuns, o sistema HS mistura a carne enquanto mói. A gordura
+                é distribuída de forma uniforme, eliminando aquele aspecto de "carne branca" e
+                entregando o vermelho vibrante que vende no PDV.
               </p>
               <ul className="mt-8 space-y-3">
                 {HS98_FEATURES.productivity.map((f) => (
@@ -365,9 +352,7 @@ function Showcase() {
                     <div className="mt-0.5 grid size-5 place-items-center rounded-full bg-accent/20 text-accent">
                       <Check className="size-3" strokeWidth={3} />
                     </div>
-                    <span className="text-sm font-medium text-foreground">
-                      {f}
-                    </span>
+                    <span className="text-sm font-medium text-foreground">{f}</span>
                   </li>
                 ))}
               </ul>
@@ -381,10 +366,9 @@ function Showcase() {
                 Segurança total, sem improviso.
               </h3>
               <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
-                Equipado com o Conjunto Único de Segurança Skymsen. Sensores e
-                travas na tampa interrompem o motor instantaneamente — em
-                conformidade total com a NR-12, sem perder agilidade no chão de
-                fábrica.
+                Equipado com o Conjunto Único de Segurança Skymsen. Sensores e travas na tampa
+                interrompem o motor instantaneamente — em conformidade total com a NR-12, sem perder
+                agilidade no chão de fábrica.
               </p>
               <div className="mt-8 grid gap-3 sm:grid-cols-2">
                 <div className="rounded-2xl border border-border bg-background p-5">
@@ -461,9 +445,7 @@ function Comparison() {
               <div className="col-span-4 p-5 text-sm font-semibold text-foreground">
                 {row.point}
               </div>
-              <div className="col-span-4 p-5 text-sm text-muted-foreground">
-                {row.common}
-              </div>
+              <div className="col-span-4 p-5 text-sm text-muted-foreground">{row.common}</div>
               <div className="col-span-4 bg-accent/[0.04] p-5 text-sm font-medium text-foreground">
                 {row.hs98}
               </div>
@@ -481,9 +463,7 @@ function Comparison() {
           <figcaption className="mt-6 flex items-center gap-3 text-sm text-muted-foreground">
             <div className="size-10 rounded-full bg-gradient-to-br from-accent/40 to-accent/10" />
             <div>
-              <div className="font-semibold text-foreground">
-                {HS98_TESTIMONIAL.author}
-              </div>
+              <div className="font-semibold text-foreground">{HS98_TESTIMONIAL.author}</div>
               <div>{HS98_TESTIMONIAL.role}</div>
             </div>
           </figcaption>
@@ -496,10 +476,7 @@ function Comparison() {
 /* ──────────────────────────────────────────────────────── ROI */
 function RoiBlock() {
   return (
-    <section
-      id="roi"
-      className="relative overflow-hidden border-b border-border py-28"
-    >
+    <section id="roi" className="relative overflow-hidden border-b border-border py-28">
       <div
         aria-hidden
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_30%_30%,color-mix(in_oklab,var(--accent)_15%,transparent),transparent_60%)]"
@@ -509,9 +486,7 @@ function RoiBlock() {
           <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
             {HS98_ROI.headline}
           </h2>
-          <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-            {HS98_ROI.body}
-          </p>
+          <p className="mt-5 text-lg leading-relaxed text-muted-foreground">{HS98_ROI.body}</p>
           <ul className="mt-8 space-y-3">
             {HS98_ROI.bullets.map((b) => (
               <li key={b} className="flex items-start gap-3">
@@ -534,9 +509,7 @@ function RoiBlock() {
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">
                   Quebra atual
                 </div>
-                <div className="mt-1 text-4xl font-semibold tabular-nums text-foreground">
-                  ~6%
-                </div>
+                <div className="mt-1 text-4xl font-semibold tabular-nums text-foreground">~6%</div>
               </div>
               <div>
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">
@@ -550,17 +523,13 @@ function RoiBlock() {
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">
                   Com HS-98
                 </div>
-                <div className="mt-1 text-4xl font-semibold tabular-nums text-accent">
-                  &lt; 1%
-                </div>
+                <div className="mt-1 text-4xl font-semibold tabular-nums text-accent">&lt; 1%</div>
               </div>
               <div>
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">
                   Payback
                 </div>
-                <div className="mt-1 text-4xl font-semibold tabular-nums text-accent">
-                  ~4 meses
-                </div>
+                <div className="mt-1 text-4xl font-semibold tabular-nums text-accent">~4 meses</div>
               </div>
             </div>
             <Button
@@ -574,8 +543,7 @@ function RoiBlock() {
               </a>
             </Button>
             <p className="mt-3 text-center text-[11px] text-muted-foreground">
-              Estimativa baseada em operações reais. Solicite o memorial técnico
-              para o seu cenário.
+              Estimativa baseada em operações reais. Solicite o memorial técnico para o seu cenário.
             </p>
           </div>
         </div>
@@ -665,13 +633,11 @@ function FinalCta() {
       />
       <div className="mx-auto max-w-4xl px-6 text-center">
         <h2 className="text-balance text-4xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
-          Cada quilo mal apresentado{" "}
-          <span className="text-accent">é margem indo embora</span>.
+          Cada quilo mal apresentado <span className="text-accent">é margem indo embora</span>.
         </h2>
         <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
-          Fale agora com um especialista técnico da Center Frios.
-          A gente entende de operação de PDV — não vamos te empurrar
-          uma máquina que não cabe no seu balcão.
+          Fale agora com um especialista técnico da Center Frios. A gente entende de operação de PDV
+          — não vamos te empurrar uma máquina que não cabe no seu balcão.
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -733,6 +699,7 @@ export function Hs98Landing() {
       <Highlights />
       <Showcase />
       <Comparison />
+      <Hs98TabuleiroSection />
       <Hs98Gallery />
       <RoiBlock />
       <Specs />
