@@ -22,9 +22,9 @@ import { Route as SegmentosIndexRouteImport } from './routes/segmentos.index'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
 import { Route as SegmentosSlugRouteImport } from './routes/segmentos.$slug'
 import { Route as ProdutosSlugRouteImport } from './routes/produtos.$slug'
-import { Route as ApiWebhookRouteImport } from './routes/api.webhook'
 import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated.admin.pedidos'
 import { Route as AuthenticatedAdminPedidosIdRouteImport } from './routes/_authenticated.admin.pedidos.$id'
+import { Route as ApiPublicWebhookRedeTokenRouteImport } from './routes/api.public.webhook.rede.$token'
 
 const SolucoesRoute = SolucoesRouteImport.update({
   id: '/solucoes',
@@ -90,11 +90,6 @@ const ProdutosSlugRoute = ProdutosSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ProdutosRoute,
 } as any)
-const ApiWebhookRoute = ApiWebhookRouteImport.update({
-  id: '/api/webhook',
-  path: '/api/webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedAdminPedidosRoute =
   AuthenticatedAdminPedidosRouteImport.update({
     id: '/admin/pedidos',
@@ -107,6 +102,12 @@ const AuthenticatedAdminPedidosIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedAdminPedidosRoute,
   } as any)
+const ApiPublicWebhookRedeTokenRoute =
+  ApiPublicWebhookRedeTokenRouteImport.update({
+    id: '/api/public/webhook/rede/$token',
+    path: '/api/public/webhook/rede/$token',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,13 +118,13 @@ export interface FileRoutesByFullPath {
   '/segmentos': typeof SegmentosRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solucoes': typeof SolucoesRoute
-  '/api/webhook': typeof ApiWebhookRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos/': typeof ProdutosIndexRoute
   '/segmentos/': typeof SegmentosIndexRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
   '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
+  '/api/public/webhook/rede/$token': typeof ApiPublicWebhookRedeTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -132,13 +133,13 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solucoes': typeof SolucoesRoute
-  '/api/webhook': typeof ApiWebhookRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos': typeof ProdutosIndexRoute
   '/segmentos': typeof SegmentosIndexRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
   '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
+  '/api/public/webhook/rede/$token': typeof ApiPublicWebhookRedeTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -151,13 +152,13 @@ export interface FileRoutesById {
   '/segmentos': typeof SegmentosRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solucoes': typeof SolucoesRoute
-  '/api/webhook': typeof ApiWebhookRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos/': typeof ProdutosIndexRoute
   '/segmentos/': typeof SegmentosIndexRoute
   '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
   '/_authenticated/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
+  '/api/public/webhook/rede/$token': typeof ApiPublicWebhookRedeTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -170,13 +171,13 @@ export interface FileRouteTypes {
     | '/segmentos'
     | '/sitemap.xml'
     | '/solucoes'
-    | '/api/webhook'
     | '/produtos/$slug'
     | '/segmentos/$slug'
     | '/produtos/'
     | '/segmentos/'
     | '/admin/pedidos'
     | '/admin/pedidos/$id'
+    | '/api/public/webhook/rede/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -185,13 +186,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/sitemap.xml'
     | '/solucoes'
-    | '/api/webhook'
     | '/produtos/$slug'
     | '/segmentos/$slug'
     | '/produtos'
     | '/segmentos'
     | '/admin/pedidos'
     | '/admin/pedidos/$id'
+    | '/api/public/webhook/rede/$token'
   id:
     | '__root__'
     | '/'
@@ -203,13 +204,13 @@ export interface FileRouteTypes {
     | '/segmentos'
     | '/sitemap.xml'
     | '/solucoes'
-    | '/api/webhook'
     | '/produtos/$slug'
     | '/segmentos/$slug'
     | '/produtos/'
     | '/segmentos/'
     | '/_authenticated/admin/pedidos'
     | '/_authenticated/admin/pedidos/$id'
+    | '/api/public/webhook/rede/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -222,7 +223,7 @@ export interface RootRouteChildren {
   SegmentosRoute: typeof SegmentosRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolucoesRoute: typeof SolucoesRoute
-  ApiWebhookRoute: typeof ApiWebhookRoute
+  ApiPublicWebhookRedeTokenRoute: typeof ApiPublicWebhookRedeTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -318,13 +319,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosSlugRouteImport
       parentRoute: typeof ProdutosRoute
     }
-    '/api/webhook': {
-      id: '/api/webhook'
-      path: '/api/webhook'
-      fullPath: '/api/webhook'
-      preLoaderRoute: typeof ApiWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/admin/pedidos': {
       id: '/_authenticated/admin/pedidos'
       path: '/admin/pedidos'
@@ -338,6 +332,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/pedidos/$id'
       preLoaderRoute: typeof AuthenticatedAdminPedidosIdRouteImport
       parentRoute: typeof AuthenticatedAdminPedidosRoute
+    }
+    '/api/public/webhook/rede/$token': {
+      id: '/api/public/webhook/rede/$token'
+      path: '/api/public/webhook/rede/$token'
+      fullPath: '/api/public/webhook/rede/$token'
+      preLoaderRoute: typeof ApiPublicWebhookRedeTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -406,18 +407,8 @@ const rootRouteChildren: RootRouteChildren = {
   SegmentosRoute: SegmentosRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolucoesRoute: SolucoesRoute,
-  ApiWebhookRoute: ApiWebhookRoute,
+  ApiPublicWebhookRedeTokenRoute: ApiPublicWebhookRedeTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
