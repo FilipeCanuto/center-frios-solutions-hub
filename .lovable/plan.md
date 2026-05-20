@@ -1,77 +1,35 @@
-## Problema
+## Diagnóstico
 
-A tela `/admin/pedidos` mostra "Acesso restrito" mesmo com o role `admin` já atribuído a `filipecanuto@centerfrios.com` (confirmado no banco). Duas causas combinadas:
+O erro não é mais race condition no frontend. A causa atual é no banco: a migration anterior fez `REVOKE EXECUTE` da função `public.has_role` para `authenticated`.
 
-1. **Race condition em `src/lib/auth.ts`** — `onAuthStateChange` e `getSession` disparam consultas a `user_roles` em paralelo; o callback que terminar por último (às vezes com `setIsAdmin(false)` antes do dado chegar) define o estado final.
-2. **Erros silenciosos** — se a query a `user_roles` falhar (rede, RLS, token expirado), o hook simplesmente assume `isAdmin = false` sem logar nada, o que dificulta o diagnóstico.
+Isso quebra as policies de RLS que usam `has_role(...)`, porque o usuário autenticado precisa ter permissão de execução para a policy ser avaliada. Por isso a consulta em `user_roles` retorna:
 
-Bonus: o token JWT atualmente em uso no browser foi emitido antes do role existir. Embora a RLS use `auth.uid()` (não o JWT), um logout/login garante um estado limpo.
-
-## Mudanças
-
-### 1. Refatorar `src/lib/auth.ts`
-
-- Centralizar a checagem de role numa única função `checkAdmin(userId)`.
-- Eliminar a corrida: usar uma flag `cancelled` no `useEffect` e só atualizar `isAdmin` para a sessão mais recente.
-- Tratar `error` da query e logar no console (`console.error`) em vez de cair em silêncio para `false`.
-- Re-checar role quando o usuário voltar à aba (`window` event `focus`) — pega o caso "admin acabou de me promover".
-- Manter `loading: true` até a primeira checagem de role completar, evitando o flash de "Acesso restrito".
-
-### 2. Sem alteração de schema, RLS ou outras rotas
-
-As policies de `user_roles` já estão corretas (usuário lê suas próprias roles).
-
-### 3. Passo do usuário
-
-Após o deploy da correção: **logout → login novamente** em `/login` para garantir um JWT novo. A página `/admin/pedidos` deve renderizar normalmente.
-
-## Detalhes técnicos
-
-Novo `useAuth` (esboço):
-
-```ts
-export function useAuth(): AuthState {
-  const [session, setSession] = useState<Session | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function checkAdmin(userId: string | undefined) {
-      if (!userId) { if (!cancelled) setIsAdmin(false); return; }
-      const { data, error } = await supabase
-        .from("user_roles").select("role").eq("user_id", userId);
-      if (cancelled) return;
-      if (error) { console.error("[useAuth] role check failed", error); setIsAdmin(false); return; }
-      setIsAdmin(Boolean(data?.some((r) => r.role === "admin")));
-    }
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
-      setSession(s);
-      setTimeout(() => checkAdmin(s?.user?.id), 0);
-    });
-
-    (async () => {
-      const { data: { session: s } } = await supabase.auth.getSession();
-      if (cancelled) return;
-      setSession(s);
-      await checkAdmin(s?.user?.id);
-      if (!cancelled) setLoading(false);
-    })();
-
-    const onFocus = () => {
-      supabase.auth.getSession().then(({ data: { session: s } }) => checkAdmin(s?.user?.id));
-    };
-    window.addEventListener("focus", onFocus);
-
-    return () => { cancelled = true; subscription.unsubscribe(); window.removeEventListener("focus", onFocus); };
-  }, []);
-
-  return { loading, session, user: session?.user ?? null, isAdmin };
-}
+```text
+permission denied for function has_role
 ```
 
-## Próximos passos após desbloqueio
+## Plano de correção
 
-Retomar Fase 2 — configuração do domínio de e-mails `mail.centerfrios.com` e templates transacionais (confirmação de pedido, PIX, notificação interna para `vendas@centerfrios.com`).
+1. **Criar migration de correção de permissões**
+   - Restaurar permissão de execução da função de verificação de role para usuários autenticados.
+   - Não liberar acesso anônimo.
+   - Manter a função como `SECURITY DEFINER` e com `search_path = public`.
+
+2. **Validar no banco**
+   - Confirmar que `authenticated` aparece com permissão de execução em `has_role`.
+   - Confirmar que o admin `filipecanuto@centerfrios.com` continua com role `admin`.
+
+3. **Validar no app**
+   - Pedir logout/login novamente.
+   - Reabrir `/admin/pedidos`.
+   - Verificar que a listagem de pedidos carrega sem o erro de permissão.
+
+## SQL esperado
+
+```sql
+GRANT EXECUTE ON FUNCTION public.has_role(UUID, public.app_role) TO authenticated;
+```
+
+## Observação de segurança
+
+Não vou conceder permissão para `anon`. A função só precisa funcionar para usuários logados, pois o painel e as policies administrativas usam a role `authenticated`.
