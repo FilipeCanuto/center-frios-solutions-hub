@@ -13,14 +13,18 @@ import { Route as SolucoesRouteImport } from './routes/solucoes'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SegmentosRouteImport } from './routes/segmentos'
 import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SegmentosIndexRouteImport } from './routes/segmentos.index'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
 import { Route as SegmentosSlugRouteImport } from './routes/segmentos.$slug'
 import { Route as ProdutosSlugRouteImport } from './routes/produtos.$slug'
 import { Route as ApiWebhookRouteImport } from './routes/api.webhook'
+import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated.admin.pedidos'
+import { Route as AuthenticatedAdminPedidosIdRouteImport } from './routes/_authenticated.admin.pedidos.$id'
 
 const SolucoesRoute = SolucoesRouteImport.update({
   id: '/solucoes',
@@ -42,6 +46,11 @@ const ProdutosRoute = ProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContatoRoute = ContatoRouteImport.update({
   id: '/contato',
   path: '/contato',
@@ -50,6 +59,10 @@ const ContatoRoute = ContatoRouteImport.update({
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -82,11 +95,24 @@ const ApiWebhookRoute = ApiWebhookRouteImport.update({
   path: '/api/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminPedidosRoute =
+  AuthenticatedAdminPedidosRouteImport.update({
+    id: '/admin/pedidos',
+    path: '/admin/pedidos',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAdminPedidosIdRoute =
+  AuthenticatedAdminPedidosIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminPedidosRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/blog': typeof BlogRoute
   '/contato': typeof ContatoRoute
+  '/login': typeof LoginRoute
   '/produtos': typeof ProdutosRouteWithChildren
   '/segmentos': typeof SegmentosRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -96,11 +122,14 @@ export interface FileRoutesByFullPath {
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos/': typeof ProdutosIndexRoute
   '/segmentos/': typeof SegmentosIndexRoute
+  '/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
+  '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/blog': typeof BlogRoute
   '/contato': typeof ContatoRoute
+  '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solucoes': typeof SolucoesRoute
   '/api/webhook': typeof ApiWebhookRoute
@@ -108,12 +137,16 @@ export interface FileRoutesByTo {
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos': typeof ProdutosIndexRoute
   '/segmentos': typeof SegmentosIndexRoute
+  '/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
+  '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/blog': typeof BlogRoute
   '/contato': typeof ContatoRoute
+  '/login': typeof LoginRoute
   '/produtos': typeof ProdutosRouteWithChildren
   '/segmentos': typeof SegmentosRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -123,6 +156,8 @@ export interface FileRoutesById {
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos/': typeof ProdutosIndexRoute
   '/segmentos/': typeof SegmentosIndexRoute
+  '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
+  '/_authenticated/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -130,6 +165,7 @@ export interface FileRouteTypes {
     | '/'
     | '/blog'
     | '/contato'
+    | '/login'
     | '/produtos'
     | '/segmentos'
     | '/sitemap.xml'
@@ -139,11 +175,14 @@ export interface FileRouteTypes {
     | '/segmentos/$slug'
     | '/produtos/'
     | '/segmentos/'
+    | '/admin/pedidos'
+    | '/admin/pedidos/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/blog'
     | '/contato'
+    | '/login'
     | '/sitemap.xml'
     | '/solucoes'
     | '/api/webhook'
@@ -151,11 +190,15 @@ export interface FileRouteTypes {
     | '/segmentos/$slug'
     | '/produtos'
     | '/segmentos'
+    | '/admin/pedidos'
+    | '/admin/pedidos/$id'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/blog'
     | '/contato'
+    | '/login'
     | '/produtos'
     | '/segmentos'
     | '/sitemap.xml'
@@ -165,12 +208,16 @@ export interface FileRouteTypes {
     | '/segmentos/$slug'
     | '/produtos/'
     | '/segmentos/'
+    | '/_authenticated/admin/pedidos'
+    | '/_authenticated/admin/pedidos/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   BlogRoute: typeof BlogRoute
   ContatoRoute: typeof ContatoRoute
+  LoginRoute: typeof LoginRoute
   ProdutosRoute: typeof ProdutosRouteWithChildren
   SegmentosRoute: typeof SegmentosRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -208,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contato': {
       id: '/contato'
       path: '/contato'
@@ -220,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog'
       preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -264,8 +325,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/pedidos': {
+      id: '/_authenticated/admin/pedidos'
+      path: '/admin/pedidos'
+      fullPath: '/admin/pedidos'
+      preLoaderRoute: typeof AuthenticatedAdminPedidosRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/admin/pedidos/$id': {
+      id: '/_authenticated/admin/pedidos/$id'
+      path: '/$id'
+      fullPath: '/admin/pedidos/$id'
+      preLoaderRoute: typeof AuthenticatedAdminPedidosIdRouteImport
+      parentRoute: typeof AuthenticatedAdminPedidosRoute
+    }
   }
 }
+
+interface AuthenticatedAdminPedidosRouteChildren {
+  AuthenticatedAdminPedidosIdRoute: typeof AuthenticatedAdminPedidosIdRoute
+}
+
+const AuthenticatedAdminPedidosRouteChildren: AuthenticatedAdminPedidosRouteChildren =
+  {
+    AuthenticatedAdminPedidosIdRoute: AuthenticatedAdminPedidosIdRoute,
+  }
+
+const AuthenticatedAdminPedidosRouteWithChildren =
+  AuthenticatedAdminPedidosRoute._addFileChildren(
+    AuthenticatedAdminPedidosRouteChildren,
+  )
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedAdminPedidosRoute: typeof AuthenticatedAdminPedidosRouteWithChildren
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAdminPedidosRoute: AuthenticatedAdminPedidosRouteWithChildren,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
 
 interface ProdutosRouteChildren {
   ProdutosSlugRoute: typeof ProdutosSlugRoute
@@ -297,8 +398,10 @@ const SegmentosRouteWithChildren = SegmentosRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   BlogRoute: BlogRoute,
   ContatoRoute: ContatoRoute,
+  LoginRoute: LoginRoute,
   ProdutosRoute: ProdutosRouteWithChildren,
   SegmentosRoute: SegmentosRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
