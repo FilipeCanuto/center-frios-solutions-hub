@@ -1,165 +1,120 @@
 ## Objetivo
+Substituir o fluxo atual de "Comprar" (CheckoutDialog com PIX/Boleto fake) por uma integração real com a **API e-Rede (Itaú)**, aceitando:
+- Crédito à vista e parcelado (Visa, Master, Elo, Amex, Hipercard)
+- Débito online (3DS)
+- PIX (via Rede/Itaú)
 
-Transformar a landing atual do HS-98 numa **landing da tecnologia de homogeneização Skymsen**, que vende o método (não o modelo) e termina obrigando o cliente a escolher entre **HS-22** (médio porte) ou **HS-98** (grande porte) no checkout.
-
-URL mantida: `/produtos/moedor-homogeneizador-hs-98` (preserva SEO já indexado e a entrada da allowlist do gate de visibilidade — não preciso mexer em `visibility.ts` nem em `robots.txt`).
+Sem PCI escopo D: cartão é tokenizado no navegador via SDK da Rede; nossa server function recebe **apenas o token** e processa via API REST e-Rede.
 
 ---
 
-## Nova arquitetura da página
+## Fluxo do usuário
 
 ```text
-1. HERO universal
-   "Carne pálida não vende. Funcionário preso no moedor não dá lucro."
-   Promessa: homogeneização Skymsen — vermelho de vitrine + mãos livres.
-   Visual: composição cinematográfica com as DUAS máquinas lado a lado
-           (HS-22 menor à esq., HS-98 maior à dir.) sobre o halo conic.
-   CTAs: "Escolher minha máquina" (âncora #bifurcacao) + WhatsApp.
-   Barra de prova: 900 kg/h · NR-12 · Pedal hands-free · 12 meses garantia.
-
-2. MANIFESTO (mantém o atual, com copy ajustada p/ "tecnologia", não modelo)
-   "Não é um moedor. É a diferença entre vender a R$ 39,90 ou rebaixar
-    para R$ 29,90 às seis da tarde."
-
-3. BENEFÍCIOS UNIVERSAIS (3 pilares — valem para HS-22 e HS-98)
-   a) Operação Mãos Livres — pedal dobra velocidade de embandejamento.
-   b) Segurança de Aço — NR-12, sensores magnéticos, zero processo.
-   c) O Ritual do Lucro — moer → caçamba → homogeneizar → padrão internacional.
-   Substitui o atual Highlights 2x2; vira grid 3 colunas com ícone+copy hard.
-
-4. RITUAL VISUAL (mantém Showcase asymmetric 7/5 reescrito)
-   2 blocos com imagens HS-98 ambient (cozinha + interna) explicando
-   "vermelho uniforme" e "ciclo automático sem operador parado".
-   Copy reescrita para falar da TECNOLOGIA, não do modelo HS-98.
-
-5. ROI / DOR ECONÔMICA (mantém estrutura atual, copy reforçada)
-   "Quanto custa NÃO ter homogeneização?" — cálculo de quebra.
-
-6. COMPARATIVO (mantém — moedor comum vs. homogeneizador Skymsen,
-   não mais "comum vs HS-98")
-
-7. ===== BIFURCAÇÃO ===== #bifurcacao
-   Headline: "Duas máquinas. Uma decisão. Quanto a sua operação processa?"
-   Subhead: medidor visual de capacidade (régua 0 → 1.000 kg/h) mostrando
-            zona HS-22 (até 600) e zona HS-98 (até 900).
-   Dois cards lado a lado, edge-to-edge, com selo de "Diferencial Exclusivo":
-
-   ┌─ HS-22 ──────────────┐   ┌─ HS-98 ──────────────┐
-   │ [foto HS-22 c/ tampa │   │ [foto HS-98 inox     │
-   │  policarbonato       │   │  cavalete piso]      │
-   │  transparente]       │   │                      │
-   │ "O MONSTRO COMPACTO" │   │ "O GIGANTE DA        │
-   │                      │   │  PRODUÇÃO"           │
-   │ Açougues gourmet e   │   │ Grandes supermercados│
-   │ supermercados médios │   │ e frigoríficos       │
-   │                      │   │                      │
-   │ 600 kg/h · 22 L      │   │ 900 kg/h · 41 L      │
-   │ 16 kg/ciclo · boca 22│   │ 31 kg/ciclo · boca 98│
-   │                      │   │                      │
-   │ ✦ Tampa policarbonato│   │ ✦ Construção 100%    │
-   │   transparente —     │   │   inox cavalete      │
-   │   vê textura em      │   │   piso, regime       │
-   │   tempo real         │   │   contínuo sem parar │
-   │                      │   │                      │
-   │ R$ XX.XXX            │   │ R$ 32.900            │
-   │ [Comprar HS-22]      │   │ [Comprar HS-98]      │
-   └──────────────────────┘   └──────────────────────┘
-
-   Microcopy abaixo: "Processa até 600 kg/h? HS-22.
-                     Precisa de quase 1 tonelada/h? HS-98."
-
-8. CHECKOUT por modelo
-   Cada botão "Comprar" abre o CheckoutDialog atual (PIX/Boleto/TED)
-   com o modelo, preço e parcelas certos. Hoje o CheckoutDialog é
-   ditado pelas constantes do PA7; vou parametrizá-lo por produto.
-
-9. FAQ + Footer CTA (mantém; copy revisada para "linha HS Skymsen").
+Card HS-22/HS-98/PA7 → "Comprar"
+   └─ CheckoutDialog (passos)
+       1. Dados do cliente (nome, CPF/CNPJ, e-mail, telefone, endereço entrega)
+       2. Escolha meio: [Crédito] [Débito] [PIX]
+       3a. Crédito/Débito → form com tokenização Rede no front → 3DS (se débito) → confirma
+       3b. PIX → server gera QR Code + copia-e-cola → polling de status
+       4. Tela de resultado (aprovado / recusado / pendente)
+   └─ Webhook Rede atualiza status → e-mail/WhatsApp
 ```
 
 ---
 
-## Detalhes técnicos
+## Arquitetura técnica
 
-### Dados (`src/data/hs22.ts` — NOVO)
+### 1. Secrets (Lovable Cloud)
+Pediremos via `add_secret`:
+- `REDE_PV` — código do estabelecimento (produção)
+- `REDE_TOKEN` — token de integração (produção)
+- `REDE_ENV` — `production` (com fallback `sandbox` quando necessário)
+- `REDE_WEBHOOK_SECRET` — segredo HMAC para validar callbacks
+- `RESEND_API_KEY` (ou conector) — notificação por e-mail ao cliente e ao vendedor
 
-Espelha `hs98.ts`:
+### 2. Banco (migration)
+Tabela `orders`:
+- `id uuid pk`, `created_at`, `updated_at`
+- `customer_name`, `customer_doc`, `customer_email`, `customer_phone`
+- `shipping_address jsonb`
+- `product_slug` (`hs-22` | `hs-98` | `pa7-pro` | ...)
+- `product_name`, `unit_price_cents`, `quantity`, `total_cents`
+- `payment_method` (`credit` | `debit` | `pix`)
+- `installments int null`
+- `rede_tid text` (transaction id), `rede_reference text` (nosso ref único)
+- `status` (`pending` | `authorized` | `captured` | `denied` | `failed` | `refunded`)
+- `pix_qr_code text null`, `pix_copy_paste text null`, `pix_expires_at timestamptz null`
+- `raw_response jsonb` (último payload Rede; sem dados sensíveis de cartão)
 
-- `HS22_IMAGES` (hero, ambient, transparent-lid, front, side, internal)
-- `HS22_PRICE` — **bloqueador: preciso do valor do HS-22**. Vou
-  implementar com `null` e ocultar o preço no card até você informar
-  (o card cai automaticamente para "Solicitar orçamento" via QuoteDialog).
-- `HS22_SPECS`: 600 kg/h · caçamba 22 L · 16 kg/ciclo · boca 22 ·
-  motor (deixar genérico até você confirmar CV/V) · tampa policarbonato.
-- `HS22_DIFF` + `HS98_DIFF` (string curta de "Diferencial Exclusivo").
+RLS:
+- INSERT: público (anon) só via server function (não direto do client)
+- SELECT/UPDATE/DELETE: bloqueados para anon; admin via role `admin` (tabela `user_roles` + `has_role`)
 
-### Dados (`src/data/hs98.ts`)
+### 3. Server functions (`src/lib/rede.functions.ts` + helpers em `*.server.ts`)
+- `createCardOrder({ customer, product, qty, installments, cardToken, method })`
+  - Cria registro `orders` com status `pending`
+  - POST `https://api.userede.com.br/erede/v1/transactions` com PV/Token Basic Auth
+  - Crédito: `kind: "credit"`, `installments`, `capture: true`
+  - Débito: `kind: "debit"`, payload 3DS (`threeDSecure`)
+  - Atualiza `orders.status` + `rede_tid`
+- `createPixOrder({ customer, product, qty })`
+  - POST endpoint PIX da Rede → retorna `qrCode` + `qrCodeBase64`
+  - Persiste `pix_*` e devolve para o front
+  - Front faz polling em `getOrderStatus(reference)` a cada 3s
+- `getOrderStatus(reference)` — lê do banco (admin client) e devolve status mascarado
+- `listOrders` (autenticada, admin) — para um futuro painel
 
-- Atualizar copy de `HS98_HIGHLIGHTS` p/ os 3 pilares universais
-  (Mãos Livres / Segurança de Aço / Ritual do Lucro).
-- Adicionar `HS98_DIFF = "Construção 100% inox cavalete piso"`.
+### 4. Server route (webhook)
+`src/routes/api/public/rede-webhook.tsx`
+- Valida HMAC `REDE_WEBHOOK_SECRET`
+- Atualiza `orders.status` por `rede_tid`
+- Dispara e-mail de confirmação (Resend) quando `captured` ou PIX `paid`
 
-### Imagens HS-22 (geração via IA — placeholder)
+### 5. Frontend
+- Refatorar `CheckoutDialog` em wizard (3 passos) com `react-hook-form` + `zod`
+- Carregar SDK de tokenização Rede via `<script>` injetado no dialog (só quando abre)
+- Tokenizar cartão no submit → enviar somente token + bin + brand para `createCardOrder`
+- Tela PIX: QR Code (`qrcode.react`), botão "copiar código", contagem regressiva
+- Tela de resultado com status + número do pedido
 
-3 renders salvos em `src/assets/products/hs-22/`:
-
-- `hero.png` — vista 3/4, tampa policarbonato transparente visível,
-  fundo neutro estúdio, paleta consistente com fotos HS-98.
-- `ambient.png` — bancada de açougue gourmet, máquina menor sobre
-  mesa, vermelho de carne moída em destaque.
-- `transparent-lid.png` — close da tampa transparente mostrando carne
-  sendo homogeneizada por dentro (diferencial-chave).
-  Gerados com `imagegen--generate_image` (premium para fidelidade). Trocamos
-  pelas reais quando você enviar.
-
-### Componentes
-
-**NOVO** `src/components/site/hs98/TechHero.tsx`
-Hero universal substituindo o atual focado em HS-98.
-
-**NOVO** `src/components/site/hs98/UniversalBenefits.tsx`
-3 pilares com ícones (Footprints/pedal, ShieldCheck, Workflow).
-
-**NOVO** `src/components/site/hs98/ModelBifurcation.tsx`
-Régua de capacidade + dois ProductChoiceCard.
-
-**NOVO** `src/components/site/hs98/ProductChoiceCard.tsx`
-Card de escolha (imagem hero, nome, apelido, specs em chips,
-diferencial exclusivo, preço opcional, CTA → abre CheckoutDialog
-com `product` prop).
-
-**EDIT** `src/components/site/pa7/CheckoutDialog.tsx`
-Parametrizar por produto:
-
-- aceitar prop `product: { name, slug, price, installments, pixDiscountPct, image }`
-- fallback para defaults do PA7 quando não passado (não quebra a página do PA7)
-- mensagens (WhatsApp, copy do PIX/boleto) usam `product.name`
-
-**EDIT** `src/components/site/hs98/Hs98Landing.tsx`
-Reordena seções conforme nova arquitetura. Remove o CheckoutSection
-único do HS-98 (vira parte do card de escolha do HS-98 na bifurcação).
-
-### SEO / metadata
-
-Em `src/routes/produtos.$slug.tsx` (head do slug `moedor-homogeneizador-hs-98`),
-ajustar:
-
-- `<title>`: "Homogeneizadores Skymsen HS-22 e HS-98 — Center Frios"
-- `description`: hard copy sobre fim do encalhe + escolha de capacidade.
-- og:image continua sendo a foto principal do HS-98 (visual mais forte).
-
-Não precisa alterar `robots.txt` nem `sitemap.xml` — URL é a mesma.
+### 6. Notificações
+- Resend (e-mail) para cliente (confirmação) e vendedor (novo pedido)
+- WhatsApp fica para fase 2 (manter botão "Falar no WhatsApp" como fallback humano)
 
 ---
 
-## Itens em aberto (preciso confirmar antes do build)
+## Pontos de atenção
 
-1. **Preço do HS-22** — sem isso o card HS-22 fica com CTA "Solicitar
-   orçamento" em vez de checkout direto. Tudo bem assim como provisório?
-2. **Imagens reais do HS-22** — sigo com renders IA. Quando você enviar
-   as fotos reais, troco em um turno só.
-3. **Especs extras do HS-22** (motor CV, tensão, peso) — uso valores
-   genéricos "consultar" ou você confirma? Posso pesquisar no site
-   oficial Skymsen se preferir.
+- **PCI-DSS SAQ-A-EP**: nunca logar PAN/CVV; nunca persistir token bruto além do necessário; HTTPS obrigatório (já é).
+- **CPF/CNPJ**: validação no front (`zod` + algoritmo de dígito); obrigatório pela Rede.
+- **3DS débito**: fluxo com redirect/iframe — implementar via SDK oficial.
+- **Antifraude**: começamos sem Cybersource; revisar após primeiras vendas.
+- **Idempotência**: enviar `reference` único por pedido para evitar duplicação em retries.
+- **Parcelamento**: definiremos política (ex.: até 6x sem juros, 7-12x com juros repassados) — preciso confirmar com você na implementação.
 
-Posso prosseguir com a implementação assumindo placeholders nos 3 itens
-acima, ou prefere me passar os dados antes?
+---
+
+## Entregáveis por fase
+
+**Fase 1 — Fundação (esta entrega)**
+1. Migration `orders` + RLS + `user_roles`
+2. Secrets cadastrados
+3. Server functions de Crédito + PIX
+4. Webhook
+5. CheckoutDialog refatorado (wizard) ligado aos 3 produtos (HS-22, HS-98, PA7 Pro)
+6. E-mail de confirmação (Resend)
+
+**Fase 2 — Polimento (depois)**
+7. Débito 3DS
+8. Painel admin de pedidos
+9. Antifraude / regras de risco
+10. WhatsApp transacional
+
+---
+
+## O que preciso de você antes de implementar
+1. **PV + Token de produção** da Rede (vou pedir via `add_secret` quando começarmos)
+2. **Política de parcelamento** (quantas vezes sem juros / com juros)
+3. **E-mail do vendedor** que recebe "novo pedido"
+4. **Confirmação**: começo pela **Fase 1** (Crédito + PIX). Débito entra na Fase 2?
