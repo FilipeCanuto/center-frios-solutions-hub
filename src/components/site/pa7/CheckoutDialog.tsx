@@ -204,24 +204,26 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     try {
       if (paymentMethod === "pix") {
         const result = await processPayment({
-          customer_name: identity.name,
-          customer_email: identity.email,
-          customer_phone: identity.phone,
-          customer_company: identity.company,
-          customer_cnpj: identity.cnpj,
-          shipping_address: {
-            cep: address.cep,
-            street: address.street,
-            number: address.number,
-            complement: address.complement,
-            district: address.district,
-            city: address.city,
-            state: address.state,
+          data: {
+            customer_name: identity.name,
+            customer_email: identity.email,
+            customer_phone: identity.phone,
+            customer_company: identity.company,
+            customer_cnpj: identity.cnpj,
+            shipping_address: {
+              cep: address.cep,
+              street: address.street,
+              number: address.number,
+              complement: address.complement,
+              district: address.district,
+              city: address.city,
+              state: address.state,
+            },
+            product_name: product.name,
+            product_price: product.price,
+            shipping_price: shipping,
+            payment_method: "pix",
           },
-          product_name: product.name,
-          product_price: product.price,
-          shipping_price: shipping,
-          payment_method: "pix",
         });
 
         if (result && result.success && result.pix) {
@@ -272,31 +274,33 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
         const fullYear = `20${year}`;
 
         const result = await processPayment({
-          customer_name: identity.name,
-          customer_email: identity.email,
-          customer_phone: identity.phone,
-          customer_company: identity.company,
-          customer_cnpj: identity.cnpj,
-          shipping_address: {
-            cep: address.cep,
-            street: address.street,
-            number: address.number,
-            complement: address.complement,
-            district: address.district,
-            city: address.city,
-            state: address.state,
-          },
-          product_name: product.name,
-          product_price: product.price,
-          shipping_price: shipping,
-          payment_method: "credit_card",
-          card_data: {
-            cardNumber: cleanCard,
-            cardholderName: cardholderName.toUpperCase(),
-            expirationMonth: month,
-            expirationYear: fullYear,
-            securityCode: securityCode,
-            installments: installments,
+          data: {
+            customer_name: identity.name,
+            customer_email: identity.email,
+            customer_phone: identity.phone,
+            customer_company: identity.company,
+            customer_cnpj: identity.cnpj,
+            shipping_address: {
+              cep: address.cep,
+              street: address.street,
+              number: address.number,
+              complement: address.complement,
+              district: address.district,
+              city: address.city,
+              state: address.state,
+            },
+            product_name: product.name,
+            product_price: product.price,
+            shipping_price: shipping,
+            payment_method: "credit_card",
+            card_data: {
+              cardNumber: cleanCard,
+              cardholderName: cardholderName.toUpperCase(),
+              expirationMonth: month,
+              expirationYear: fullYear,
+              securityCode: securityCode,
+              installments: installments,
+            },
           },
         });
 
