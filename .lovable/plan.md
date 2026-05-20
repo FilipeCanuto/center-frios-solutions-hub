@@ -1,80 +1,77 @@
-## Fase 2 — Débito 3DS, Painel Admin e E-mails de Confirmação
+## Problema
 
-### 1. Débito Online com 3DS (e-Rede)
+A tela `/admin/pedidos` mostra "Acesso restrito" mesmo com o role `admin` já atribuído a `filipecanuto@centerfrios.com` (confirmado no banco). Duas causas combinadas:
 
-**Backend (`src/lib/payments.functions.ts`)**
-- Adicionar `kind: "debit"` ao fluxo de `processPayment`
-- Incluir bloco `threeDSecure` no payload (obrigatório para débito):
-  - `embedded: true`
-  - `onFailure: "decline"` (recusa se 3DS falhar)
-  - `userAgent`, `device` (mobile/desktop), `returnUrl`
-- Tratar resposta `threeDSecure.url` → redirecionar o cliente ao banco emissor
-- Após retorno do 3DS, capturar transação
+1. **Race condition em `src/lib/auth.ts`** — `onAuthStateChange` e `getSession` disparam consultas a `user_roles` em paralelo; o callback que terminar por último (às vezes com `setIsAdmin(false)` antes do dado chegar) define o estado final.
+2. **Erros silenciosos** — se a query a `user_roles` falhar (rede, RLS, token expirado), o hook simplesmente assume `isAdmin = false` sem logar nada, o que dificulta o diagnóstico.
 
-**Frontend (`CheckoutDialog.tsx`)**
-- Adicionar opção "Débito Online" no seletor de método
-- Quando débito selecionado: ocultar campo "parcelas"
-- Após `processPayment` retornar `threeDSecureUrl` → abrir em modal/iframe ou redirecionar
-- Tela de retorno: ler `tid` da query string e exibir status
+Bonus: o token JWT atualmente em uso no browser foi emitido antes do role existir. Embora a RLS use `auth.uid()` (não o JWT), um logout/login garante um estado limpo.
 
----
+## Mudanças
 
-### 2. Painel Admin de Pedidos
+### 1. Refatorar `src/lib/auth.ts`
 
-**Autenticação**
-- Habilitar Supabase Auth (e-mail/senha + Google)
-- Criar enum `app_role` (`admin`, `user`) + tabela `user_roles`
-- Function `has_role(uuid, app_role)` (SECURITY DEFINER)
-- Atualizar RLS de `orders` e `transactions`:
-  - SELECT permitido para `has_role(auth.uid(), 'admin')`
-  - INSERT/UPDATE continuam restritos ao service role
+- Centralizar a checagem de role numa única função `checkAdmin(userId)`.
+- Eliminar a corrida: usar uma flag `cancelled` no `useEffect` e só atualizar `isAdmin` para a sessão mais recente.
+- Tratar `error` da query e logar no console (`console.error`) em vez de cair em silêncio para `false`.
+- Re-checar role quando o usuário voltar à aba (`window` event `focus`) — pega o caso "admin acabou de me promover".
+- Manter `loading: true` até a primeira checagem de role completar, evitando o flash de "Acesso restrito".
 
-**Rotas**
-- `/admin/login` — tela de login (pública)
-- `/_authenticated/admin/pedidos` — listagem (tabela com filtros: status, método, data)
-- `/_authenticated/admin/pedidos/$id` — detalhe (cliente, endereço, transações, raw_response)
-- Layout `_authenticated.tsx` valida sessão + role admin no `beforeLoad`
+### 2. Sem alteração de schema, RLS ou outras rotas
 
-**Server functions** (`src/lib/orders.functions.ts`)
-- `listOrders({ status?, method?, from?, to? })` com `requireSupabaseAuth` + check de role
-- `getOrderById(id)`
-- `refundOrder(id)` (chama e-Rede `/transactions/{tid}/refunds`)
+As policies de `user_roles` já estão corretas (usuário lê suas próprias roles).
 
----
+### 3. Passo do usuário
 
-### 3. E-mails de Confirmação (Lovable Emails)
+Após o deploy da correção: **logout → login novamente** em `/login` para garantir um JWT novo. A página `/admin/pedidos` deve renderizar normalmente.
 
-**Setup**
-- Configurar domínio de envio via Lovable Emails
-- Scaffold de infra de email (filas pgmq, cron dispatcher)
-- Scaffold de templates transacionais
+## Detalhes técnicos
 
-**Templates** (`src/lib/email-templates/`)
-- `order-confirmation.tsx` — para o cliente (pedido recebido + dados de pagamento)
-- `pix-instructions.tsx` — para PIX (QR Code + copia-cola + validade)
-- `payment-approved.tsx` — pagamento confirmado (acionado pelo webhook)
-- `seller-new-order.tsx` — notificação interna ao vendedor
+Novo `useAuth` (esboço):
 
-**Triggers**
-- Após criação de pedido (cartão aprovado) → `order-confirmation` + `seller-new-order`
-- Após criação de pedido PIX → `pix-instructions` + `seller-new-order`
-- Webhook `paid` → `payment-approved` (somente se PIX, pois cartão já estava aprovado)
+```ts
+export function useAuth(): AuthState {
+  const [session, setSession] = useState<Session | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
----
+  useEffect(() => {
+    let cancelled = false;
 
-### 4. Ajustes complementares
+    async function checkAdmin(userId: string | undefined) {
+      if (!userId) { if (!cancelled) setIsAdmin(false); return; }
+      const { data, error } = await supabase
+        .from("user_roles").select("role").eq("user_id", userId);
+      if (cancelled) return;
+      if (error) { console.error("[useAuth] role check failed", error); setIsAdmin(false); return; }
+      setIsAdmin(Boolean(data?.some((r) => r.role === "admin")));
+    }
 
-- Adicionar coluna `customer_user_id` (nullable) em `orders` para vincular pedido a usuário logado (futuro)
-- Página `/meus-pedidos` (Fase 3, fora de escopo agora)
-- Logs estruturados nas server functions de pagamento
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
+      setSession(s);
+      setTimeout(() => checkAdmin(s?.user?.id), 0);
+    });
 
----
+    (async () => {
+      const { data: { session: s } } = await supabase.auth.getSession();
+      if (cancelled) return;
+      setSession(s);
+      await checkAdmin(s?.user?.id);
+      if (!cancelled) setLoading(false);
+    })();
 
-### Perguntas antes de implementar
+    const onFocus = () => {
+      supabase.auth.getSession().then(({ data: { session: s } }) => checkAdmin(s?.user?.id));
+    };
+    window.addEventListener("focus", onFocus);
 
-1. **E-mail do vendedor** que recebe "novo pedido"? (ex: `vendas@centerfrios.com`)
-2. **Domínio de envio** dos e-mails? Sugiro `notify.centerfrios.com` (subdomínio dedicado para não conflitar com e-mail corporativo).
-3. **Primeiro admin**: qual e-mail cadastro como admin inicial? (depois ele promove os outros)
-4. **Refund/estorno** no painel: liberar agora ou só visualização?
+    return () => { cancelled = true; subscription.unsubscribe(); window.removeEventListener("focus", onFocus); };
+  }, []);
 
-Posso começar pela ordem: (1) Auth + Admin → (2) E-mails → (3) Débito 3DS. Confirma essa ordem ou prefere outra?
+  return { loading, session, user: session?.user ?? null, isAdmin };
+}
+```
+
+## Próximos passos após desbloqueio
+
+Retomar Fase 2 — configuração do domínio de e-mails `mail.centerfrios.com` e templates transacionais (confirmação de pedido, PIX, notificação interna para `vendas@centerfrios.com`).
