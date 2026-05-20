@@ -24,9 +24,18 @@ function TestPaymentPage() {
     installments: "1",
   });
 
+  type ChargeInput = {
+    amount: number;
+    description: string;
+    cardholderName: string;
+    cardNumber: string;
+    expirationMonth: string;
+    expirationYear: string;
+    securityCode: string;
+    installments: number;
+  };
   const mutation = useMutation({
-    mutationFn: (vars: Parameters<typeof chargeTestPayment>[0]["data"]) =>
-      charge({ data: vars }),
+    mutationFn: (vars: ChargeInput) => charge({ data: vars }),
   });
 
   function update<K extends keyof typeof form>(k: K, v: string) {
