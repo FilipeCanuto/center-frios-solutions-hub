@@ -1,0 +1,132 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+const TestChargeSchema = z.object({
+  amount: z.number().positive().max(10000),
+  description: z.string().trim().min(1).max(200),
+  cardholderName: z.string().trim().min(2).max(100),
+  cardNumber: z.string().trim().min(13).max(25),
+  expirationMonth: z.string().trim().regex(/^\d{2}$/),
+  expirationYear: z.string().trim().regex(/^\d{2}$|^\d{4}$/),
+  securityCode: z.string().trim().regex(/^\d{3,4}$/),
+  installments: z.number().int().min(1).max(12).default(1),
+});
+
+export const chargeTestPayment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => TestChargeSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+
+    // Verifica role admin
+    const { data: roleRow } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    if (!roleRow) {
+      throw new Error("Acesso restrito a administradores.");
+    }
+
+    // Email do admin
+    const { data: userInfo } = await supabaseAdmin.auth.admin.getUserById(userId);
+    const adminEmail = userInfo?.user?.email ?? "admin@centerfrios.com";
+
+    // Cria order
+    const { data: order, error: orderError } = await supabaseAdmin
+      .from("orders")
+      .insert({
+        customer_name: "TESTE ADMIN",
+        customer_email: adminEmail,
+        customer_phone: "00000000000",
+        shipping_address: { teste: true },
+        product_name: data.description,
+        product_price: data.amount,
+        shipping_price: 0,
+        total_price: data.amount,
+        payment_method: "credit_card",
+        status: "pending",
+      })
+      .select()
+      .single();
+
+    if (orderError || !order) {
+      console.error("[chargeTestPayment] order insert failed:", orderError);
+      throw new Error("Falha ao criar pedido de teste.");
+    }
+
+    const REDE_PV = process.env.REDE_PV;
+    const REDE_TOKEN = process.env.REDE_TOKEN;
+    if (!REDE_PV || !REDE_TOKEN) {
+      await supabaseAdmin.from("orders").update({ status: "failed" }).eq("id", order.id);
+      throw new Error("REDE_PV/REDE_TOKEN não configurados.");
+    }
+
+    const amountCents = Math.round(data.amount * 100);
+    const expYear = data.expirationYear.length === 2 ? `20${data.expirationYear}` : data.expirationYear;
+
+    let transactionStatus = "failed";
+    let tid: string | null = null;
+    let returnCode: string | null = null;
+    let returnMessage = "Sem resposta";
+    let rawResponse: unknown = null;
+
+    try {
+      const authHeader = "Basic " + btoa(`${REDE_PV}:${REDE_TOKEN}`);
+      const res = await fetch("https://api.userede.com.br/erede/v1/transactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: authHeader },
+        body: JSON.stringify({
+          capture: true,
+          kind: "credit",
+          reference: order.id,
+          amount: amountCents,
+          installments: data.installments,
+          cardholderName: data.cardholderName,
+          cardNumber: data.cardNumber.replace(/\s+/g, ""),
+          expirationMonth: data.expirationMonth,
+          expirationYear: expYear,
+          securityCode: data.securityCode,
+          softDescriptor: "CF TESTE",
+        }),
+      });
+      rawResponse = await res.json();
+      const r = rawResponse as { tid?: string; returnCode?: string; returnMessage?: string };
+      tid = r.tid ?? null;
+      returnCode = r.returnCode ?? null;
+      returnMessage = r.returnMessage ?? "Sem mensagem";
+      if (res.ok && r.returnCode === "00") {
+        transactionStatus = "captured";
+      } else {
+        transactionStatus = "denied";
+      }
+    } catch (err) {
+      console.error("[chargeTestPayment] e-Rede error:", err);
+      returnMessage = err instanceof Error ? err.message : "Erro de rede";
+      transactionStatus = "failed";
+    }
+
+    await supabaseAdmin.from("transactions").insert({
+      order_id: order.id,
+      gateway: "rede",
+      gateway_transaction_id: tid,
+      amount: data.amount,
+      status: transactionStatus,
+      raw_response: rawResponse as never,
+    });
+
+    const newOrderStatus = transactionStatus === "captured" ? "paid" : "failed";
+    await supabaseAdmin.from("orders").update({ status: newOrderStatus }).eq("id", order.id);
+
+    return {
+      orderId: order.id,
+      tid,
+      returnCode,
+      returnMessage,
+      status: newOrderStatus,
+      approved: transactionStatus === "captured",
+    };
+  });
