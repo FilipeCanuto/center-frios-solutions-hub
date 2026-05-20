@@ -22,7 +22,6 @@ import { Route as SegmentosIndexRouteImport } from './routes/segmentos.index'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
 import { Route as SegmentosSlugRouteImport } from './routes/segmentos.$slug'
 import { Route as ProdutosSlugRouteImport } from './routes/produtos.$slug'
-import { Route as ApiWebhookRouteImport } from './routes/api.webhook'
 import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated.admin.pedidos'
 import { Route as AuthenticatedAdminPedidosIdRouteImport } from './routes/_authenticated.admin.pedidos.$id'
 
@@ -90,11 +89,6 @@ const ProdutosSlugRoute = ProdutosSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ProdutosRoute,
 } as any)
-const ApiWebhookRoute = ApiWebhookRouteImport.update({
-  id: '/api/webhook',
-  path: '/api/webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedAdminPedidosRoute =
   AuthenticatedAdminPedidosRouteImport.update({
     id: '/admin/pedidos',
@@ -117,7 +111,6 @@ export interface FileRoutesByFullPath {
   '/segmentos': typeof SegmentosRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solucoes': typeof SolucoesRoute
-  '/api/webhook': typeof ApiWebhookRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos/': typeof ProdutosIndexRoute
@@ -132,7 +125,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solucoes': typeof SolucoesRoute
-  '/api/webhook': typeof ApiWebhookRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos': typeof ProdutosIndexRoute
@@ -151,7 +143,6 @@ export interface FileRoutesById {
   '/segmentos': typeof SegmentosRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solucoes': typeof SolucoesRoute
-  '/api/webhook': typeof ApiWebhookRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos/': typeof ProdutosIndexRoute
@@ -170,7 +161,6 @@ export interface FileRouteTypes {
     | '/segmentos'
     | '/sitemap.xml'
     | '/solucoes'
-    | '/api/webhook'
     | '/produtos/$slug'
     | '/segmentos/$slug'
     | '/produtos/'
@@ -185,7 +175,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/sitemap.xml'
     | '/solucoes'
-    | '/api/webhook'
     | '/produtos/$slug'
     | '/segmentos/$slug'
     | '/produtos'
@@ -203,7 +192,6 @@ export interface FileRouteTypes {
     | '/segmentos'
     | '/sitemap.xml'
     | '/solucoes'
-    | '/api/webhook'
     | '/produtos/$slug'
     | '/segmentos/$slug'
     | '/produtos/'
@@ -222,7 +210,6 @@ export interface RootRouteChildren {
   SegmentosRoute: typeof SegmentosRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolucoesRoute: typeof SolucoesRoute
-  ApiWebhookRoute: typeof ApiWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -318,13 +305,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosSlugRouteImport
       parentRoute: typeof ProdutosRoute
     }
-    '/api/webhook': {
-      id: '/api/webhook'
-      path: '/api/webhook'
-      fullPath: '/api/webhook'
-      preLoaderRoute: typeof ApiWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/admin/pedidos': {
       id: '/_authenticated/admin/pedidos'
       path: '/admin/pedidos'
@@ -406,7 +386,6 @@ const rootRouteChildren: RootRouteChildren = {
   SegmentosRoute: SegmentosRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolucoesRoute: SolucoesRoute,
-  ApiWebhookRoute: ApiWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
