@@ -127,7 +127,7 @@ export const Route = createFileRoute("/api/public/webhook/rede/$token")({
           gateway_transaction_id: tid,
           amount,
           status: mapped.transaction,
-          raw_response: body,
+          raw_response: body as unknown as never,
         });
         if (txErr) {
           console.error("[rede-webhook] transaction insert failed", txErr);

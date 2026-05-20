@@ -24,6 +24,7 @@ import { Route as SegmentosSlugRouteImport } from './routes/segmentos.$slug'
 import { Route as ProdutosSlugRouteImport } from './routes/produtos.$slug'
 import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated.admin.pedidos'
 import { Route as AuthenticatedAdminPedidosIdRouteImport } from './routes/_authenticated.admin.pedidos.$id'
+import { Route as ApiPublicWebhookRedeTokenRouteImport } from './routes/api.public.webhook.rede.$token'
 
 const SolucoesRoute = SolucoesRouteImport.update({
   id: '/solucoes',
@@ -101,6 +102,12 @@ const AuthenticatedAdminPedidosIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedAdminPedidosRoute,
   } as any)
+const ApiPublicWebhookRedeTokenRoute =
+  ApiPublicWebhookRedeTokenRouteImport.update({
+    id: '/api/public/webhook/rede/$token',
+    path: '/api/public/webhook/rede/$token',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/segmentos/': typeof SegmentosIndexRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
   '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
+  '/api/public/webhook/rede/$token': typeof ApiPublicWebhookRedeTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -131,6 +139,7 @@ export interface FileRoutesByTo {
   '/segmentos': typeof SegmentosIndexRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
   '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
+  '/api/public/webhook/rede/$token': typeof ApiPublicWebhookRedeTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -149,6 +158,7 @@ export interface FileRoutesById {
   '/segmentos/': typeof SegmentosIndexRoute
   '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
   '/_authenticated/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
+  '/api/public/webhook/rede/$token': typeof ApiPublicWebhookRedeTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/segmentos/'
     | '/admin/pedidos'
     | '/admin/pedidos/$id'
+    | '/api/public/webhook/rede/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/segmentos'
     | '/admin/pedidos'
     | '/admin/pedidos/$id'
+    | '/api/public/webhook/rede/$token'
   id:
     | '__root__'
     | '/'
@@ -198,6 +210,7 @@ export interface FileRouteTypes {
     | '/segmentos/'
     | '/_authenticated/admin/pedidos'
     | '/_authenticated/admin/pedidos/$id'
+    | '/api/public/webhook/rede/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -210,6 +223,7 @@ export interface RootRouteChildren {
   SegmentosRoute: typeof SegmentosRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolucoesRoute: typeof SolucoesRoute
+  ApiPublicWebhookRedeTokenRoute: typeof ApiPublicWebhookRedeTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -319,6 +333,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPedidosIdRouteImport
       parentRoute: typeof AuthenticatedAdminPedidosRoute
     }
+    '/api/public/webhook/rede/$token': {
+      id: '/api/public/webhook/rede/$token'
+      path: '/api/public/webhook/rede/$token'
+      fullPath: '/api/public/webhook/rede/$token'
+      preLoaderRoute: typeof ApiPublicWebhookRedeTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -386,17 +407,8 @@ const rootRouteChildren: RootRouteChildren = {
   SegmentosRoute: SegmentosRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolucoesRoute: SolucoesRoute,
+  ApiPublicWebhookRedeTokenRoute: ApiPublicWebhookRedeTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
