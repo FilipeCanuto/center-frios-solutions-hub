@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import {
@@ -6,6 +6,8 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
+  Copy,
+  CreditCard,
   Landmark,
   Loader2,
   Lock,
@@ -20,6 +22,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PA7_BANK } from "@/data/pa7";
+import { processPayment } from "@/lib/payments.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 type Props = {
   open: boolean;
@@ -57,6 +61,69 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [shipping] = useState(89.9);
 
+  const [paymentMethod, setPaymentMethod] = useState<"pix" | "credit_card">("pix");
+
+  // PIX State
+  const [pixResult, setPixResult] = useState<{
+    qrCode: string;
+    copiaCola: string;
+    orderId: string;
+  } | null>(null);
+
+  // Credit Card States
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardholderName, setCardholderName] = useState("");
+  const [expiryDate, setExpiryDate] = useState(""); // MM/AA
+  const [securityCode, setSecurityCode] = useState("");
+  const [installments, setInstallments] = useState(1);
+
+  // Polling to verify PIX payment confirmation in real-time
+  useEffect(() => {
+    if (!pixResult) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const { data: order } = await supabase
+          .from("orders")
+          .select("status")
+          .eq("id", pixResult.orderId)
+          .single();
+
+        if (order && order.status === "paid") {
+          clearInterval(interval);
+          setStep(4);
+          toast.success("Pagamento PIX confirmado com sucesso!");
+        } else if (order && order.status === "failed") {
+          clearInterval(interval);
+          toast.error("O pagamento falhou ou foi recusado pela operadora.");
+        }
+      } catch (err) {
+        console.error("Erro ao verificar status do PIX:", err);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [pixResult]);
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    const formatted = value.match(/.{1,4}/g)?.join(" ") || value;
+    setCardNumber(formatted.substring(0, 19));
+  };
+
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 2) {
+      value = `${value.substring(0, 2)}/${value.substring(2, 4)}`;
+    }
+    setExpiryDate(value.substring(0, 5));
+  };
+
+  const handleCvvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    setSecurityCode(value.substring(0, 4));
+  };
+
   const subtotal = product.price;
   const discountPix = useMemo(() => subtotal * 0.05, [subtotal]);
   const total = subtotal + shipping;
@@ -66,6 +133,13 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     setStep(1);
     setIdentity(null);
     setAddress(null);
+    setPixResult(null);
+    setCardNumber("");
+    setCardholderName("");
+    setExpiryDate("");
+    setSecurityCode("");
+    setInstallments(1);
+    setPaymentMethod("pix");
   }
 
   function handleClose(v: boolean) {
@@ -116,12 +190,131 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     setStep(3);
   }
 
-  async function fakePay() {
+  async function handlePayment(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+
+    if (!identity || !address) {
+      toast.error("Por favor, preencha seus dados de identificação e endereço primeiro.");
+      setStep(1);
+      return;
+    }
+
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1100));
-    setSubmitting(false);
-    setStep(4);
-    toast.success("Pedido registrado para confirmação!");
+
+    try {
+      if (paymentMethod === "pix") {
+        const result = await processPayment({
+          customer_name: identity.name,
+          customer_email: identity.email,
+          customer_phone: identity.phone,
+          customer_company: identity.company,
+          customer_cnpj: identity.cnpj,
+          shipping_address: {
+            cep: address.cep,
+            street: address.street,
+            number: address.number,
+            complement: address.complement,
+            district: address.district,
+            city: address.city,
+            state: address.state,
+          },
+          product_name: product.name,
+          product_price: product.price,
+          shipping_price: shipping,
+          payment_method: "pix",
+        });
+
+        if (result && result.success && result.pix) {
+          setPixResult({
+            qrCode: result.pix.qrCode,
+            copiaCola: result.pix.copiaCola,
+            orderId: result.orderId,
+          });
+          toast.success("QR Code do PIX gerado com sucesso!");
+        } else {
+          throw new Error("Erro ao gerar o PIX.");
+        }
+      } else {
+        // Credit Card validation
+        const cleanCard = cardNumber.replace(/\s+/g, "");
+        if (cleanCard.length < 15 || cleanCard.length > 16) {
+          toast.error("Número do cartão inválido.");
+          setSubmitting(false);
+          return;
+        }
+
+        if (!cardholderName.trim()) {
+          toast.error("Nome do titular do cartão obrigatório.");
+          setSubmitting(false);
+          return;
+        }
+
+        const [month, year] = expiryDate.split("/");
+        if (!month || !year || month.length !== 2 || year.length !== 2) {
+          toast.error("Validade inválida. Use o formato MM/AA.");
+          setSubmitting(false);
+          return;
+        }
+
+        const m = parseInt(month, 10);
+        if (m < 1 || m > 12) {
+          toast.error("Mês de validade inválido.");
+          setSubmitting(false);
+          return;
+        }
+
+        if (securityCode.length < 3) {
+          toast.error("Código de segurança (CVV) inválido.");
+          setSubmitting(false);
+          return;
+        }
+
+        const fullYear = `20${year}`;
+
+        const result = await processPayment({
+          customer_name: identity.name,
+          customer_email: identity.email,
+          customer_phone: identity.phone,
+          customer_company: identity.company,
+          customer_cnpj: identity.cnpj,
+          shipping_address: {
+            cep: address.cep,
+            street: address.street,
+            number: address.number,
+            complement: address.complement,
+            district: address.district,
+            city: address.city,
+            state: address.state,
+          },
+          product_name: product.name,
+          product_price: product.price,
+          shipping_price: shipping,
+          payment_method: "credit_card",
+          card_data: {
+            cardNumber: cleanCard,
+            cardholderName: cardholderName.toUpperCase(),
+            expirationMonth: month,
+            expirationYear: fullYear,
+            securityCode: securityCode,
+            installments: installments,
+          },
+        });
+
+        if (result && result.success) {
+          toast.success("Pagamento autorizado com sucesso!");
+          setStep(4);
+        } else {
+          throw new Error("O pagamento foi recusado ou falhou.");
+        }
+      }
+    } catch (err: unknown) {
+      console.error("Erro no pagamento:", err);
+      const msg =
+        err instanceof Error ? err.message : "Erro ao processar o pagamento. Tente novamente.";
+      toast.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -330,100 +523,195 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                 <div className="grid gap-5">
                   <h2 className="text-xl font-semibold text-foreground">Forma de pagamento</h2>
 
-                  <Tabs defaultValue="pix" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
+                  <Tabs
+                    defaultValue="pix"
+                    value={paymentMethod}
+                    onValueChange={(v) => setPaymentMethod(v as "pix" | "credit_card")}
+                    className="w-full"
+                  >
+                    <TabsList className="grid w-full grid-cols-2">
                       <TabsTrigger value="pix">
                         <QrCode className="mr-1.5 size-4" />
-                        PIX
+                        PIX (5% Desconto)
                       </TabsTrigger>
-                      <TabsTrigger value="boleto">
-                        <Wallet className="mr-1.5 size-4" />
-                        Boleto
-                      </TabsTrigger>
-                      <TabsTrigger value="ted">
-                        <Landmark className="mr-1.5 size-4" />
-                        TED
+                      <TabsTrigger value="credit_card">
+                        <CreditCard className="mr-1.5 size-4" />
+                        Cartão de Crédito
                       </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="pix" className="mt-5">
-                      <div className="grid gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5 md:grid-cols-[180px_1fr]">
-                        <div className="grid place-items-center rounded-xl bg-white p-3">
-                          <QrPlaceholder />
-                        </div>
-                        <div className="grid gap-3">
-                          <div>
-                            <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-                              5% de desconto à vista
-                            </p>
-                            <p className="mt-1 text-2xl font-semibold text-foreground">
-                              {formatBRL(totalPix)}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              Aprovação em segundos · pedido liberado para faturamento.
-                            </p>
+                      {!pixResult ? (
+                        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+                          <div className="flex flex-col items-center text-center gap-3">
+                            <div className="p-3 bg-white/5 rounded-full border border-white/10">
+                              <QrCode className="size-10 text-accent" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-foreground">
+                                Pagamento Instantâneo PIX
+                              </h3>
+                              <p className="text-xs text-accent font-semibold uppercase tracking-wider mt-1">
+                                5% de Desconto Exclusivo
+                              </p>
+                              <p className="text-sm text-muted-foreground mt-2 max-w-sm">
+                                O faturamento e liberação do pedido ocorrem imediatamente após a
+                                confirmação do PIX pela e-Rede.
+                              </p>
+                            </div>
+                            <div className="border-t border-white/10 pt-4 mt-2 w-full flex flex-col items-center">
+                              <span className="text-xs text-muted-foreground">
+                                Valor total com desconto:
+                              </span>
+                              <span className="text-2xl font-bold text-foreground mt-1">
+                                {formatBRL(totalPix)}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-background/60 p-2">
-                            <code className="flex-1 truncate text-xs text-muted-foreground">
-                              {PA7_BANK.pixKey}
-                            </code>
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                navigator.clipboard?.writeText(PA7_BANK.pixKey);
-                                toast.success("Chave PIX copiada");
-                              }}
-                            >
-                              Copiar
-                            </Button>
+                          <PayCta
+                            onClick={() => handlePayment()}
+                            loading={submitting}
+                            label="Gerar QR Code PIX"
+                          />
+                        </div>
+                      ) : (
+                        <div className="grid gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5 md:grid-cols-[180px_1fr]">
+                          <div className="grid place-items-center rounded-xl bg-white p-3">
+                            <img
+                              src={
+                                pixResult.qrCode.startsWith("data:")
+                                  ? pixResult.qrCode
+                                  : `data:image/png;base64,${pixResult.qrCode}`
+                              }
+                              className="h-40 w-40 object-contain"
+                              alt="QR Code PIX"
+                            />
+                          </div>
+                          <div className="grid gap-3">
+                            <div>
+                              <p className="text-xs font-semibold uppercase tracking-widest text-accent">
+                                5% de desconto à vista
+                              </p>
+                              <p className="mt-1 text-2xl font-semibold text-foreground">
+                                {formatBRL(totalPix)}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                Escaneie o QR Code ou copie o código abaixo para pagar.
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-background/60 p-2">
+                              <code className="flex-1 truncate text-xs text-muted-foreground select-all">
+                                {pixResult.copiaCola}
+                              </code>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  navigator.clipboard?.writeText(pixResult.copiaCola);
+                                  toast.success("Código Copia e Cola copiado!");
+                                }}
+                              >
+                                <Copy className="size-3.5 mr-1" />
+                                Copiar
+                              </Button>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-accent/10 border border-accent/20 rounded-lg p-2.5">
+                              <Loader2 className="size-4 animate-spin text-accent" />
+                              <span>Aguardando detecção do pagamento via Rede...</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <PayCta
-                        onClick={fakePay}
-                        loading={submitting}
-                        label="Confirmar pedido com PIX"
-                      />
+                      )}
                     </TabsContent>
 
-                    <TabsContent value="boleto" className="mt-5">
-                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-                        <p className="text-sm text-muted-foreground">
-                          O boleto será enviado por e-mail em até 1 dia útil. Vencimento em 3 dias.
-                        </p>
-                        <div className="mt-3 rounded-lg border border-dashed border-white/15 bg-background/60 p-3 text-center font-mono text-xs text-muted-foreground">
-                          34191.79001 01043.510047 91020.150008 4 99850000{" "}
-                          {String(Math.round(total * 100)).padStart(8, "0")}
+                    <TabsContent value="credit_card" className="mt-5">
+                      <form
+                        onSubmit={handlePayment}
+                        className="grid gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5"
+                      >
+                        <div className="grid gap-2">
+                          <Label htmlFor="cardholderName">Nome impresso no cartão *</Label>
+                          <Input
+                            id="cardholderName"
+                            required
+                            placeholder="NOME DO TITULAR"
+                            value={cardholderName}
+                            onChange={(e) => setCardholderName(e.target.value.toUpperCase())}
+                            className="bg-background border-white/10 text-foreground"
+                          />
                         </div>
-                      </div>
-                      <PayCta onClick={fakePay} loading={submitting} label="Gerar boleto" />
-                    </TabsContent>
-
-                    <TabsContent value="ted" className="mt-5">
-                      <div className="grid gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-sm">
-                        <p className="text-muted-foreground">
-                          Realize a transferência para os dados abaixo e envie o comprovante.
-                        </p>
-                        <dl className="mt-2 grid grid-cols-2 gap-y-1.5 text-foreground">
-                          <dt className="text-muted-foreground">Banco</dt>
-                          <dd>{PA7_BANK.bank}</dd>
-                          <dt className="text-muted-foreground">Agência</dt>
-                          <dd>{PA7_BANK.agency}</dd>
-                          <dt className="text-muted-foreground">Conta</dt>
-                          <dd>{PA7_BANK.account}</dd>
-                          <dt className="text-muted-foreground">Titular</dt>
-                          <dd>{PA7_BANK.holder}</dd>
-                          <dt className="text-muted-foreground">CNPJ</dt>
-                          <dd>{PA7_BANK.cnpj}</dd>
-                        </dl>
-                      </div>
-                      <PayCta
-                        onClick={fakePay}
-                        loading={submitting}
-                        label="Confirmar pedido por TED"
-                      />
+                        <div className="grid gap-2">
+                          <Label htmlFor="cardNumber">Número do cartão *</Label>
+                          <div className="relative">
+                            <Input
+                              id="cardNumber"
+                              required
+                              placeholder="0000 0000 0000 0000"
+                              value={cardNumber}
+                              onChange={handleCardNumberChange}
+                              className="bg-background border-white/10 text-foreground pr-10"
+                            />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
+                              <CreditCard className="size-5" />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="grid gap-2">
+                            <Label htmlFor="expiryDate">Validade *</Label>
+                            <Input
+                              id="expiryDate"
+                              required
+                              placeholder="MM/AA"
+                              value={expiryDate}
+                              onChange={handleExpiryChange}
+                              maxLength={5}
+                              className="bg-background border-white/10 text-foreground"
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="securityCode">CVV *</Label>
+                            <Input
+                              id="securityCode"
+                              required
+                              placeholder="000"
+                              value={securityCode}
+                              onChange={handleCvvChange}
+                              maxLength={4}
+                              className="bg-background border-white/10 text-foreground"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="installments">Opções de Parcelamento *</Label>
+                          <select
+                            id="installments"
+                            value={installments}
+                            onChange={(e) => setInstallments(Number(e.target.value))}
+                            className="flex h-10 w-full rounded-md border border-white/10 bg-background px-3 py-2 text-sm text-foreground ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {Array.from({ length: 12 }, (_, i) => {
+                              const count = i + 1;
+                              const val = total / count;
+                              return (
+                                <option
+                                  key={count}
+                                  value={count}
+                                  className="bg-background text-foreground"
+                                >
+                                  {count}x de {formatBRL(val)} sem juros
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </div>
+                        <PayCta
+                          type="submit"
+                          loading={submitting}
+                          label={`Pagar ${formatBRL(total)}`}
+                        />
+                      </form>
                     </TabsContent>
                   </Tabs>
 
@@ -437,7 +725,8 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                       <ArrowLeft className="mr-2 size-4" /> Voltar
                     </Button>
                     <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                      <Lock className="size-3.5" /> Conexão segura SSL · Dados protegidos LGPD
+                      <Lock className="size-3.5" /> Conexão segura SSL · Transação encriptada PCI
+                      Compliance
                     </p>
                   </div>
                 </div>
@@ -539,13 +828,21 @@ function PayCta({
   onClick,
   loading,
   label,
+  type = "button",
 }: {
-  onClick: () => void;
+  onClick?: () => void;
   loading: boolean;
   label: string;
+  type?: "button" | "submit";
 }) {
   return (
-    <Button onClick={onClick} disabled={loading} size="lg" className="mt-5 w-full rounded-full">
+    <Button
+      type={type}
+      onClick={onClick}
+      disabled={loading}
+      size="lg"
+      className="mt-5 w-full rounded-full"
+    >
       {loading ? (
         <>
           <Loader2 className="mr-2 size-4 animate-spin" /> Processando…

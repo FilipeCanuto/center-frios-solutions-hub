@@ -53,6 +53,104 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          id: string
+          created_at: string
+          customer_name: string
+          customer_email: string
+          customer_phone: string
+          customer_company: string | null
+          customer_cnpj: string | null
+          shipping_address: Json
+          product_name: string
+          product_price: number
+          shipping_price: number
+          total_price: number
+          payment_method: string
+          status: string
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          customer_name: string
+          customer_email: string
+          customer_phone: string
+          customer_company?: string | null
+          customer_cnpj?: string | null
+          shipping_address: Json
+          product_name: string
+          product_price: number
+          shipping_price: number
+          total_price: number
+          payment_method: string
+          status?: string
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          customer_name?: string
+          customer_email?: string
+          customer_phone?: string
+          customer_company?: string | null
+          customer_cnpj?: string | null
+          shipping_address?: Json
+          product_name?: string
+          product_price?: number
+          shipping_price?: number
+          total_price?: number
+          payment_method?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          id: string
+          order_id: string
+          created_at: string
+          gateway: string
+          gateway_transaction_id: string | null
+          amount: number
+          status: string
+          raw_response: Json | null
+          pix_qr_code: string | null
+          pix_copia_cola: string | null
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          created_at?: string
+          gateway?: string
+          gateway_transaction_id?: string | null
+          amount: number
+          status: string
+          raw_response?: Json | null
+          pix_qr_code?: string | null
+          pix_copia_cola?: string | null
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          created_at?: string
+          gateway?: string
+          gateway_transaction_id?: string | null
+          amount?: number
+          status?: string
+          raw_response?: Json | null
+          pix_qr_code?: string | null
+          pix_copia_cola?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
