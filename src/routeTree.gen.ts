@@ -22,6 +22,7 @@ import { Route as SegmentosIndexRouteImport } from './routes/segmentos.index'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
 import { Route as SegmentosSlugRouteImport } from './routes/segmentos.$slug'
 import { Route as ProdutosSlugRouteImport } from './routes/produtos.$slug'
+import { Route as AuthenticatedAdminTestePagamentoRouteImport } from './routes/_authenticated.admin.teste-pagamento'
 import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated.admin.pedidos'
 import { Route as AuthenticatedAdminPedidosIdRouteImport } from './routes/_authenticated.admin.pedidos.$id'
 import { Route as ApiPublicWebhookRedeTokenRouteImport } from './routes/api.public.webhook.rede.$token'
@@ -90,6 +91,12 @@ const ProdutosSlugRoute = ProdutosSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ProdutosRoute,
 } as any)
+const AuthenticatedAdminTestePagamentoRoute =
+  AuthenticatedAdminTestePagamentoRouteImport.update({
+    id: '/admin/teste-pagamento',
+    path: '/admin/teste-pagamento',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAdminPedidosRoute =
   AuthenticatedAdminPedidosRouteImport.update({
     id: '/admin/pedidos',
@@ -123,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/produtos/': typeof ProdutosIndexRoute
   '/segmentos/': typeof SegmentosIndexRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
+  '/admin/teste-pagamento': typeof AuthenticatedAdminTestePagamentoRoute
   '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
   '/api/public/webhook/rede/$token': typeof ApiPublicWebhookRedeTokenRoute
 }
@@ -138,6 +146,7 @@ export interface FileRoutesByTo {
   '/produtos': typeof ProdutosIndexRoute
   '/segmentos': typeof SegmentosIndexRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
+  '/admin/teste-pagamento': typeof AuthenticatedAdminTestePagamentoRoute
   '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
   '/api/public/webhook/rede/$token': typeof ApiPublicWebhookRedeTokenRoute
 }
@@ -157,6 +166,7 @@ export interface FileRoutesById {
   '/produtos/': typeof ProdutosIndexRoute
   '/segmentos/': typeof SegmentosIndexRoute
   '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
+  '/_authenticated/admin/teste-pagamento': typeof AuthenticatedAdminTestePagamentoRoute
   '/_authenticated/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
   '/api/public/webhook/rede/$token': typeof ApiPublicWebhookRedeTokenRoute
 }
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/produtos/'
     | '/segmentos/'
     | '/admin/pedidos'
+    | '/admin/teste-pagamento'
     | '/admin/pedidos/$id'
     | '/api/public/webhook/rede/$token'
   fileRoutesByTo: FileRoutesByTo
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/segmentos'
     | '/admin/pedidos'
+    | '/admin/teste-pagamento'
     | '/admin/pedidos/$id'
     | '/api/public/webhook/rede/$token'
   id:
@@ -209,6 +221,7 @@ export interface FileRouteTypes {
     | '/produtos/'
     | '/segmentos/'
     | '/_authenticated/admin/pedidos'
+    | '/_authenticated/admin/teste-pagamento'
     | '/_authenticated/admin/pedidos/$id'
     | '/api/public/webhook/rede/$token'
   fileRoutesById: FileRoutesById
@@ -319,6 +332,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosSlugRouteImport
       parentRoute: typeof ProdutosRoute
     }
+    '/_authenticated/admin/teste-pagamento': {
+      id: '/_authenticated/admin/teste-pagamento'
+      path: '/admin/teste-pagamento'
+      fullPath: '/admin/teste-pagamento'
+      preLoaderRoute: typeof AuthenticatedAdminTestePagamentoRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/pedidos': {
       id: '/_authenticated/admin/pedidos'
       path: '/admin/pedidos'
@@ -359,10 +379,12 @@ const AuthenticatedAdminPedidosRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminPedidosRoute: typeof AuthenticatedAdminPedidosRouteWithChildren
+  AuthenticatedAdminTestePagamentoRoute: typeof AuthenticatedAdminTestePagamentoRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminPedidosRoute: AuthenticatedAdminPedidosRouteWithChildren,
+  AuthenticatedAdminTestePagamentoRoute: AuthenticatedAdminTestePagamentoRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -412,13 +434,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
