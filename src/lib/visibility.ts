@@ -15,8 +15,14 @@ export const PREVIEW_KEY = "cf-2026-bastidores";
 /** Nome da flag persistida em localStorage. */
 export const PREVIEW_STORAGE_KEY = "cf_preview";
 
+/** Prefixos sempre liberados (auth, painel admin, retorno de pagamento). */
+const PUBLIC_PREFIXES: ReadonlyArray<string> = ["/login", "/admin", "/pagamento"];
+
 export function isPublicPath(pathname: string): boolean {
   const normalized = pathname.replace(/\/+$/, "") || "/";
+  if (PUBLIC_PREFIXES.some((p) => normalized === p || normalized.startsWith(p + "/"))) {
+    return true;
+  }
   return PUBLIC_ROUTES.some((route) => {
     const r = route.replace(/\/+$/, "") || "/";
     return normalized === r;
