@@ -274,6 +274,12 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
 
         const fullYear = `20${year}`;
 
+        if (!identity.cpf || identity.cpf.replace(/\D/g, "").length !== 11) {
+          toast.error("Informe um CPF válido (obrigatório para autenticação 3DS).");
+          setSubmitting(false);
+          return;
+        }
+
         const result = await processPayment({
           data: {
             customer_name: identity.name,
@@ -281,6 +287,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
             customer_phone: identity.phone,
             customer_company: identity.company,
             customer_cnpj: identity.cnpj,
+            customer_cpf: identity.cpf,
             shipping_address: {
               cep: address.cep,
               street: address.street,
@@ -301,6 +308,20 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
               expirationYear: fullYear,
               securityCode: securityCode,
               installments: installments,
+            },
+            three_ds: {
+              userAgent: navigator.userAgent,
+              acceptHeader: "application/json",
+              device: {
+                colorDepth: window.screen.colorDepth || 24,
+                deviceType: "BROWSER",
+                javaEnabled:
+                  typeof navigator.javaEnabled === "function" ? navigator.javaEnabled() : false,
+                language: navigator.language || "pt-BR",
+                screenHeight: window.screen.height,
+                screenWidth: window.screen.width,
+                timeZoneOffset: new Date().getTimezoneOffset(),
+              },
             },
           },
         });
