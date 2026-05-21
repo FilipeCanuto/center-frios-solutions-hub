@@ -98,7 +98,51 @@ export type ThreeDSInput = {
   billingAddress: ThreeDSBillingAddress;
   cardHolder: ThreeDSCardHolder;
   browser: { acceptHeader: string };
+  ipAddress?: string;
+  phoneNumber?: string;
 };
+
+/** Formata CEP no padrão estrito "XXXXX-XXX" (9 chars com hífen) — pág. 43/61 do manual. */
+export function formatPostalCode(raw: string | null | undefined): string {
+  const digits = onlyDigits(raw).slice(0, 8);
+  if (digits.length !== 8) return digits; // deixa a validação a montante reclamar
+  return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+}
+
+/** Remove acentos e caracteres especiais, mantendo apenas letras/números/espaços. */
+function stripSpecials(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9 ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Formata telefone BR como "(XX)XXXXX-XXXX" ou "(XX)XXXX-XXXX", máx 32 chars. */
+function formatBillingPhone(raw: string | null | undefined): string {
+  const d = onlyDigits(raw);
+  // remove DDI 55 se presente
+  const local = d.startsWith("55") && d.length > 11 ? d.slice(2) : d;
+  if (local.length === 11) {
+    return `(${local.slice(0, 2)})${local.slice(2, 7)}-${local.slice(7)}`.slice(0, 32);
+  }
+  if (local.length === 10) {
+    return `(${local.slice(0, 2)})${local.slice(2, 6)}-${local.slice(6)}`.slice(0, 32);
+  }
+  return local.slice(0, 32);
+}
+
+/** Garante IPv4 válido (≤15 chars). Faz fallback para 10.0.0.1 em IPv6/inválido. */
+function ensureIPv4(raw: string | null | undefined): string {
+  const fallback = "10.0.0.1";
+  if (!raw) return fallback;
+  const v = raw.trim();
+  const m = v.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (!m) return fallback;
+  if (m.slice(1).some((o) => Number(o) > 255)) return fallback;
+  return v;
+}
 
 export type CreditChargeInput = {
   orderId: string;
@@ -254,16 +298,21 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
         userAgent: userAgent.slice(0, 255),
         acceptHeader: acceptHeader.slice(0, 255),
       },
-      // Nó billing com postalCode camelCase (pág. 45), CEP sem pontos/traços.
+      // Nó billing com postalCode/postalcode (pág. 43/45/61).
       billing: {
-        street: t.billingAddress.street.slice(0, 50),
+        street: stripSpecials(t.billingAddress.street).slice(0, 50),
         number: t.billingAddress.number.slice(0, 10),
-        complement: t.billingAddress.complement?.slice(0, 30) ?? "",
-        city: t.billingAddress.city.slice(0, 50),
-        state: t.billingAddress.state.slice(0, 2).toUpperCase(),
+        complement: t.billingAddress.complement
+          ? stripSpecials(t.billingAddress.complement).slice(0, 30)
+          : "",
+        city: stripSpecials(t.billingAddress.city).slice(0, 50),
+        state: stripSpecials(t.billingAddress.state).slice(0, 2).toUpperCase(),
         country: t.billingAddress.country.slice(0, 3).toUpperCase(),
-        postalCode: onlyDigits(t.billingAddress.zipCode),
+        postalCode: formatPostalCode(t.billingAddress.zipCode),
+        postalcode: formatPostalCode(t.billingAddress.zipCode),
+        phoneNumber: formatBillingPhone(t.phoneNumber ?? t.cardHolder.mobilePhone),
       },
+      ipAddress: ensureIPv4(t.ipAddress),
       cardHolder: {
         name: sanitizedCardHolderName || sanitizedHolderName,
         email: t.cardHolder.email.trim().slice(0, 100),
