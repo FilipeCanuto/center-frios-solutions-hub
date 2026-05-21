@@ -37,6 +37,7 @@ const StepOne = z.object({
   phone: z.string().trim().min(8, "Telefone inválido"),
   company: z.string().trim().optional(),
   cnpj: z.string().trim().optional(),
+  cpf: z.string().trim().optional(),
 });
 
 const StepTwo = z.object({
