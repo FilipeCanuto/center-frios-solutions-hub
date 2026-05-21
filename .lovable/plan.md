@@ -1,53 +1,73 @@
+# Tokenização frontend e-Rede (Checkout Transparente)
 
-## Diagnóstico atual (antes de mexer)
+Objetivo: remover PAN/CVV do nosso servidor. O navegador troca os dados sensíveis diretamente com a e-Rede e devolve um `tokenCartao` (one-time token). Só esse token vai pro nosso backend.
 
-Li `src/lib/payments.functions.ts`, `src/lib/test-charge.functions.ts` e o webhook `src/routes/api.public.webhook.rede.$token.ts`. Achados:
+## 1. Carregamento do script oficial da e-Rede
 
-1. **Endpoint**: hoje usamos `https://api.userede.com.br/erede/v1/transactions`. Esse **é** o endpoint de produção do produto e-Rede padrão. O `eresplit/v1/` que você citou é de outro produto (e-Rede **Split**, para marketplaces). **Preciso confirmar com você qual é o seu produto contratado** antes de trocar — trocar pra `eresplit` num PV não-split derruba 100% das transações.
-2. **Modo sandbox silencioso**: em `payments.functions.ts` existe `isSandbox = !REDE_PV || !REDE_TOKEN`. Se uma das secrets falhar em runtime, o checkout “aprova” sem chamar a Rede e o cliente acha que pagou. Isso explica por que nada chega no painel.
-3. **Erros engolidos**: o `catch` da chamada à Rede só faz `console.error("[processPayment] e-Rede API request error:", apiError)` e segue. Não logamos `returnCode`/`returnMessage` da resposta quando ela vem com erro mas `res.ok` é true. O response cru vai pra `transactions.raw_response`, mas nenhuma trilha estruturada.
-4. **Valor**: já vai em centavos (`Math.round(total * 100)`) — ok.
-5. **Documentos**: `customer_cnpj` e `customer_phone` são gravados como o usuário digitou (com máscara). Não enviamos hoje no payload da Rede (a API e-Rede `/transactions` credit não exige), mas se você precisa antifraude/3DS, precisamos enviar limpos.
-6. **Tokenização no frontend**: hoje **não há** tokenização — `CheckoutDialog` manda PAN, CVV e validade direto pro server function, que repassa pra Rede. Isso funciona, mas mantém o app no escopo PCI-DSS SAQ D. O “checkout transparente” da Rede usa um JS que tokeniza no browser e devolve um token; só ele vai pro backend.
+- Criar `src/lib/payments/useRedeScript.ts`: hook que injeta `<script src="https://sandbox.userede.com.br/static/js/erede.min.js">` (ou URL de produção quando confirmada) uma única vez, retorna `{ ready, error }`.
+- Necessário rodar só no cliente (sem SSR). `useEffect` + checagem `window.$` / `window.eRede`.
 
----
+> Observação: a e-Rede expõe duas variantes de tokenização. Vamos usar a de **Checkout Transparente / Tokenização JS** que recebe `PV` público + dados do cartão e devolve `tokenCartao`. URL e nome exatos do método são confirmados no console da e-Rede (já temos PV/Token).
 
-## Plano de correção
+## 2. Expor PV público ao frontend
 
-### 1. Forçar produção e falhar alto se faltar credencial
-- `src/lib/payments.functions.ts` e `src/lib/test-charge.functions.ts`:
-  - Remover o caminho `isSandbox` que simula aprovação. Se `REDE_PV` ou `REDE_TOKEN` faltarem, **lançar erro** com mensagem clara (sem criar order como “paid”).
-  - Centralizar a base URL numa constante `REDE_API_BASE = "https://api.userede.com.br/erede/v1"` (ou `eresplit/v1` se você confirmar split) num arquivo único `src/lib/payments/rede-client.ts` para os dois fluxos consumirem.
+- `REDE_PV` hoje é runtime-only no servidor. Para o JS oficial precisamos do PV no browser.
+- Adicionar `VITE_REDE_PV` (mesmo valor do `REDE_PV`, é público — é só o identificador do estabelecimento, não dá pra cobrar sem o token secret).
+- Usar `import.meta.env.VITE_REDE_PV` ao inicializar o script.
 
-### 2. Logging profundo da resposta da Rede
-Em ambos os handlers, depois do `fetch`:
-- Logar `res.status`, `res.statusText`, `rawResponse.returnCode`, `rawResponse.returnMessage`, `rawResponse.tid`, `order.id` num único `console.error("[rede] reject", {...})` quando `returnCode !== "00"` ou `!res.ok`.
-- No `catch` (erro de rede), logar `apiError.name`, `apiError.message` e o stack.
-- Salvar sempre `raw_response` no `transactions` (já fazemos no checkout real; ampliar no teste).
+## 3. Novo componente de cartão tokenizado
 
-### 3. Sanitização do payload
-Criar `src/lib/payments/sanitize.ts` com:
-- `onlyDigits(value)` → remove tudo que não é dígito.
-- Aplicar em `cardNumber`, `securityCode`, `expirationMonth`, `expirationYear` (já fazemos pro cardNumber; padronizar).
-- Normalizar `expirationYear` pra 4 dígitos sempre.
-- Em `payments.functions.ts`, limpar `customer_phone` e `customer_cnpj` antes do insert no banco e antes de qualquer envio externo.
-- Garantir `amount = Math.round(total * 100)` como `number` inteiro (assert).
+`src/components/payments/RedeCardForm.tsx`:
+- Campos: nome, número, validade (MM/AA), CVV — controlados localmente, **nunca enviados ao backend**.
+- Botão "Tokenizar e cobrar" chama o SDK e-Rede no browser → recebe `{ tokenCartao, bin, last4, brand, expMonth, expYear }`.
+- `onToken(payload)` callback devolve apenas os dados não sensíveis + token.
+- Estados: idle / tokenizing / error (com `returnCode`/`returnMessage` do SDK quando houver).
 
-### 4. Decisão sobre tokenização (precisa de aprovação sua)
-Duas opções, escolha uma:
-- **A — Manter PAN no servidor (rápido)**: nada muda no frontend. Você assume compliance PCI SAQ D. É como está hoje, só com os logs/sanitização corrigidos.
-- **B — Adotar checkout transparente da Rede (recomendado)**: incluir o JS oficial da Rede no `CheckoutDialog`, tokenizar no browser usando `REDE_PV` público e enviar só o token pro `processPayment`. Reduz escopo PCI. Requer 1 etapa extra de desenvolvimento e validação com a Rede.
+## 4. Refatorar `chargeTestPayment` e fluxo de checkout
 
-### 5. Endpoint de auditoria rápida
-Adicionar `GET /api/admin/rede-healthcheck` (protegido por admin) que:
-- Confirma presença de `REDE_PV` e `REDE_TOKEN` (sem expô-los).
-- Faz uma chamada `GET /transactions/{tid_fake}` que deve retornar 404/400 da Rede — comprova que estamos atingindo o endpoint de produção certo com credenciais aceitas.
+Em `src/lib/payments/rede.ts`:
+- Adicionar `chargeCreditCardWithToken({ orderId, amountCents, installments, cardToken, cardholderName, last4, brand, softDescriptor })`.
+- Payload e-Rede: usar campo `cardToken` (sem `cardNumber`, `securityCode`, `expirationMonth/Year`). Manter `capture: true`, `kind: "credit"`, logging estruturado (`returnCode`, `returnMessage`, `httpStatus`, `tid`) idêntico.
+- Manter `chargeCreditCard` (PAN) por enquanto marcado como `@deprecated` para podermos removê-lo depois da validação.
 
----
+Em `src/lib/test-charge.functions.ts`:
+- Trocar schema Zod: remover `cardNumber/expirationMonth/expirationYear/securityCode`; aceitar `cardToken: string`, `cardholderName`, `last4: string(4)`, `brand: string`, `installments`, `amount`, `description`.
+- Chamar `chargeCreditCardWithToken`.
+- Inserir em `transactions.raw_response` o `last4`/`brand`/`bin` (sem PAN).
+
+Mesma troca em `src/lib/payments.functions.ts` (`createOrderAndCharge` ou equivalente do checkout público) para o fluxo do `CheckoutDialog`.
+
+## 5. Atualizar páginas
+
+`src/routes/_authenticated.admin.teste-pagamento.tsx`:
+- Substituir os inputs de cartão pelo `<RedeCardForm onToken={...} />`.
+- Mutação só dispara depois que `onToken` resolve; envia `{ amount, description, installments, cardToken, cardholderName, last4, brand }`.
+- Bloco de resultado continua mostrando TID/HTTP/returnCode/returnMessage (já funciona).
+
+`src/components/site/pa7/CheckoutDialog.tsx`:
+- Mesma substituição na etapa cartão de crédito.
+
+## 6. Logs e observabilidade (preservar)
+
+- Mantemos toda a estrutura `[rede] charge approved/rejected/network error` no servidor — o token muda o payload mas a resposta da e-Rede continua igual (`returnCode`, `returnMessage`, `tid`, `httpStatus`).
+- Adicionar log no frontend (`console.error("[rede.tokenize] failed", {...})`) quando a tokenização falhar, sem dados sensíveis.
+
+## 7. Secrets / configuração
+
+- Pedir ao usuário (via `add_secret`) o `VITE_REDE_PV` se ele aceitar expor o PV no bundle. Geralmente o PV é público — confirmar.
+- Confirmar URL exata do script JS oficial em produção (sandbox vs prod). Se a documentação não estiver à mão, peço o link antes de implementar.
+
+## Arquivos afetados
+
+- novo `src/lib/payments/useRedeScript.ts`
+- novo `src/components/payments/RedeCardForm.tsx`
+- edit `src/lib/payments/rede.ts` (adicionar `chargeCreditCardWithToken`)
+- edit `src/lib/test-charge.functions.ts` (schema + handler)
+- edit `src/lib/payments.functions.ts` (checkout público)
+- edit `src/routes/_authenticated.admin.teste-pagamento.tsx`
+- edit `src/components/site/pa7/CheckoutDialog.tsx`
 
 ## Perguntas antes de implementar
-1. **Seu PV é e-Rede padrão ou e-Rede Split?** (define `erede/v1` vs `eresplit/v1`)
-2. **Tokenização**: opção A ou B?
-3. Posso **remover de vez** o caminho “sandbox simulado” do `payments.functions.ts`? (recomendo sim, mas confirma)
 
-Assim que você responder, abro a implementação no próximo turno.
+1. Confirma que posso adicionar `VITE_REDE_PV` (mesmo valor do `REDE_PV`) como variável pública no frontend?
+2. Tem em mãos a **URL exata do JS de tokenização de produção** da e-Rede e o nome do método (ex.: `$.eRede.tokenize(...)` ou `eRede.create(...)`)? Se sim, me envia — caso contrário, sigo com a URL padrão `https://api.userede.com.br/static/js/erede.min.js` da documentação pública e ajustamos se a e-Rede pedir outra.
