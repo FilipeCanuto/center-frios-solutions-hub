@@ -365,14 +365,15 @@ export async function chargePix(input: {
   orderId: string;
   amountCents: number;
 }): Promise<PixChargeResult> {
-  const { pv, token } = getRedeCredentials();
+  const accessToken = await getRedeAccessToken();
 
   try {
     const res = await fetch(`${REDE_API_BASE}/transactions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: authHeader(pv, token),
+        Authorization: bearerHeader(accessToken),
+        Accept: "application/json",
       },
       body: JSON.stringify({
         kind: "pix",
