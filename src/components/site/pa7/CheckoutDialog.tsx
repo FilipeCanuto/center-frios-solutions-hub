@@ -226,7 +226,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
           },
         });
 
-        if (result && result.success && result.pix) {
+        if (result && result.success && result.pix && result.pix.qrCode && result.pix.copiaCola) {
           setPixResult({
             qrCode: result.pix.qrCode,
             copiaCola: result.pix.copiaCola,

@@ -137,6 +137,7 @@ function TestPaymentPage() {
           <div className="text-sm space-y-1">
             <div><strong>Status pedido:</strong> {result.status}</div>
             <div><strong>TID:</strong> {result.tid ?? "—"}</div>
+            <div><strong>HTTP:</strong> {result.httpStatus ?? "—"}</div>
             <div><strong>Code:</strong> {result.returnCode ?? "—"}</div>
             <div><strong>Mensagem:</strong> {result.returnMessage}</div>
             <div><strong>Order ID:</strong> {result.orderId}</div>
