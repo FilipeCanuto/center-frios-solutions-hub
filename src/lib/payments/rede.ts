@@ -1,7 +1,6 @@
 /**
  * Cliente compartilhado da e-Rede.
- * Centraliza endpoint, autenticação, sanitização e logging.
- * SERVER-ONLY (lê process.env).
+ * SERVER-ONLY (lê process.env). PAN/CVV nunca são logados nem persistidos.
  */
 
 export const REDE_API_BASE = "https://api.userede.com.br/erede/v1";
@@ -37,6 +36,70 @@ function authHeader(pv: string, token: string): string {
   return "Basic " + btoa(`${pv}:${token}`);
 }
 
+/** Remove qualquer eco de campos sensíveis antes de logar/serializar. */
+function redactForLog<T>(obj: T): T {
+  if (!obj || typeof obj !== "object") return obj;
+  const SENSITIVE = new Set([
+    "cardNumber",
+    "securityCode",
+    "cvv",
+    "cvc",
+    "pan",
+    "expirationMonth",
+    "expirationYear",
+    "cardholderName",
+  ]);
+  const walk = (v: unknown): unknown => {
+    if (Array.isArray(v)) return v.map(walk);
+    if (v && typeof v === "object") {
+      const out: Record<string, unknown> = {};
+      for (const [k, val] of Object.entries(v)) {
+        out[k] = SENSITIVE.has(k) ? "[REDACTED]" : walk(val);
+      }
+      return out;
+    }
+    return v;
+  };
+  return walk(obj) as T;
+}
+
+export type ThreeDSDevice = {
+  colorDepth: number;
+  deviceType: "BROWSER" | "MOBILE";
+  javaEnabled: boolean;
+  language: string;
+  screenHeight: number;
+  screenWidth: number;
+  timeZoneOffset: number;
+};
+
+export type ThreeDSBillingAddress = {
+  street: string;
+  number: string;
+  complement?: string;
+  city: string;
+  state: string;
+  country: string; // ISO-3 (BRA)
+  zipCode: string; // 8 dígitos
+};
+
+export type ThreeDSCardHolder = {
+  name: string;
+  email: string;
+  mobilePhone: string; // com DDI: ex 5511999999999
+  documentNumber: string; // CPF 11 dígitos
+};
+
+export type ThreeDSInput = {
+  embedded: boolean;
+  onFailure: "decline" | "continue";
+  userAgent: string;
+  device: ThreeDSDevice;
+  billingAddress: ThreeDSBillingAddress;
+  cardHolder: ThreeDSCardHolder;
+  browser: { acceptHeader: string };
+};
+
 export type CreditChargeInput = {
   orderId: string;
   amountCents: number;
@@ -47,12 +110,14 @@ export type CreditChargeInput = {
   expirationYear: string;
   securityCode: string;
   softDescriptor?: string;
+  threeDS: ThreeDSInput;
 };
 
 export type RedeRawResponse = {
   tid?: string;
   returnCode?: string;
   returnMessage?: string;
+  threeDSecure?: { url?: string; paReq?: string };
   [k: string]: unknown;
 };
 
@@ -62,21 +127,19 @@ export type RedeChargeResult = {
   returnCode: string | null;
   returnMessage: string;
   httpStatus: number;
+  threeDS: { url: string; paReq?: string } | null;
   raw: RedeRawResponse | null;
 };
 
-/**
- * Cobra no crédito via e-Rede com logging estruturado.
- * Nunca lança em erro de gateway — devolve approved=false com diagnóstico.
- */
 export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeChargeResult> {
   const { pv, token } = getRedeCredentials();
 
+  const t = input.threeDS;
   const payload = {
     capture: true,
     kind: "credit",
     reference: input.orderId,
-    amount: input.amountCents, // inteiro em centavos
+    amount: input.amountCents,
     installments: input.installments,
     cardholderName: input.cardholderName.trim().slice(0, 50),
     cardNumber: onlyDigits(input.cardNumber),
@@ -84,6 +147,28 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
     expirationYear: normalizeExpYear(input.expirationYear),
     securityCode: onlyDigits(input.securityCode),
     softDescriptor: (input.softDescriptor ?? "CENTERFRIOS").slice(0, 22),
+    threeDSecure: {
+      embedded: t.embedded,
+      onFailure: t.onFailure,
+      userAgent: t.userAgent.slice(0, 255),
+      device: t.device,
+      billingAddress: {
+        street: t.billingAddress.street.slice(0, 50),
+        number: t.billingAddress.number.slice(0, 10),
+        complement: t.billingAddress.complement?.slice(0, 30) ?? "",
+        city: t.billingAddress.city.slice(0, 50),
+        state: t.billingAddress.state.slice(0, 2).toUpperCase(),
+        country: t.billingAddress.country.slice(0, 3).toUpperCase(),
+        zipCode: onlyDigits(t.billingAddress.zipCode),
+      },
+      cardHolder: {
+        name: t.cardHolder.name.trim().slice(0, 50),
+        email: t.cardHolder.email.trim().slice(0, 100),
+        mobilePhone: onlyDigits(t.cardHolder.mobilePhone),
+        documentNumber: onlyDigits(t.cardHolder.documentNumber),
+      },
+      browser: { acceptHeader: t.browser.acceptHeader.slice(0, 255) },
+    },
   };
 
   let httpStatus = 0;
@@ -104,28 +189,31 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
     const tid = raw?.tid ?? null;
     const returnCode = raw?.returnCode ?? null;
     const returnMessage = raw?.returnMessage ?? (res.ok ? "Sem mensagem" : res.statusText);
+    const threeDS = raw?.threeDSecure?.url
+      ? { url: raw.threeDSecure.url, paReq: raw.threeDSecure.paReq }
+      : null;
 
     if (!approved) {
+      // Log estruturado SEM dados de cartão
       console.error("[rede] charge rejected", {
         orderId: input.orderId,
         httpStatus,
         returnCode,
         returnMessage,
         tid,
-        raw,
+        threeDSRequired: !!threeDS,
       });
     } else {
       console.log("[rede] charge approved", { orderId: input.orderId, tid, httpStatus });
     }
 
-    return { approved, tid, returnCode, returnMessage, httpStatus, raw };
+    return { approved, tid, returnCode, returnMessage, httpStatus, threeDS, raw };
   } catch (err) {
     const e = err as Error;
     console.error("[rede] charge network error", {
       orderId: input.orderId,
       name: e.name,
       message: e.message,
-      stack: e.stack,
     });
     return {
       approved: false,
@@ -133,6 +221,7 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
       returnCode: null,
       returnMessage: `Erro de rede: ${e.message}`,
       httpStatus,
+      threeDS: null,
       raw,
     };
   }
@@ -188,7 +277,8 @@ export async function chargePix(input: {
     console.error("[rede] pix rejected", {
       orderId: input.orderId,
       httpStatus: res.status,
-      raw,
+      returnCode: raw?.returnCode ?? null,
+      returnMessage: raw?.returnMessage ?? res.statusText,
     });
     return {
       ok: false,
@@ -216,4 +306,9 @@ export async function chargePix(input: {
       raw: null,
     };
   }
+}
+
+/** Saneia a resposta bruta para persistência em banco (remove eco sensível). */
+export function sanitizeRawForStorage(raw: unknown): unknown {
+  return redactForLog(raw);
 }

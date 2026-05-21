@@ -37,6 +37,7 @@ const StepOne = z.object({
   phone: z.string().trim().min(8, "Telefone inválido"),
   company: z.string().trim().optional(),
   cnpj: z.string().trim().optional(),
+  cpf: z.string().trim().optional(),
 });
 
 const StepTwo = z.object({
@@ -273,6 +274,12 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
 
         const fullYear = `20${year}`;
 
+        if (!identity.cpf || identity.cpf.replace(/\D/g, "").length !== 11) {
+          toast.error("Informe um CPF válido (obrigatório para autenticação 3DS).");
+          setSubmitting(false);
+          return;
+        }
+
         const result = await processPayment({
           data: {
             customer_name: identity.name,
@@ -280,6 +287,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
             customer_phone: identity.phone,
             customer_company: identity.company,
             customer_cnpj: identity.cnpj,
+            customer_cpf: identity.cpf,
             shipping_address: {
               cep: address.cep,
               street: address.street,
@@ -300,6 +308,20 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
               expirationYear: fullYear,
               securityCode: securityCode,
               installments: installments,
+            },
+            three_ds: {
+              userAgent: navigator.userAgent,
+              acceptHeader: "application/json",
+              device: {
+                colorDepth: window.screen.colorDepth || 24,
+                deviceType: "BROWSER",
+                javaEnabled:
+                  typeof navigator.javaEnabled === "function" ? navigator.javaEnabled() : false,
+                language: navigator.language || "pt-BR",
+                screenHeight: window.screen.height,
+                screenWidth: window.screen.width,
+                timeZoneOffset: new Date().getTimezoneOffset(),
+              },
             },
           },
         });
@@ -412,6 +434,18 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                         defaultValue={identity?.cnpj}
                       />
                     </div>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="cpf">CPF do portador do cartão *</Label>
+                    <Input
+                      id="cpf"
+                      name="cpf"
+                      placeholder="000.000.000-00"
+                      defaultValue={identity?.cpf}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Obrigatório para autenticação 3DS 2.0 ao pagar com cartão.
+                    </p>
                   </div>
                   <Button type="submit" className="mt-2 rounded-full" size="lg">
                     Continuar para entrega
