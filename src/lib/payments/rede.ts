@@ -166,13 +166,62 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
     input.orderId,
     input.callbackBaseUrl ?? REDE_DEFAULT_CALLBACK_BASE,
   );
+  // Fallback estático para o ambiente do comprador. Garante que mesmo se o
+  // frontend não capturar todos os atributos do navegador, a e-Rede ainda
+  // receba um payload completo (Code 3001: "DeviceType3ds: Required parameter missing").
+  const BROWSER_FALLBACK = {
+    userAgent:
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    acceptHeader:
+      "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    colorDepth: 24,
+    javaEnabled: true,
+    language: "pt-BR",
+    screenHeight: 1080,
+    screenWidth: 1920,
+    timeZoneOffset: 180,
+  };
+
+  const dev = t.device ?? ({} as Partial<ThreeDSDevice>);
+  const userAgent = (t.userAgent && t.userAgent.trim()) || BROWSER_FALLBACK.userAgent;
+  const acceptHeader =
+    (t.browser?.acceptHeader && t.browser.acceptHeader.trim()) || BROWSER_FALLBACK.acceptHeader;
+  const colorDepth = Number.isFinite(dev.colorDepth) ? dev.colorDepth! : BROWSER_FALLBACK.colorDepth;
+  const javaEnabled = typeof dev.javaEnabled === "boolean" ? dev.javaEnabled : BROWSER_FALLBACK.javaEnabled;
+  const language = (dev.language && dev.language.trim()) || BROWSER_FALLBACK.language;
+  const screenHeight = Number.isFinite(dev.screenHeight) ? dev.screenHeight! : BROWSER_FALLBACK.screenHeight;
+  const screenWidth = Number.isFinite(dev.screenWidth) ? dev.screenWidth! : BROWSER_FALLBACK.screenWidth;
+  const timeZoneOffset = Number.isFinite(dev.timeZoneOffset)
+    ? dev.timeZoneOffset!
+    : BROWSER_FALLBACK.timeZoneOffset;
+  const deviceTypeStr: "BROWSER" | "MOBILE" = dev.deviceType === "MOBILE" ? "MOBILE" : "BROWSER";
+
+  // Higienização do holderName: remove acentos, caracteres especiais e força maiúsculas.
+  const sanitizedHolderName = input.cardholderName
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z ]/g, "")
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, " ")
+    .slice(0, 50);
+
+  const sanitizedCardHolderName = t.cardHolder.name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z ]/g, "")
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, " ")
+    .slice(0, 50);
+
   const payload = {
     capture: true,
     kind: "credit",
     reference: input.orderId,
     amount: input.amountCents,
     installments: input.installments,
-    cardholderName: input.cardholderName.trim().slice(0, 50),
+    cardholderName: sanitizedHolderName,
     cardNumber: onlyDigits(input.cardNumber),
     expirationMonth: onlyDigits(input.expirationMonth).padStart(2, "0"),
     expirationYear: normalizeExpYear(input.expirationYear),
@@ -188,8 +237,31 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
     threeDSecure: {
       embedded: t.embedded,
       onFailure: t.onFailure,
-      userAgent: t.userAgent.slice(0, 255),
-      device: t.device,
+      // Code 3001: DeviceType3ds required — enviar em ambas formas (alfa + numérica)
+      // para compatibilidade com schema da e-Rede.
+      deviceType: deviceTypeStr,
+      deviceType3ds: deviceTypeStr === "MOBILE" ? "01" : "02",
+      challengePreference: "no_preference",
+      userAgent: userAgent.slice(0, 255),
+      device: {
+        colorDepth,
+        deviceType: deviceTypeStr,
+        javaEnabled,
+        language,
+        screenHeight,
+        screenWidth,
+        timeZoneOffset,
+      },
+      browser: {
+        userAgent: userAgent.slice(0, 255),
+        acceptHeader: acceptHeader.slice(0, 255),
+        colorDepth,
+        javaEnabled,
+        language,
+        screenHeight,
+        screenWidth,
+        timeZoneOffset,
+      },
       billingAddress: {
         street: t.billingAddress.street.slice(0, 50),
         number: t.billingAddress.number.slice(0, 10),
@@ -200,12 +272,11 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
         zipCode: onlyDigits(t.billingAddress.zipCode),
       },
       cardHolder: {
-        name: t.cardHolder.name.trim().slice(0, 50),
+        name: sanitizedCardHolderName || sanitizedHolderName,
         email: t.cardHolder.email.trim().slice(0, 100),
         mobilePhone: onlyDigits(t.cardHolder.mobilePhone),
         documentNumber: onlyDigits(t.cardHolder.documentNumber),
       },
-      browser: { acceptHeader: t.browser.acceptHeader.slice(0, 255) },
       // Espelha as URLs também dentro do nó 3DS (algumas versões do schema validam aqui).
       threeDSUrls: {
         callbackUrl: successUrl,
