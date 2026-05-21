@@ -1,69 +1,53 @@
-# Opção A — Página admin de teste de pagamento
 
-Criar uma rota oculta, protegida por admin, que permite cobrar um valor simbólico (ex.: R$ 1,00) num cartão real via e-Rede, sem mexer no checkout de produção.
+## Diagnóstico atual (antes de mexer)
 
-## O que será criado
+Li `src/lib/payments.functions.ts`, `src/lib/test-charge.functions.ts` e o webhook `src/routes/api.public.webhook.rede.$token.ts`. Achados:
 
-### 1. Rota protegida `/admin/teste-pagamento`
-- Arquivo: `src/routes/_authenticated/admin/teste-pagamento.tsx`
-- Acessível apenas para usuários com role `admin` (mesma proteção das outras telas `/admin/*`)
-- Não aparece em nenhum menu — só quem souber a URL acessa
+1. **Endpoint**: hoje usamos `https://api.userede.com.br/erede/v1/transactions`. Esse **é** o endpoint de produção do produto e-Rede padrão. O `eresplit/v1/` que você citou é de outro produto (e-Rede **Split**, para marketplaces). **Preciso confirmar com você qual é o seu produto contratado** antes de trocar — trocar pra `eresplit` num PV não-split derruba 100% das transações.
+2. **Modo sandbox silencioso**: em `payments.functions.ts` existe `isSandbox = !REDE_PV || !REDE_TOKEN`. Se uma das secrets falhar em runtime, o checkout “aprova” sem chamar a Rede e o cliente acha que pagou. Isso explica por que nada chega no painel.
+3. **Erros engolidos**: o `catch` da chamada à Rede só faz `console.error("[processPayment] e-Rede API request error:", apiError)` e segue. Não logamos `returnCode`/`returnMessage` da resposta quando ela vem com erro mas `res.ok` é true. O response cru vai pra `transactions.raw_response`, mas nenhuma trilha estruturada.
+4. **Valor**: já vai em centavos (`Math.round(total * 100)`) — ok.
+5. **Documentos**: `customer_cnpj` e `customer_phone` são gravados como o usuário digitou (com máscara). Não enviamos hoje no payload da Rede (a API e-Rede `/transactions` credit não exige), mas se você precisa antifraude/3DS, precisamos enviar limpos.
+6. **Tokenização no frontend**: hoje **não há** tokenização — `CheckoutDialog` manda PAN, CVV e validade direto pro server function, que repassa pra Rede. Isso funciona, mas mantém o app no escopo PCI-DSS SAQ D. O “checkout transparente” da Rede usa um JS que tokeniza no browser e devolve um token; só ele vai pro backend.
 
-### 2. Formulário de teste
-Campos:
-- **Valor (R$)** — livre, default `1.00`
-- **Descrição** — default "Teste e-Rede"
-- **Nome no cartão**
-- **Número do cartão**
-- **Validade (MM/AA)**
-- **CVV**
-- **Parcelas** — default 1x
+---
 
-Botão **"Cobrar agora"** chama o server function de pagamento.
+## Plano de correção
 
-### 3. Server function `chargeTestPayment`
-- Arquivo: `src/lib/payments/test-charge.functions.ts`
-- Cria uma `order` no banco com:
-  - `customer_name` = "TESTE ADMIN"
-  - `customer_email` = email do admin logado
-  - `product_name` = descrição informada
-  - `total_price` = valor informado
-  - `payment_method` = "credit_card"
-  - `status` = "pending"
-- Chama a API da e-Rede (mesma integração já feita no checkout) usando `process.env.REDE_PV` e `REDE_TOKEN`
-- Atualiza a `order` para `paid` ou `failed` conforme retorno
-- Insere linha em `transactions` com `raw_response` completo
-- Retorna `{ orderId, tid, status, message }` para a UI exibir
+### 1. Forçar produção e falhar alto se faltar credencial
+- `src/lib/payments.functions.ts` e `src/lib/test-charge.functions.ts`:
+  - Remover o caminho `isSandbox` que simula aprovação. Se `REDE_PV` ou `REDE_TOKEN` faltarem, **lançar erro** com mensagem clara (sem criar order como “paid”).
+  - Centralizar a base URL numa constante `REDE_API_BASE = "https://api.userede.com.br/erede/v1"` (ou `eresplit/v1` se você confirmar split) num arquivo único `src/lib/payments/rede-client.ts` para os dois fluxos consumirem.
 
-### 4. Resultado na tela
-Depois da cobrança, mostra um card com:
-- Status (aprovado / negado) com cor
-- TID da Rede
-- Mensagem de retorno
-- Link "Ver pedido em /admin/pedidos"
+### 2. Logging profundo da resposta da Rede
+Em ambos os handlers, depois do `fetch`:
+- Logar `res.status`, `res.statusText`, `rawResponse.returnCode`, `rawResponse.returnMessage`, `rawResponse.tid`, `order.id` num único `console.error("[rede] reject", {...})` quando `returnCode !== "00"` ou `!res.ok`.
+- No `catch` (erro de rede), logar `apiError.name`, `apiError.message` e o stack.
+- Salvar sempre `raw_response` no `transactions` (já fazemos no checkout real; ampliar no teste).
 
-## Fluxo de validação que poderemos rodar
+### 3. Sanitização do payload
+Criar `src/lib/payments/sanitize.ts` com:
+- `onlyDigits(value)` → remove tudo que não é dígito.
+- Aplicar em `cardNumber`, `securityCode`, `expirationMonth`, `expirationYear` (já fazemos pro cardNumber; padronizar).
+- Normalizar `expirationYear` pra 4 dígitos sempre.
+- Em `payments.functions.ts`, limpar `customer_phone` e `customer_cnpj` antes do insert no banco e antes de qualquer envio externo.
+- Garantir `amount = Math.round(total * 100)` como `number` inteiro (assert).
 
-1. Abrir `/admin/teste-pagamento` (logado como admin)
-2. Preencher R$ 1,00 + dados do cartão virtual → **Cobrar**
-3. Confirmar `status: paid` na tela e em `/admin/pedidos`
-4. Confirmar linha em `transactions` com `tid` e `raw_response`
-5. Disparar manualmente o webhook (`/api/public/webhook/rede/<token>`) com o mesmo `tid` para validar:
-   - Reenvio do mesmo evento → `200 { duplicate: true }`
-   - Token errado → `401`
-   - `pending` depois de `paid` → status permanece `paid`
+### 4. Decisão sobre tokenização (precisa de aprovação sua)
+Duas opções, escolha uma:
+- **A — Manter PAN no servidor (rápido)**: nada muda no frontend. Você assume compliance PCI SAQ D. É como está hoje, só com os logs/sanitização corrigidos.
+- **B — Adotar checkout transparente da Rede (recomendado)**: incluir o JS oficial da Rede no `CheckoutDialog`, tokenizar no browser usando `REDE_PV` público e enviar só o token pro `processPayment`. Reduz escopo PCI. Requer 1 etapa extra de desenvolvimento e validação com a Rede.
 
-## Detalhes técnicos
+### 5. Endpoint de auditoria rápida
+Adicionar `GET /api/admin/rede-healthcheck` (protegido por admin) que:
+- Confirma presença de `REDE_PV` e `REDE_TOKEN` (sem expô-los).
+- Faz uma chamada `GET /transactions/{tid_fake}` que deve retornar 404/400 da Rede — comprova que estamos atingindo o endpoint de produção certo com credenciais aceitas.
 
-- A integração com a e-Rede já existe no checkout; vamos **reutilizar a mesma função/cliente** que faz `POST /v1/transactions` — só muda o ponto de entrada (formulário admin em vez de checkout público).
-- Nenhuma alteração no checkout real, nos preços ou no webhook.
-- A página é client-side com `useServerFn` + `useMutation`; o cartão **nunca** trafega pelo banco — vai direto do browser → server function → e-Rede.
-- Validação Zod no `inputValidator` (valor > 0, número de cartão 13-19 dígitos, CVV 3-4 dígitos, validade futura).
+---
 
-## Arquivos a criar/editar
+## Perguntas antes de implementar
+1. **Seu PV é e-Rede padrão ou e-Rede Split?** (define `erede/v1` vs `eresplit/v1`)
+2. **Tokenização**: opção A ou B?
+3. Posso **remover de vez** o caminho “sandbox simulado” do `payments.functions.ts`? (recomendo sim, mas confirma)
 
-- `src/routes/_authenticated/admin/teste-pagamento.tsx` (novo)
-- `src/lib/payments/test-charge.functions.ts` (novo)
-- Reaproveita o cliente da Rede que já existe (vou localizar e reutilizar — sem duplicar lógica)
-
-Posso seguir?
+Assim que você responder, abro a implementação no próximo turno.
