@@ -53,7 +53,7 @@ function TestPaymentPage() {
   });
 
   const mutation = useMutation({
-    mutationFn: (vars: Parameters<typeof charge>[0]["data"]) => charge({ data: vars }),
+    mutationFn: (vars: Parameters<typeof chargeTestPayment>[0]["data"]) => charge({ data: vars }),
   });
 
   function update<K extends keyof typeof form>(k: K, v: string) {
