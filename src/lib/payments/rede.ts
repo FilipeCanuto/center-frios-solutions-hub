@@ -227,19 +227,20 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
     .replace(/\s+/g, " ")
     .slice(0, 50);
 
+  // Payload mínimo de venda direta — sem storageCard (Code 130) nem nós extras.
+  // Apenas campos puros do Ordinary Transactional Cycle conforme manual e-Rede.
+  void input.installments;
+  void input.softDescriptor;
   const payload = {
     capture: true,
     kind: "credit",
     reference: input.orderId,
     amount: input.amountCents,
-    installments: input.installments,
     cardholderName: sanitizedHolderName,
     cardNumber: onlyDigits(input.cardNumber),
     expirationMonth: onlyDigits(input.expirationMonth).padStart(2, "0"),
     expirationYear: normalizeExpYear(input.expirationYear),
     securityCode: onlyDigits(input.securityCode),
-    softDescriptor: (input.softDescriptor ?? "CENTERFRIOS").slice(0, 22),
-    storageCard: false,
   };
 
   let httpStatus = 0;
