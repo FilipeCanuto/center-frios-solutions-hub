@@ -25,9 +25,18 @@ export function toCents(amountBRL: number): number {
 export function getRedeCredentials(): { pv: string; token: string } {
   const pvRaw = process.env.REDE_PV;
   const token = process.env.REDE_TOKEN;
+  // Auditoria de Secrets (nunca loga o valor, só presença/tamanho).
+  console.log("[rede] env audit", {
+    REDE_PV_present: !!pvRaw,
+    REDE_PV_len: pvRaw ? String(pvRaw).length : 0,
+    REDE_TOKEN_present: !!token,
+    REDE_TOKEN_len: token ? String(token).length : 0,
+  });
   if (!pvRaw || !token) {
     throw new Error(
-      "Credenciais e-Rede ausentes (REDE_PV/REDE_TOKEN). Configure as secrets antes de cobrar.",
+      "Erro de Configuração de Variável de Ambiente: " +
+        `REDE_PV=${!!pvRaw ? "ok" : "undefined"}, REDE_TOKEN=${!!token ? "ok" : "undefined"}. ` +
+        "Configure os Secrets no Lovable Cloud antes de cobrar.",
     );
   }
   // Pág. 16 do manual v1.32: PV não pode conter zeros à esquerda
@@ -296,6 +305,7 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
 
   let httpStatus = 0;
   let raw: RedeRawResponse | null = null;
+  let rawText = "";
   try {
     const res = await fetch(`${REDE_API_BASE}/transactions`, {
       method: "POST",
@@ -307,19 +317,38 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
       body: JSON.stringify(payload),
     });
     httpStatus = res.status;
-    raw = (await res.json().catch(() => null)) as RedeRawResponse | null;
+    rawText = await res.text().catch(() => "");
+    try {
+      raw = rawText ? (JSON.parse(rawText) as RedeRawResponse) : null;
+    } catch {
+      raw = null;
+    }
 
-    const approved = res.ok && raw?.returnCode === "00";
+    // HTTP não-2xx: a Rede recusou a requisição (auth, validação, gateway).
+    // Exige throw explícito com o corpo bruto para ver a verdade do servidor.
+    if (!res.ok) {
+      console.error("[rede] charge HTTP error", {
+        orderId: input.orderId,
+        httpStatus,
+        rawText: rawText.slice(0, 2000),
+      });
+      throw new Error(
+        `e-Rede HTTP ${httpStatus} em /v2/transactions — resposta crua: ${
+          rawText || res.statusText || "(corpo vazio)"
+        }`,
+      );
+    }
+
+    const approved = raw?.returnCode === "00";
     const tid = raw?.tid ?? null;
     const returnCode = raw?.returnCode ?? null;
-    const returnMessage = raw?.returnMessage ?? (res.ok ? "Sem mensagem" : res.statusText);
+    const returnMessage = raw?.returnMessage ?? "Sem mensagem";
     const threeDS = raw?.threeDSecure?.url
       ? { url: raw.threeDSecure.url, paReq: raw.threeDSecure.paReq }
       : null;
 
     if (!approved) {
-      // Log estruturado SEM dados de cartão
-      console.error("[rede] charge rejected", {
+      console.error("[rede] charge denied by issuer", {
         orderId: input.orderId,
         httpStatus,
         returnCode,
@@ -334,20 +363,17 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
     return { approved, tid, returnCode, returnMessage, httpStatus, threeDS, raw };
   } catch (err) {
     const e = err as Error;
-    console.error("[rede] charge network error", {
+    console.error("[rede] charge failure", {
       orderId: input.orderId,
       name: e.name,
       message: e.message,
-    });
-    return {
-      approved: false,
-      tid: null,
-      returnCode: null,
-      returnMessage: `Erro de rede: ${e.message}`,
       httpStatus,
-      threeDS: null,
-      raw,
-    };
+      rawText: rawText.slice(0, 2000),
+    });
+    // Propaga a exceção — sem mocks, sem falso positivo.
+    throw new Error(
+      `Falha real na e-Rede (HTTP ${httpStatus || "network"}): ${e.message}`,
+    );
   }
 }
 
