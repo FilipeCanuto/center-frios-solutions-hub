@@ -205,51 +205,20 @@ export type RedeChargeResult = {
 export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeChargeResult> {
   const { pv, token } = getRedeCredentials();
 
-  const t = input.threeDS;
-  const { successUrl, failureUrl } = buildThreeDSUrls(
-    input.orderId,
-    input.callbackBaseUrl ?? REDE_DEFAULT_CALLBACK_BASE,
-  );
-  // Fallback estático para o ambiente do comprador. Garante que mesmo se o
-  // frontend não capturar todos os atributos do navegador, a e-Rede ainda
-  // receba um payload completo (Code 3001: "DeviceType3ds: Required parameter missing").
-  const BROWSER_FALLBACK = {
-    userAgent:
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    acceptHeader:
-      "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    colorDepth: 24,
-    javaEnabled: true,
-    language: "pt-BR",
-    screenHeight: 1080,
-    screenWidth: 1920,
-    timeZoneOffset: 180,
-  };
-
-  const dev = t.device ?? ({} as Partial<ThreeDSDevice>);
-  const userAgent = (t.userAgent && t.userAgent.trim()) || BROWSER_FALLBACK.userAgent;
-  const acceptHeader =
-    (t.browser?.acceptHeader && t.browser.acceptHeader.trim()) || BROWSER_FALLBACK.acceptHeader;
-  const colorDepth = Number.isFinite(dev.colorDepth) ? dev.colorDepth! : BROWSER_FALLBACK.colorDepth;
-  const javaEnabled = typeof dev.javaEnabled === "boolean" ? dev.javaEnabled : BROWSER_FALLBACK.javaEnabled;
-  const language = (dev.language && dev.language.trim()) || BROWSER_FALLBACK.language;
-  const screenHeight = Number.isFinite(dev.screenHeight) ? dev.screenHeight! : BROWSER_FALLBACK.screenHeight;
-  const screenWidth = Number.isFinite(dev.screenWidth) ? dev.screenWidth! : BROWSER_FALLBACK.screenWidth;
-  const timeZoneOffset = Number.isFinite(dev.timeZoneOffset)
-    ? dev.timeZoneOffset!
-    : BROWSER_FALLBACK.timeZoneOffset;
+  // 3DS desativado temporariamente — serviço de autenticação não contratado
+  // no PV (Code 203: "Authentication service not registered for the merchant").
+  // Rodando fluxo transacional ordinário sem nó `threeDSecure` nem `urls`.
+  // input.threeDS / callbackBaseUrl permanecem na assinatura para reativação futura.
+  void input.threeDS;
+  void input.callbackBaseUrl;
+  void buildThreeDSUrls;
+  void stripSpecials;
+  void formatPostalCode;
+  void formatBillingPhone;
+  void ensureIPv4;
 
   // Higienização do holderName: remove acentos, caracteres especiais e força maiúsculas.
   const sanitizedHolderName = input.cardholderName
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z ]/g, "")
-    .trim()
-    .toUpperCase()
-    .replace(/\s+/g, " ")
-    .slice(0, 50);
-
-  const sanitizedCardHolderName = t.cardHolder.name
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-zA-Z ]/g, "")
@@ -270,61 +239,7 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
     expirationYear: normalizeExpYear(input.expirationYear),
     securityCode: onlyDigits(input.securityCode),
     softDescriptor: (input.softDescriptor ?? "CENTERFRIOS").slice(0, 22),
-    // URLs de retorno exigidas pela e-Rede quando 3DS 2.0 está ativo.
-    // Code 259 ("Urls: Required parameter missing") é resolvido aqui.
-    urls: [
-      { kind: "threeDSecureSuccess", url: successUrl },
-      { kind: "threeDSecureFailure", url: failureUrl },
-      { kind: "callback", url: successUrl },
-    ],
-    // Contrato estrito conforme manual de produção e-Rede v1.32 (mar/2026),
-    // págs. 40, 42 e 45. Resolve Code 3001 (DeviceType3ds required).
-    threeDSecure: {
-      embedded: t.embedded,
-      onFailure: t.onFailure,
-      // responseMode fixo "event" (pág. 40).
-      responseMode: "event",
-      userAgent: userAgent.slice(0, 255),
-      // Nó device: camelCase exato; deviceType3ds fixo "BROWSER" (pág. 42),
-      // padrão regulamentar e-Rede para checkouts web (mobile e desktop).
-      device: {
-        deviceType3ds: "BROWSER",
-        colorDepth,
-        javaEnabled,
-        language,
-        screenHeight,
-        screenWidth,
-        timeZoneOffset,
-        userAgent: userAgent.slice(0, 255),
-        acceptHeader: acceptHeader.slice(0, 255),
-      },
-      // Nó billing com postalCode/postalcode (pág. 43/45/61).
-      billing: {
-        street: stripSpecials(t.billingAddress.street).slice(0, 50),
-        number: t.billingAddress.number.slice(0, 10),
-        complement: t.billingAddress.complement
-          ? stripSpecials(t.billingAddress.complement).slice(0, 30)
-          : "",
-        city: stripSpecials(t.billingAddress.city).slice(0, 50),
-        state: stripSpecials(t.billingAddress.state).slice(0, 2).toUpperCase(),
-        country: t.billingAddress.country.slice(0, 3).toUpperCase(),
-        postalCode: formatPostalCode(t.billingAddress.zipCode),
-        postalcode: formatPostalCode(t.billingAddress.zipCode),
-        phoneNumber: formatBillingPhone(t.phoneNumber ?? t.cardHolder.mobilePhone),
-      },
-      ipAddress: ensureIPv4(t.ipAddress),
-      cardHolder: {
-        name: sanitizedCardHolderName || sanitizedHolderName,
-        email: t.cardHolder.email.trim().slice(0, 100),
-        mobilePhone: onlyDigits(t.cardHolder.mobilePhone),
-        documentNumber: onlyDigits(t.cardHolder.documentNumber),
-      },
-      // Espelha as URLs também dentro do nó 3DS (algumas versões do schema validam aqui).
-      threeDSUrls: {
-        callbackUrl: successUrl,
-        failureUrl: failureUrl,
-      },
-    },
+    storageCard: false,
   };
 
   let httpStatus = 0;
