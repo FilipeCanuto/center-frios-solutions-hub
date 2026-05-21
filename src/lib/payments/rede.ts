@@ -111,7 +111,21 @@ export type CreditChargeInput = {
   securityCode: string;
   softDescriptor?: string;
   threeDS: ThreeDSInput;
+  /** Base pública para URLs de retorno 3DS. Default: produção centerfrioshub. */
+  callbackBaseUrl?: string;
 };
+
+/** Domínio público estável para callbacks 3DS da e-Rede. */
+export const REDE_DEFAULT_CALLBACK_BASE = "https://centerfrioshub.lovable.app";
+
+function buildThreeDSUrls(orderId: string, base: string) {
+  const root = base.replace(/\/+$/, "");
+  const ref = encodeURIComponent(orderId);
+  return {
+    successUrl: `${root}/api/public/rede/3ds/callback?status=success&ref=${ref}`,
+    failureUrl: `${root}/api/public/rede/3ds/callback?status=failure&ref=${ref}`,
+  };
+}
 
 export type RedeRawResponse = {
   tid?: string;
@@ -135,6 +149,10 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
   const { pv, token } = getRedeCredentials();
 
   const t = input.threeDS;
+  const { successUrl, failureUrl } = buildThreeDSUrls(
+    input.orderId,
+    input.callbackBaseUrl ?? REDE_DEFAULT_CALLBACK_BASE,
+  );
   const payload = {
     capture: true,
     kind: "credit",
@@ -147,6 +165,13 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
     expirationYear: normalizeExpYear(input.expirationYear),
     securityCode: onlyDigits(input.securityCode),
     softDescriptor: (input.softDescriptor ?? "CENTERFRIOS").slice(0, 22),
+    // URLs de retorno exigidas pela e-Rede quando 3DS 2.0 está ativo.
+    // Code 259 ("Urls: Required parameter missing") é resolvido aqui.
+    urls: [
+      { kind: "threeDSecureSuccess", url: successUrl },
+      { kind: "threeDSecureFailure", url: failureUrl },
+      { kind: "callback", url: successUrl },
+    ],
     threeDSecure: {
       embedded: t.embedded,
       onFailure: t.onFailure,
@@ -168,6 +193,11 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
         documentNumber: onlyDigits(t.cardHolder.documentNumber),
       },
       browser: { acceptHeader: t.browser.acceptHeader.slice(0, 255) },
+      // Espelha as URLs também dentro do nó 3DS (algumas versões do schema validam aqui).
+      threeDSUrls: {
+        callbackUrl: successUrl,
+        failureUrl: failureUrl,
+      },
     },
   };
 
