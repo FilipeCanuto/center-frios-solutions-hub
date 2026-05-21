@@ -3,7 +3,8 @@
  * SERVER-ONLY (lê process.env). PAN/CVV nunca são logados nem persistidos.
  */
 
-export const REDE_API_BASE = "https://api.userede.com.br/erede/v1";
+export const REDE_OAUTH_URL = "https://api.userede.com.br/redelabs/oauth2/token";
+export const REDE_API_BASE = "https://api.userede.com.br/erede/v2";
 
 export function onlyDigits(v: string | null | undefined): string {
   return (v ?? "").replace(/\D+/g, "");
@@ -22,18 +23,67 @@ export function toCents(amountBRL: number): number {
 }
 
 export function getRedeCredentials(): { pv: string; token: string } {
-  const pv = process.env.REDE_PV;
+  const pvRaw = process.env.REDE_PV;
   const token = process.env.REDE_TOKEN;
-  if (!pv || !token) {
+  if (!pvRaw || !token) {
     throw new Error(
       "Credenciais e-Rede ausentes (REDE_PV/REDE_TOKEN). Configure as secrets antes de cobrar.",
     );
   }
+  // Pág. 16 do manual v1.32: PV não pode conter zeros à esquerda
+  // (sob pena de HTTP 401 "invalid_client" no OAuth2).
+  const pv = String(pvRaw).replace(/^0+/, "");
   return { pv, token };
 }
 
-function authHeader(pv: string, token: string): string {
-  return "Basic " + btoa(`${pv}:${token}`);
+/**
+ * Gera e cacheia token OAuth2 (client_credentials) — pág. 15-17 do manual v1.32.
+ * clientId = REDE_PV (sem zeros à esquerda), clientSecret = REDE_TOKEN.
+ */
+let cachedToken: { value: string; expiresAt: number } | null = null;
+
+export async function getRedeAccessToken(): Promise<string> {
+  const now = Date.now();
+  if (cachedToken && cachedToken.expiresAt > now + 30_000) {
+    return cachedToken.value;
+  }
+  const { pv, token } = getRedeCredentials();
+  const basic = btoa(`${pv}:${token}`);
+
+  const res = await fetch(REDE_OAUTH_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Basic ${basic}`,
+      Accept: "application/json",
+    },
+    body: new URLSearchParams({ grant_type: "client_credentials" }).toString(),
+  });
+
+  const json = (await res.json().catch(() => null)) as
+    | {
+        access_token?: string;
+        expires_in?: number;
+        error?: string;
+        error_description?: string;
+      }
+    | null;
+
+  if (!res.ok || !json?.access_token) {
+    const msg = json?.error_description || json?.error || res.statusText;
+    console.error("[rede] oauth2 failure", { httpStatus: res.status, error: msg });
+    throw new Error(`[rede] Falha OAuth2 (${res.status}): ${msg}`);
+  }
+
+  cachedToken = {
+    value: json.access_token,
+    expiresAt: now + (json.expires_in ?? 3600) * 1000,
+  };
+  return json.access_token;
+}
+
+function bearerHeader(accessToken: string): string {
+  return `Bearer ${accessToken}`;
 }
 
 /** Remove qualquer eco de campos sensíveis antes de logar/serializar. */
