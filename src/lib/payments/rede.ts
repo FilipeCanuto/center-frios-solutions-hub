@@ -194,7 +194,6 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
   const timeZoneOffset = Number.isFinite(dev.timeZoneOffset)
     ? dev.timeZoneOffset!
     : BROWSER_FALLBACK.timeZoneOffset;
-  const deviceTypeStr: "BROWSER" | "MOBILE" = dev.deviceType === "MOBILE" ? "MOBILE" : "BROWSER";
 
   // Higienização do holderName: remove acentos, caracteres especiais e força maiúsculas.
   const sanitizedHolderName = input.cardholderName
@@ -234,42 +233,36 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
       { kind: "threeDSecureFailure", url: failureUrl },
       { kind: "callback", url: successUrl },
     ],
+    // Contrato estrito conforme manual de produção e-Rede v1.32 (mar/2026),
+    // págs. 40, 42 e 45. Resolve Code 3001 (DeviceType3ds required).
     threeDSecure: {
       embedded: t.embedded,
       onFailure: t.onFailure,
-      // Code 3001: DeviceType3ds required — enviar em ambas formas (alfa + numérica)
-      // para compatibilidade com schema da e-Rede.
-      deviceType: deviceTypeStr,
-      deviceType3ds: deviceTypeStr === "MOBILE" ? "01" : "02",
-      challengePreference: "no_preference",
+      // responseMode fixo "event" (pág. 40).
+      responseMode: "event",
       userAgent: userAgent.slice(0, 255),
+      // Nó device: camelCase exato; deviceType3ds fixo "BROWSER" (pág. 42),
+      // padrão regulamentar e-Rede para checkouts web (mobile e desktop).
       device: {
+        deviceType3ds: "BROWSER",
         colorDepth,
-        deviceType: deviceTypeStr,
         javaEnabled,
         language,
         screenHeight,
         screenWidth,
         timeZoneOffset,
-      },
-      browser: {
         userAgent: userAgent.slice(0, 255),
         acceptHeader: acceptHeader.slice(0, 255),
-        colorDepth,
-        javaEnabled,
-        language,
-        screenHeight,
-        screenWidth,
-        timeZoneOffset,
       },
-      billingAddress: {
+      // Nó billing com postalCode camelCase (pág. 45), CEP sem pontos/traços.
+      billing: {
         street: t.billingAddress.street.slice(0, 50),
         number: t.billingAddress.number.slice(0, 10),
         complement: t.billingAddress.complement?.slice(0, 30) ?? "",
         city: t.billingAddress.city.slice(0, 50),
         state: t.billingAddress.state.slice(0, 2).toUpperCase(),
         country: t.billingAddress.country.slice(0, 3).toUpperCase(),
-        zipCode: onlyDigits(t.billingAddress.zipCode),
+        postalCode: onlyDigits(t.billingAddress.zipCode),
       },
       cardHolder: {
         name: sanitizedCardHolderName || sanitizedHolderName,
