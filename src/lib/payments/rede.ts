@@ -298,16 +298,21 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
         userAgent: userAgent.slice(0, 255),
         acceptHeader: acceptHeader.slice(0, 255),
       },
-      // Nó billing com postalCode camelCase (pág. 45), CEP sem pontos/traços.
+      // Nó billing com postalCode/postalcode (pág. 43/45/61).
       billing: {
-        street: t.billingAddress.street.slice(0, 50),
+        street: stripSpecials(t.billingAddress.street).slice(0, 50),
         number: t.billingAddress.number.slice(0, 10),
-        complement: t.billingAddress.complement?.slice(0, 30) ?? "",
-        city: t.billingAddress.city.slice(0, 50),
-        state: t.billingAddress.state.slice(0, 2).toUpperCase(),
+        complement: t.billingAddress.complement
+          ? stripSpecials(t.billingAddress.complement).slice(0, 30)
+          : "",
+        city: stripSpecials(t.billingAddress.city).slice(0, 50),
+        state: stripSpecials(t.billingAddress.state).slice(0, 2).toUpperCase(),
         country: t.billingAddress.country.slice(0, 3).toUpperCase(),
-        postalCode: onlyDigits(t.billingAddress.zipCode),
+        postalCode: formatPostalCode(t.billingAddress.zipCode),
+        postalcode: formatPostalCode(t.billingAddress.zipCode),
+        phoneNumber: formatBillingPhone(t.phoneNumber ?? t.cardHolder.mobilePhone),
       },
+      ipAddress: ensureIPv4(t.ipAddress),
       cardHolder: {
         name: sanitizedCardHolderName || sanitizedHolderName,
         email: t.cardHolder.email.trim().slice(0, 100),
