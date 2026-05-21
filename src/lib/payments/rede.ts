@@ -253,7 +253,8 @@ export type RedeChargeResult = {
 };
 
 export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeChargeResult> {
-  const { pv, token } = getRedeCredentials();
+  const accessToken = await getRedeAccessToken();
+
 
   // 3DS desativado temporariamente — serviço de autenticação não contratado
   // no PV (Code 203: "Authentication service not registered for the merchant").
