@@ -435,6 +435,18 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                       />
                     </div>
                   </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="cpf">CPF do portador do cartão *</Label>
+                    <Input
+                      id="cpf"
+                      name="cpf"
+                      placeholder="000.000.000-00"
+                      defaultValue={identity?.cpf}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Obrigatório para autenticação 3DS 2.0 ao pagar com cartão.
+                    </p>
+                  </div>
                   <Button type="submit" className="mt-2 rounded-full" size="lg">
                     Continuar para entrega
                     <ArrowRight className="ml-2 size-4" />
