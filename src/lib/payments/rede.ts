@@ -118,14 +118,27 @@ export type CreditChargeInput = {
 /** Domínio público estável para callbacks 3DS da e-Rede. */
 export const REDE_DEFAULT_CALLBACK_BASE = "https://centerfrioshub.lovable.app";
 
-function buildThreeDSUrls(orderId: string, base: string) {
-  const root = base.replace(/\/+$/, "");
-  const ref = encodeURIComponent(orderId);
-  return {
-    successUrl: `${root}/api/public/rede/3ds/callback?status=success&ref=${ref}`,
-    failureUrl: `${root}/api/public/rede/3ds/callback?status=failure&ref=${ref}`,
-  };
+/**
+ * URLs ultracurtas exigidas pela e-Rede (Code 253: "Invalid parameter size").
+ * O campo url/ThreeDSecureFailure tem limite restrito (~60 chars), então
+ * usamos rotas estáticas mínimas hospedadas no domínio público estável.
+ * Não inclui orderId no path — a e-Rede devolve a referência junto no callback.
+ */
+const THREE_DS_SUCCESS_URL = "https://centerfrioshub.lovable.app/3ds-ok";
+const THREE_DS_FAILURE_URL = "https://centerfrioshub.lovable.app/3ds-no";
+
+function assertShortUrl(url: string, field: string) {
+  if (url.length > 60) {
+    throw new Error(`[rede] URL ${field} excede 60 chars (${url.length})`);
+  }
 }
+
+function buildThreeDSUrls(_orderId: string, _base: string) {
+  assertShortUrl(THREE_DS_SUCCESS_URL, "threeDSecureSuccess");
+  assertShortUrl(THREE_DS_FAILURE_URL, "threeDSecureFailure");
+  return { successUrl: THREE_DS_SUCCESS_URL, failureUrl: THREE_DS_FAILURE_URL };
+}
+
 
 export type RedeRawResponse = {
   tid?: string;
