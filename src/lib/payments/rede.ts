@@ -25,9 +25,18 @@ export function toCents(amountBRL: number): number {
 export function getRedeCredentials(): { pv: string; token: string } {
   const pvRaw = process.env.REDE_PV;
   const token = process.env.REDE_TOKEN;
+  // Auditoria de Secrets (nunca loga o valor, só presença/tamanho).
+  console.log("[rede] env audit", {
+    REDE_PV_present: !!pvRaw,
+    REDE_PV_len: pvRaw ? String(pvRaw).length : 0,
+    REDE_TOKEN_present: !!token,
+    REDE_TOKEN_len: token ? String(token).length : 0,
+  });
   if (!pvRaw || !token) {
     throw new Error(
-      "Credenciais e-Rede ausentes (REDE_PV/REDE_TOKEN). Configure as secrets antes de cobrar.",
+      "Erro de Configuração de Variável de Ambiente: " +
+        `REDE_PV=${!!pvRaw ? "ok" : "undefined"}, REDE_TOKEN=${!!token ? "ok" : "undefined"}. ` +
+        "Configure os Secrets no Lovable Cloud antes de cobrar.",
     );
   }
   // Pág. 16 do manual v1.32: PV não pode conter zeros à esquerda
