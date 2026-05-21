@@ -98,7 +98,51 @@ export type ThreeDSInput = {
   billingAddress: ThreeDSBillingAddress;
   cardHolder: ThreeDSCardHolder;
   browser: { acceptHeader: string };
+  ipAddress?: string;
+  phoneNumber?: string;
 };
+
+/** Formata CEP no padrão estrito "XXXXX-XXX" (9 chars com hífen) — pág. 43/61 do manual. */
+export function formatPostalCode(raw: string | null | undefined): string {
+  const digits = onlyDigits(raw).slice(0, 8);
+  if (digits.length !== 8) return digits; // deixa a validação a montante reclamar
+  return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+}
+
+/** Remove acentos e caracteres especiais, mantendo apenas letras/números/espaços. */
+function stripSpecials(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9 ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Formata telefone BR como "(XX)XXXXX-XXXX" ou "(XX)XXXX-XXXX", máx 32 chars. */
+function formatBillingPhone(raw: string | null | undefined): string {
+  const d = onlyDigits(raw);
+  // remove DDI 55 se presente
+  const local = d.startsWith("55") && d.length > 11 ? d.slice(2) : d;
+  if (local.length === 11) {
+    return `(${local.slice(0, 2)})${local.slice(2, 7)}-${local.slice(7)}`.slice(0, 32);
+  }
+  if (local.length === 10) {
+    return `(${local.slice(0, 2)})${local.slice(2, 6)}-${local.slice(6)}`.slice(0, 32);
+  }
+  return local.slice(0, 32);
+}
+
+/** Garante IPv4 válido (≤15 chars). Faz fallback para 10.0.0.1 em IPv6/inválido. */
+function ensureIPv4(raw: string | null | undefined): string {
+  const fallback = "10.0.0.1";
+  if (!raw) return fallback;
+  const v = raw.trim();
+  const m = v.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (!m) return fallback;
+  if (m.slice(1).some((o) => Number(o) > 255)) return fallback;
+  return v;
+}
 
 export type CreditChargeInput = {
   orderId: string;
