@@ -111,7 +111,21 @@ export type CreditChargeInput = {
   securityCode: string;
   softDescriptor?: string;
   threeDS: ThreeDSInput;
+  /** Base pública para URLs de retorno 3DS. Default: produção centerfrioshub. */
+  callbackBaseUrl?: string;
 };
+
+/** Domínio público estável para callbacks 3DS da e-Rede. */
+export const REDE_DEFAULT_CALLBACK_BASE = "https://centerfrioshub.lovable.app";
+
+function buildThreeDSUrls(orderId: string, base: string) {
+  const root = base.replace(/\/+$/, "");
+  const ref = encodeURIComponent(orderId);
+  return {
+    successUrl: `${root}/api/public/rede/3ds/callback?status=success&ref=${ref}`,
+    failureUrl: `${root}/api/public/rede/3ds/callback?status=failure&ref=${ref}`,
+  };
+}
 
 export type RedeRawResponse = {
   tid?: string;
