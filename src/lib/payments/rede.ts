@@ -301,7 +301,8 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: authHeader(pv, token),
+        Authorization: bearerHeader(accessToken),
+        Accept: "application/json",
       },
       body: JSON.stringify(payload),
     });
