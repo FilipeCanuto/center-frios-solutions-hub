@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getHeaders } from "@tanstack/react-start/server";
+import { getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import {
@@ -14,7 +14,7 @@ import {
   PRODUCT_CATALOG,
   getCatalogProduct,
 } from "@/lib/catalog.server";
-import { getClientIp, rateLimit } from "@/lib/rate-limit.server";
+import { rateLimit } from "@/lib/rate-limit.server";
 
 const ThreeDSSchema = z.object({
   userAgent: z.string().min(1).max(500),
@@ -68,21 +68,12 @@ export const processPayment = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => PaymentSchema.parse(input))
   .handler(async ({ data }) => {
     // Rate limit: best-effort IP throttle + per-email throttle.
-    try {
-      const headers = new Headers(getHeaders() as Record<string, string>);
-      const ip = getClientIp(headers);
-      const ipLimit = rateLimit(`pay:ip:${ip}`, {
-        limit: 10,
-        windowMs: 60_000,
-      });
-      if (!ipLimit.ok) {
-        throw new Error(
-          "Muitas tentativas de pagamento. Aguarde alguns instantes e tente novamente.",
-        );
-      }
-    } catch (err) {
-      // If headers aren't available, fall back to email key only.
-      if (err instanceof Error && err.message.startsWith("Muitas")) throw err;
+    const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
+    const ipLimit = rateLimit(`pay:ip:${ip}`, { limit: 10, windowMs: 60_000 });
+    if (!ipLimit.ok) {
+      throw new Error(
+        "Muitas tentativas de pagamento. Aguarde alguns instantes e tente novamente.",
+      );
     }
     const emailLimit = rateLimit(`pay:email:${data.customer_email.toLowerCase()}`, {
       limit: 5,

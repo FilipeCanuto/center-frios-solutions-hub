@@ -1,8 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getHeaders } from "@tanstack/react-start/server";
+import { getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { getClientIp, rateLimit } from "@/lib/rate-limit.server";
+import { rateLimit } from "@/lib/rate-limit.server";
 
 const QuoteSchema = z.object({
   name: z.string().trim().min(2, "Informe seu nome").max(120),
@@ -26,18 +26,10 @@ export const submitQuote = createServerFn({ method: "POST" })
     }
 
     // Rate limit by IP and email.
-    try {
-      const headers = new Headers(getHeaders() as Record<string, string>);
-      const ip = getClientIp(headers);
-      const ipLimit = rateLimit(`quote:ip:${ip}`, {
-        limit: 8,
-        windowMs: 60_000,
-      });
-      if (!ipLimit.ok) {
-        throw new Error("Muitas solicitações. Aguarde um minuto e tente novamente.");
-      }
-    } catch (err) {
-      if (err instanceof Error && err.message.startsWith("Muitas")) throw err;
+    const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
+    const ipLimit = rateLimit(`quote:ip:${ip}`, { limit: 8, windowMs: 60_000 });
+    if (!ipLimit.ok) {
+      throw new Error("Muitas solicitações. Aguarde um minuto e tente novamente.");
     }
     const emailLimit = rateLimit(`quote:email:${data.email.toLowerCase()}`, {
       limit: 5,
