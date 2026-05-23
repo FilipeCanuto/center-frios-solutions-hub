@@ -28,7 +28,7 @@ import { supabase } from "@/integrations/supabase/client";
 type Props = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  product: { name: string; image: string; price: number };
+  product: { slug: string; name: string; image: string; price: number };
 };
 
 const StepOne = z.object({
@@ -220,9 +220,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
               city: address.city,
               state: address.state,
             },
-            product_name: product.name,
-            product_price: product.price,
-            shipping_price: shipping,
+            product_slug: product.slug,
             payment_method: "pix",
           },
         });
@@ -297,9 +295,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
               city: address.city,
               state: address.state,
             },
-            product_name: product.name,
-            product_price: product.price,
-            shipping_price: shipping,
+            product_slug: product.slug,
             payment_method: "credit_card",
             card_data: {
               cardNumber: cleanCard,

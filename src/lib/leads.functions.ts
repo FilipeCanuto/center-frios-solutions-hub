@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { rateLimit } from "@/lib/rate-limit.server";
 
 const QuoteSchema = z.object({
   name: z.string().trim().min(2, "Informe seu nome").max(120),
@@ -11,11 +13,32 @@ const QuoteSchema = z.object({
   product_interest: z.string().trim().max(120).optional().or(z.literal("")),
   message: z.string().trim().max(2000).optional().or(z.literal("")),
   source: z.string().trim().max(120).optional().or(z.literal("")),
+  // Honeypot — bots fill hidden fields; humans don't.
+  website: z.string().max(0).optional().or(z.literal("")),
 });
 
 export const submitQuote = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => QuoteSchema.parse(input))
   .handler(async ({ data }) => {
+    // Honeypot tripped — silently succeed to avoid signaling bots.
+    if (data.website && data.website.length > 0) {
+      return { ok: true };
+    }
+
+    // Rate limit by IP and email.
+    const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
+    const ipLimit = rateLimit(`quote:ip:${ip}`, { limit: 8, windowMs: 60_000 });
+    if (!ipLimit.ok) {
+      throw new Error("Muitas solicitações. Aguarde um minuto e tente novamente.");
+    }
+    const emailLimit = rateLimit(`quote:email:${data.email.toLowerCase()}`, {
+      limit: 5,
+      windowMs: 5 * 60_000,
+    });
+    if (!emailLimit.ok) {
+      throw new Error("Você já enviou várias solicitações. Aguarde alguns minutos.");
+    }
+
     const { error } = await supabaseAdmin.from("quote_leads").insert({
       name: data.name,
       company: data.company || null,

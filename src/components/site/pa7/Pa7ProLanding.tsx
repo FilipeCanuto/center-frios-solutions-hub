@@ -555,6 +555,7 @@ export function Pa7ProLanding() {
         open={open}
         onOpenChange={setOpen}
         product={{
+          slug: product.slug,
           name: "Processador de Alimentos PA7 Pro Skymsen",
           image: PA7_IMAGES.main,
           price: PA7_PRICE.amount,

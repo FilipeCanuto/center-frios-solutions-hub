@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import {
@@ -8,6 +9,12 @@ import {
   sanitizeRawForStorage,
   toCents,
 } from "@/lib/payments/rede";
+import {
+  FIXED_SHIPPING_PRICE,
+  PRODUCT_CATALOG,
+  getCatalogProduct,
+} from "@/lib/catalog.server";
+import { rateLimit } from "@/lib/rate-limit.server";
 
 const ThreeDSSchema = z.object({
   userAgent: z.string().min(1).max(500),
@@ -24,33 +31,34 @@ const ThreeDSSchema = z.object({
 });
 
 const PaymentSchema = z.object({
-  customer_name: z.string().trim().min(2),
-  customer_email: z.string().trim().email(),
-  customer_phone: z.string().trim().min(8),
-  customer_company: z.string().trim().optional(),
-  customer_cnpj: z.string().trim().optional(),
-  customer_cpf: z.string().trim().optional(),
+  customer_name: z.string().trim().min(2).max(160),
+  customer_email: z.string().trim().email().max(255),
+  customer_phone: z.string().trim().min(8).max(40),
+  customer_company: z.string().trim().max(160).optional(),
+  customer_cnpj: z.string().trim().max(32).optional(),
+  customer_cpf: z.string().trim().max(20).optional(),
   shipping_address: z.object({
-    cep: z.string(),
-    street: z.string(),
-    number: z.string(),
-    complement: z.string().optional(),
-    district: z.string(),
-    city: z.string(),
-    state: z.string(),
+    cep: z.string().min(8).max(12),
+    street: z.string().min(1).max(160),
+    number: z.string().min(1).max(20),
+    complement: z.string().max(80).optional(),
+    district: z.string().min(1).max(120),
+    city: z.string().min(1).max(120),
+    state: z.string().min(2).max(2),
   }),
-  product_name: z.string(),
-  product_price: z.number(),
-  shipping_price: z.number(),
+  // Server is the source of truth for product identity & price.
+  product_slug: z.enum(
+    Object.keys(PRODUCT_CATALOG) as [string, ...string[]],
+  ),
   payment_method: z.enum(["pix", "credit_card"]),
   card_data: z
     .object({
-      cardNumber: z.string(),
-      cardholderName: z.string(),
-      expirationMonth: z.string(),
-      expirationYear: z.string(),
-      securityCode: z.string(),
-      installments: z.number(),
+      cardNumber: z.string().min(13).max(25),
+      cardholderName: z.string().min(2).max(80),
+      expirationMonth: z.string().min(1).max(2),
+      expirationYear: z.string().min(2).max(4),
+      securityCode: z.string().min(3).max(4),
+      installments: z.number().int().min(1).max(12),
     })
     .optional(),
   three_ds: ThreeDSSchema.optional(),
@@ -59,9 +67,34 @@ const PaymentSchema = z.object({
 export const processPayment = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => PaymentSchema.parse(input))
   .handler(async ({ data }) => {
-    const subtotal = data.product_price;
+    // Rate limit: best-effort IP throttle + per-email throttle.
+    const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
+    const ipLimit = rateLimit(`pay:ip:${ip}`, { limit: 10, windowMs: 60_000 });
+    if (!ipLimit.ok) {
+      throw new Error(
+        "Muitas tentativas de pagamento. Aguarde alguns instantes e tente novamente.",
+      );
+    }
+    const emailLimit = rateLimit(`pay:email:${data.customer_email.toLowerCase()}`, {
+      limit: 5,
+      windowMs: 60_000,
+    });
+    if (!emailLimit.ok) {
+      throw new Error(
+        "Muitas tentativas de pagamento para este e-mail. Aguarde um minuto e tente novamente.",
+      );
+    }
+
+    // Authoritative product lookup — never trust client-supplied prices.
+    const catalog = getCatalogProduct(data.product_slug);
+    if (!catalog) throw new Error("Produto inválido.");
+    const productName = catalog.name;
+    const productPrice = catalog.price;
+    const shippingPrice = FIXED_SHIPPING_PRICE;
+
+    const subtotal = productPrice;
     const discountPix = data.payment_method === "pix" ? subtotal * 0.05 : 0;
-    const total = subtotal - discountPix + data.shipping_price;
+    const total = subtotal - discountPix + shippingPrice;
 
     const cleanPhone = onlyDigits(data.customer_phone);
     const cleanCnpj = data.customer_cnpj ? onlyDigits(data.customer_cnpj) : null;
@@ -75,9 +108,9 @@ export const processPayment = createServerFn({ method: "POST" })
         customer_company: data.customer_company || null,
         customer_cnpj: cleanCnpj,
         shipping_address: data.shipping_address,
-        product_name: data.product_name,
-        product_price: data.product_price,
-        shipping_price: data.shipping_price,
+        product_name: productName,
+        product_price: productPrice,
+        shipping_price: shippingPrice,
         total_price: total,
         payment_method: data.payment_method,
         status: "pending",
