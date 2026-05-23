@@ -154,6 +154,7 @@ export function ProductChoiceCard({
                 open={open}
                 onOpenChange={setOpen}
                 product={{
+                  slug: productSlug,
                   name: productName,
                   image,
                   price: price.amount,

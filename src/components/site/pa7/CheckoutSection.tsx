@@ -187,6 +187,7 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
         open={open}
         onOpenChange={setOpen}
         product={{
+          slug: product.id,
           name: product.name,
           image: product.image,
           price: product.price,
