@@ -18,7 +18,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[color:var(--steel)] bg-brushed-metal backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+      <div className="relative z-10 mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Link to="/" className="flex items-center">
           <Logo size="md" />
         </Link>

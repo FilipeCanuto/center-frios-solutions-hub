@@ -26,10 +26,10 @@ export function StickyBuyBar({ name, image, price, onBuy }: Props) {
     >
       <div className="mx-auto max-w-7xl px-3 pb-3">
         <div className="flex items-center gap-3 rounded-xl border border-[color:var(--steel)] bg-brushed-metal p-2 pr-3 shadow-[var(--shadow-4)] backdrop-blur-xl md:gap-4 md:p-3 md:pr-4">
-          <div className="hidden size-12 shrink-0 overflow-hidden rounded-xl bg-white/5 md:block">
+          <div className="relative z-10 hidden size-12 shrink-0 overflow-hidden rounded-lg border border-[color:var(--steel)] bg-card md:block">
             <img src={image} alt="" className="h-full w-full object-contain p-1" />
           </div>
-          <div className="min-w-0 flex-1">
+          <div className="relative z-10 min-w-0 flex-1">
             <p className="truncate text-xs font-medium text-muted-foreground md:text-sm">{name}</p>
             <p className="text-sm font-semibold text-foreground md:text-base">
               R$ {price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
@@ -38,9 +38,10 @@ export function StickyBuyBar({ name, image, price, onBuy }: Props) {
               </span>
             </p>
           </div>
-          <Button onClick={onBuy} size="lg" className="rounded-full">
+          <Button onClick={onBuy} size="lg" className="relative z-10 rounded-full">
             Comprar agora
           </Button>
+
         </div>
       </div>
     </div>
