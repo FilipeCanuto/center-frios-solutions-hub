@@ -25,7 +25,7 @@ export function StickyBuyBar({ name, image, price, onBuy }: Props) {
       }`}
     >
       <div className="mx-auto max-w-7xl px-3 pb-3">
-        <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-background/80 p-2 pr-3 shadow-2xl backdrop-blur-xl md:gap-4 md:p-3 md:pr-4">
+        <div className="flex items-center gap-3 rounded-xl border border-[color:var(--steel)] bg-brushed-metal p-2 pr-3 shadow-[var(--shadow-4)] backdrop-blur-xl md:gap-4 md:p-3 md:pr-4">
           <div className="hidden size-12 shrink-0 overflow-hidden rounded-xl bg-white/5 md:block">
             <img src={image} alt="" className="h-full w-full object-contain p-1" />
           </div>
