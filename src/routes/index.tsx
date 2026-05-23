@@ -6,6 +6,7 @@ import { SectionHeading } from "@/components/site/SectionHeading";
 import { SegmentCard } from "@/components/site/SegmentCard";
 import { ProductCard } from "@/components/site/ProductCard";
 import { CtaBanner } from "@/components/site/CtaBanner";
+import { PremiumCard } from "@/components/site/PremiumCard";
 import { FEATURED_PRODUCT_SLUGS, IMAGES, SEGMENTS, getProductsBySlugs } from "@/data/site";
 
 export const Route = createFileRoute("/")({
@@ -38,7 +39,7 @@ function HomePage() {
   return (
     <>
       {/* HERO */}
-      <section className="tech-grid relative overflow-hidden border-b border-border">
+      <section className="tech-grid relative overflow-hidden border-b border-white/10">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="flex flex-col items-center text-center">
             <span className="mb-6 inline-flex items-center rounded-full border border-accent/30 bg-accent/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-accent">
@@ -70,17 +71,18 @@ function HomePage() {
           </div>
 
           <div className="relative mt-16 md:mt-20">
-            <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl bg-card outline outline-1 -outline-offset-1 outline-border">
+            <div className="metal-surface metal-image-stage mx-auto w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-card">
               <img
                 src={IMAGES.hero}
                 alt="Equipamento profissional Center Frios em ambiente de cozinha industrial"
                 width={1600}
                 height={896}
-                className="h-auto w-full object-cover"
+                fetchPriority="high"
+                className="relative z-10 h-auto w-full object-cover"
               />
             </div>
             <div className="absolute -left-2 top-1/2 hidden -translate-y-1/2 lg:block">
-              <div className="rounded-lg border border-border bg-card/90 p-4 backdrop-blur-md">
+              <div className="metal-surface rounded-xl border border-white/10 bg-card/90 p-4 backdrop-blur-md">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-accent">
                   Performance
                 </div>
@@ -89,7 +91,7 @@ function HomePage() {
               </div>
             </div>
             <div className="absolute -right-2 bottom-6 hidden lg:block">
-              <div className="rounded-lg border border-border bg-card/90 p-4 backdrop-blur-md">
+              <div className="metal-surface rounded-xl border border-white/10 bg-card/90 p-4 backdrop-blur-md">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-accent">
                   Eficiência
                 </div>
@@ -102,8 +104,8 @@ function HomePage() {
       </section>
 
       {/* TRUST STRIP */}
-      <section className="border-b border-border bg-card/40">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-px bg-border md:grid-cols-3">
+      <section className="border-b border-white/10 py-6">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-6 md:grid-cols-3">
           {[
             {
               icon: ShieldCheck,
@@ -121,13 +123,13 @@ function HomePage() {
               desc: "Logística e montagem com equipe especializada.",
             },
           ].map((item) => (
-            <div key={item.title} className="flex items-start gap-4 bg-background p-6">
+            <PremiumCard key={item.title} className="flex items-start gap-4 p-6">
               <item.icon className="mt-1 size-6 text-accent" />
               <div>
                 <p className="text-sm font-semibold text-foreground">{item.title}</p>
                 <p className="mt-1 text-sm text-muted-foreground">{item.desc}</p>
               </div>
-            </div>
+            </PremiumCard>
           ))}
         </div>
       </section>
@@ -157,7 +159,7 @@ function HomePage() {
       </section>
 
       {/* PRODUTOS DESTAQUE */}
-      <section className="border-y border-border py-20 md:py-24">
+      <section className="border-y border-white/10 py-20 md:py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="mb-12 flex items-end justify-between gap-6">
             <SectionHeading
@@ -184,24 +186,24 @@ function HomePage() {
       <section className="py-20 md:py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid gap-10 text-center md:grid-cols-3 md:text-left">
-            <div>
+            <PremiumCard>
               <div className="text-4xl font-semibold text-foreground md:text-5xl">+25 anos</div>
               <p className="mt-2 text-sm uppercase tracking-widest text-muted-foreground">
                 de mercado em refrigeração comercial
               </p>
-            </div>
-            <div>
+            </PremiumCard>
+            <PremiumCard>
               <div className="text-4xl font-semibold text-foreground md:text-5xl">3.200+</div>
               <p className="mt-2 text-sm uppercase tracking-widest text-muted-foreground">
                 clientes ativos atendidos
               </p>
-            </div>
-            <div>
+            </PremiumCard>
+            <PremiumCard>
               <div className="text-4xl font-semibold text-foreground md:text-5xl">100%</div>
               <p className="mt-2 text-sm uppercase tracking-widest text-muted-foreground">
                 cobertura de assistência técnica
               </p>
-            </div>
+            </PremiumCard>
           </div>
 
           <p className="mx-auto mt-16 max-w-3xl text-center text-xl font-medium leading-relaxed text-foreground md:text-2xl">

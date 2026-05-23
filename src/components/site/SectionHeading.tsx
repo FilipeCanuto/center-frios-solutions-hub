@@ -5,14 +5,15 @@ type Props = {
   title: ReactNode;
   description?: ReactNode;
   align?: "left" | "center";
+  className?: string;
 };
 
-export function SectionHeading({ eyebrow, title, description, align = "left" }: Props) {
+export function SectionHeading({ eyebrow, title, description, align = "left", className = "" }: Props) {
   const alignment = align === "center" ? "text-center mx-auto" : "text-left";
   return (
-    <div className={`max-w-2xl ${alignment}`}>
+    <div className={`max-w-2xl ${alignment} ${className}`}>
       {eyebrow && (
-        <span className="mb-3 inline-block text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
+        <span className="mb-3 inline-flex items-center rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-accent shadow-[var(--shadow-inner-edge)]">
           {eyebrow}
         </span>
       )}
@@ -20,7 +21,11 @@ export function SectionHeading({ eyebrow, title, description, align = "left" }: 
       {description && (
         <p className="mt-4 text-base text-muted-foreground md:text-lg">{description}</p>
       )}
-      {align === "left" && <div className="mt-4 h-1 w-12 bg-accent" />}
+      <div
+        className={`mt-5 h-px bg-gradient-to-r from-accent via-accent/35 to-transparent ${
+          align === "center" ? "mx-auto w-24" : "w-20"
+        }`}
+      />
     </div>
   );
 }

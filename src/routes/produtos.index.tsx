@@ -42,20 +42,7 @@ function ProdutosPage() {
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {others.map((p) => (
-              <div key={p.slug} className="rounded-xl border border-border bg-card p-6">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-                  {p.category}
-                </span>
-                <h3 className="mt-2 text-lg font-medium text-foreground">{p.name}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{p.description}</p>
-                <ul className="mt-4 space-y-1 text-xs text-muted-foreground">
-                  {p.specs.map((s) => (
-                    <li key={s.label}>
-                      <span className="text-foreground">{s.label}:</span> {s.value}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ProductCard key={p.slug} product={p} compact />
             ))}
           </div>
         </div>

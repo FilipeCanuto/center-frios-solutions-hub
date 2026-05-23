@@ -3,6 +3,7 @@ import { Boxes, ClipboardList, HeadphonesIcon, Truck, Wrench } from "lucide-reac
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { CtaBanner } from "@/components/site/CtaBanner";
 import { Button } from "@/components/ui/button";
+import { PremiumCard } from "@/components/site/PremiumCard";
 
 export const Route = createFileRoute("/solucoes")({
   head: () => ({
@@ -68,15 +69,15 @@ function SolucoesPage() {
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {SOLUCOES.map((s) => (
-              <div key={s.title} className="rounded-2xl border border-border bg-card p-6">
+              <PremiumCard key={s.title}>
                 <s.icon className="size-7 text-accent" />
                 <h3 className="mt-4 text-lg font-semibold text-foreground">{s.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{s.desc}</p>
-              </div>
+              </PremiumCard>
             ))}
           </div>
 
-          <div className="mt-16 rounded-2xl border border-border bg-card p-8 md:p-12">
+          <PremiumCard className="mt-16 p-8 md:p-12">
             <h3 className="text-2xl font-semibold text-foreground">Por que a Center Frios?</h3>
             <p className="mt-3 max-w-3xl text-muted-foreground">
               O cliente CENTERFRIOS não pode parar — qualquer falha em equipamento representa
@@ -86,7 +87,7 @@ function SolucoesPage() {
             <Button asChild size="lg" className="mt-6 rounded-full">
               <Link to="/contato">Fale com nosso time</Link>
             </Button>
-          </div>
+          </PremiumCard>
         </div>
       </section>
 

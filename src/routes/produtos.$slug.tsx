@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { QuoteDialog } from "@/components/site/QuoteDialog";
 import { SpecGrid } from "@/components/site/SpecGrid";
 import { CtaBanner } from "@/components/site/CtaBanner";
+import { PremiumCard } from "@/components/site/PremiumCard";
 import { Pa7ProLanding } from "@/components/site/pa7/Pa7ProLanding";
 import { Hs98Landing } from "@/components/site/hs98/Hs98Landing";
 import { getProduct } from "@/data/site";
@@ -90,17 +91,18 @@ function ProductPage() {
           </Link>
 
           <div className="mt-8 grid gap-12 lg:grid-cols-2">
-            <div className="aspect-square overflow-hidden rounded-2xl bg-card outline outline-1 -outline-offset-1 outline-border">
+            <div className="metal-surface metal-image-stage aspect-square overflow-hidden rounded-3xl border border-white/10 bg-card">
               {product.image ? (
                 <img
                   src={product.image}
                   alt={product.name}
                   width={1024}
                   height={1024}
-                  className="h-full w-full object-cover"
+                  decoding="async"
+                  className="relative z-10 h-full w-full object-cover"
                 />
               ) : (
-                <div className="grid h-full place-items-center text-sm uppercase tracking-widest text-muted-foreground">
+                <div className="relative z-10 grid h-full place-items-center text-sm uppercase tracking-widest text-muted-foreground">
                   {product.name}
                 </div>
               )}
@@ -158,7 +160,7 @@ function ProductPage() {
               {product.applications.map((a: string) => (
                 <li
                   key={a}
-                  className="flex items-start gap-3 rounded-lg border border-border bg-card p-4"
+                  className="metal-hover flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4"
                 >
                   <Check className="mt-0.5 size-5 text-accent" />
                   <span className="text-sm text-foreground">{a}</span>
@@ -176,11 +178,11 @@ function ProductPage() {
               <ShieldCheck className="size-6 text-accent" />
               <h2 className="text-2xl font-semibold text-foreground">Normas e conformidade</h2>
             </div>
-            <ul className="mt-6 space-y-2">
+            <ul className="mt-6 grid gap-2">
               {product.compliance.map((c: string) => (
-                <li key={c} className="text-sm text-muted-foreground">
-                  • {c}
-                </li>
+                <PremiumCard key={c} className="p-4 text-sm text-muted-foreground" interactive={false}>
+                  {c}
+                </PremiumCard>
               ))}
             </ul>
           </div>

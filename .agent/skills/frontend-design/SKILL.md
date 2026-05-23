@@ -382,6 +382,20 @@ For EVERY design task:
 
 ---
 
+## Project Refinement Addendum
+
+Use this addendum when improving an existing premium interface instead of redesigning it.
+
+- Preserve what already works; change the fewest tokens or components needed.
+- For design-system changes, prefer global tokens over scattered component overrides.
+- When lightening a dark premium background, preserve or increase separation between `background`, `card`, `muted`, `border`, and CTA surfaces.
+- Do not lighten secondary text just because the background became lighter; protect readability first.
+- Keep vivid color reserved for action, focus, and key product emphasis.
+- Validate hero, cards, long sections, sticky elements, and checkout surfaces on desktop and mobile.
+- If a rule in this skill slows down or limits a precise user request, report the conflict and suggest a targeted skill update.
+
+---
+
 ## Reference Files
 
 For deeper guidance on specific areas:

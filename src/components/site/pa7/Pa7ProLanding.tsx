@@ -166,7 +166,7 @@ export function Pa7ProLanding() {
 
               <motion.div
                 variants={itemVariants}
-                className="mt-7 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.01] p-6 backdrop-blur-xl relative overflow-hidden group shadow-[0_8px_30px_rgba(0,0,0,0.2)]"
+                className="metal-surface metal-hover mt-7 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.01] p-6 backdrop-blur-xl relative overflow-hidden group shadow-[0_8px_30px_rgba(0,0,0,0.2)]"
               >
                 <div
                   aria-hidden
@@ -234,7 +234,7 @@ export function Pa7ProLanding() {
                 ].map(({ icon: Icon, label }) => (
                   <div
                     key={label}
-                    className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.04]"
+                    className="metal-hover flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.04]"
                   >
                     <Icon
                       className="size-4 text-accent animate-pulse"
@@ -286,7 +286,7 @@ export function Pa7ProLanding() {
                 <motion.div
                   key={h.title}
                   variants={itemVariants}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-accent/40 hover:bg-white/[0.06] hover:shadow-[0_12px_30px_rgba(0,0,0,0.3)]"
+                  className="group metal-surface metal-hover relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-500 hover:border-accent/40 hover:bg-white/[0.06] hover:shadow-[0_12px_30px_rgba(0,0,0,0.3)]"
                 >
                   <div
                     aria-hidden
@@ -361,7 +361,7 @@ export function Pa7ProLanding() {
               <motion.div
                 key={d.code}
                 variants={itemVariants}
-                className="group relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
+                className="group metal-surface metal-hover relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-500 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
               >
                 <motion.div
                   whileHover={{ rotate: 180 }}
@@ -467,7 +467,7 @@ export function Pa7ProLanding() {
                 <motion.div
                   key={u.name}
                   variants={itemVariants}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
+                  className="group metal-surface metal-hover relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-500 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
                 >
                   <div
                     aria-hidden
@@ -517,7 +517,7 @@ export function Pa7ProLanding() {
               {product.applications.map((a) => (
                 <li
                   key={a}
-                  className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-white/20"
+                    className="metal-hover flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-white/20"
                 >
                   <ChevronRight className="mt-0.5 size-5 text-accent" />
                   <span className="text-sm text-foreground">{a}</span>

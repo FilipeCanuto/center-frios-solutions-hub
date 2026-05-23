@@ -18,7 +18,11 @@ export function FaqPa7() {
         </h2>
         <Accordion type="single" collapsible className="mt-8">
           {PA7_FAQ.map((item, i) => (
-            <AccordionItem key={i} value={`item-${i}`} className="border-white/10">
+            <AccordionItem
+              key={i}
+              value={`item-${i}`}
+              className="metal-hover rounded-xl border-white/10 px-4"
+            >
               <AccordionTrigger className="text-left text-base font-medium hover:no-underline">
                 {item.q}
               </AccordionTrigger>

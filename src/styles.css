@@ -54,21 +54,22 @@
 
 :root {
   /* Raw palette tokens (dark default) */
-  --midnight: oklch(0.235 0.013 250);
-  --steel: oklch(0.298 0.013 250);
-  --graphite: oklch(0.365 0.013 250);
+  --midnight: oklch(0.265 0.013 250);
+  --steel: oklch(0.325 0.013 250);
+  --graphite: oklch(0.385 0.013 250);
   --silver: oklch(0.745 0.008 250);
   --platinum: oklch(0.93 0.004 250);
   --electric: oklch(0.62 0.22 258);
   --electric-glow: oklch(0.7 0.22 258);
+  --brand-blue: var(--electric);
 
   /* Semantic (shadcn) mappings */
   --background: var(--midnight);
   --foreground: var(--platinum);
 
-  --card: oklch(0.275 0.013 250);
+  --card: oklch(0.305 0.013 250);
   --card-foreground: var(--platinum);
-  --popover: oklch(0.275 0.013 250);
+  --popover: oklch(0.305 0.013 250);
   --popover-foreground: var(--platinum);
 
   --primary: var(--electric);
@@ -77,7 +78,7 @@
   --secondary: var(--graphite);
   --secondary-foreground: var(--platinum);
 
-  --muted: oklch(0.31 0.013 250);
+  --muted: oklch(0.335 0.013 250);
   --muted-foreground: var(--silver);
 
   --accent: var(--electric);
@@ -99,9 +100,9 @@
   /* Gradients */
   --gradient-steel: linear-gradient(
     180deg,
-    oklch(0.34 0.013 250) 0%,
-    oklch(0.27 0.013 250) 50%,
-    oklch(0.22 0.013 250) 100%
+    oklch(0.365 0.013 250) 0%,
+    oklch(0.3 0.013 250) 50%,
+    oklch(0.255 0.013 250) 100%
   );
   --gradient-blue-glow: radial-gradient(
     circle at 50% 50%,
@@ -115,12 +116,22 @@
   );
   --gradient-dark-surface: linear-gradient(
     180deg,
-    oklch(0.28 0.013 250) 0%,
-    oklch(0.22 0.013 250) 100%
+    oklch(0.31 0.013 250) 0%,
+    oklch(0.255 0.013 250) 100%
   );
 
-  /* Brushed metal: turbulence noise overlay + horizontal grain + steel base */
+  /* Metallic texture layers: subtle enough to preserve text contrast. */
   --brushed-noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  --metal-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.055 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  --metal-sheen: linear-gradient(
+    112deg,
+    transparent 0%,
+    color-mix(in oklab, oklch(1 0 0) 3%, transparent) 32%,
+    transparent 48%,
+    color-mix(in oklab, oklch(0 0 0) 10%, transparent) 100%
+  );
+  --metal-edge: inset 0 1px 0 0 oklch(1 0 0 / 0.08),
+    inset 0 -1px 0 0 oklch(0 0 0 / 0.35);
 
   /* Elevation scale (matches reference 0..4) */
   --shadow-1: 0 1px 2px 0 oklch(0 0 0 / 0.35);
@@ -141,6 +152,7 @@
   --platinum: oklch(0.99 0.002 250);
   --electric: oklch(0.55 0.22 258);
   --electric-glow: oklch(0.62 0.22 258);
+  --brand-blue: var(--electric);
 
   --background: var(--platinum);
   --foreground: var(--midnight);
@@ -201,9 +213,36 @@
 
   body {
     background-color: var(--color-background);
+    background-image:
+      radial-gradient(
+        70% 42% at 18% -10%,
+        color-mix(in oklab, var(--electric) 10%, transparent),
+        transparent 64%
+      ),
+      radial-gradient(
+        55% 36% at 88% 8%,
+        color-mix(in oklab, var(--platinum) 4%, transparent),
+        transparent 68%
+      ),
+      var(--metal-sheen),
+      var(--metal-grain),
+      linear-gradient(180deg, oklch(0.285 0.013 250) 0%, var(--color-background) 38%, oklch(0.245 0.013 250) 100%);
+    background-blend-mode: screen, overlay, normal, overlay, normal;
+    background-size:
+      auto,
+      auto,
+      auto,
+      180px 180px,
+      auto;
     color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  @media (min-width: 768px) {
+    body {
+      background-attachment: fixed, fixed, fixed, fixed, fixed;
+    }
   }
 
   :focus-visible {
@@ -283,18 +322,21 @@
   background-image:
     var(--brushed-noise),
     repeating-linear-gradient(
-      90deg,
-      oklch(0.3 0.013 250) 0px,
-      oklch(0.34 0.013 250) 1px,
-      oklch(0.28 0.013 250) 2px,
-      oklch(0.32 0.013 250) 3px
+      100deg,
+      oklch(0.325 0.013 250) 0px,
+      oklch(0.37 0.013 250) 1px,
+      oklch(0.305 0.013 250) 2px,
+      oklch(0.35 0.013 250) 4px
     ),
-    linear-gradient(180deg, oklch(0.34 0.013 250) 0%, oklch(0.22 0.013 250) 100%);
+    linear-gradient(112deg, transparent 0%, oklch(1 0 0 / 0.05) 34%, transparent 52%),
+    linear-gradient(180deg, oklch(0.365 0.013 250) 0%, oklch(0.255 0.013 250) 100%);
   background-size:
     240px 240px,
     auto,
+    auto,
     auto;
-  background-blend-mode: overlay, normal, normal;
+  background-blend-mode: overlay, soft-light, normal, normal;
+  box-shadow: var(--metal-edge);
   position: relative;
 }
 .bg-brushed-metal::after {
@@ -332,6 +374,113 @@
   background: var(--gradient-dark-surface);
 }
 
+.metal-surface {
+  position: relative;
+  overflow: hidden;
+  background-image:
+    var(--metal-grain),
+    repeating-linear-gradient(
+      105deg,
+      oklch(1 0 0 / 0.035) 0px,
+      transparent 1px,
+      oklch(0 0 0 / 0.04) 3px,
+      transparent 5px
+    ),
+    linear-gradient(135deg, oklch(1 0 0 / 0.075) 0%, transparent 36%, oklch(0 0 0 / 0.16) 100%),
+    var(--gradient-dark-surface);
+  background-blend-mode: overlay, soft-light, normal, normal;
+  box-shadow: var(--metal-edge), var(--shadow-2);
+}
+
+.metal-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    118deg,
+    transparent 0%,
+    color-mix(in oklab, var(--platinum) 8%, transparent) 34%,
+    transparent 49%,
+    color-mix(in oklab, var(--electric) 6%, transparent) 100%
+  );
+  opacity: 0.68;
+  z-index: 0;
+}
+
+.metal-surface > :where(:not(style):not(.absolute):not(.fixed):not(.sticky)) {
+  position: relative;
+  z-index: 1;
+}
+
+.metal-hover {
+  transition:
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 260ms ease,
+    box-shadow 260ms ease,
+    background-color 260ms ease;
+  will-change: transform;
+}
+
+.metal-hover:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--electric) 42%, var(--steel));
+  box-shadow:
+    var(--metal-edge),
+    0 18px 42px -24px color-mix(in oklab, var(--electric) 38%, transparent),
+    var(--shadow-3);
+}
+
+.metal-hover:hover::before {
+  opacity: 0.92;
+}
+
+.metal-image-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+.metal-image-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 8%, oklch(1 0 0 / 0.08) 34%, transparent 52%);
+  mix-blend-mode: screen;
+  opacity: 0.55;
+  transition: opacity 320ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateX(-8%);
+}
+
+.metal-image-stage:hover::after {
+  opacity: 0.9;
+  transform: translateX(8%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+
+  [class*="animate-"] {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+
+  .metal-hover,
+  .metal-image-stage::after {
+    transition: none;
+  }
+
+  .metal-hover:hover {
+    transform: none;
+  }
+}
+
 .glow-blue {
   box-shadow: var(--shadow-glow-blue);
 }
@@ -364,7 +513,7 @@
 .tech-grid {
   background-image: radial-gradient(
     circle at 1px 1px,
-    color-mix(in oklab, var(--platinum) 8%, transparent) 1px,
+    color-mix(in oklab, var(--platinum) 7%, transparent) 1px,
     transparent 0
   );
   background-size: 32px 32px;

@@ -8,13 +8,19 @@ export function useParallax<T extends HTMLElement = HTMLDivElement>(intensity = 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (reducedMotion.matches) {
+      setOffset(0);
+      return;
+    }
+
     let raf = 0;
     const update = () => {
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight || 1;
       // -1 (above) ... 0 (center) ... +1 (below)
       const progress = (rect.top + rect.height / 2 - vh / 2) / vh;
-      setOffset(progress * 60 * intensity * 8);
+      setOffset(progress * 48 * intensity);
     };
     const onScroll = () => {
       cancelAnimationFrame(raf);

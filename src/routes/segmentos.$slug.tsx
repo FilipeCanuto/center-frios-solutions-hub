@@ -3,6 +3,7 @@ import { ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/site/ProductCard";
 import { CtaBanner } from "@/components/site/CtaBanner";
+import { PremiumCard } from "@/components/site/PremiumCard";
 import { SEGMENTS, getProductsBySlugs } from "@/data/site";
 
 export const Route = createFileRoute("/segmentos/$slug")({
@@ -51,6 +52,7 @@ function SegmentoPage() {
           className="absolute inset-0 h-full w-full object-cover opacity-25"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
+        <div className="absolute inset-0 bg-[radial-gradient(80%_45%_at_50%_0%,color-mix(in_oklab,var(--brand-blue)_18%,transparent),transparent_70%)]" />
         <div className="relative mx-auto max-w-7xl px-6 py-20 md:py-28">
           <Link
             to="/segmentos"
@@ -67,14 +69,14 @@ function SegmentoPage() {
 
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <h2 className="text-2xl font-semibold text-foreground">
-            Por que escolher a Center Frios para esse segmento
-          </h2>
+            <h2 className="text-2xl font-semibold text-foreground">
+              Por que escolher a Center Frios para esse segmento
+            </h2>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {segment.benefits.map((b: string) => (
               <li
                 key={b}
-                className="flex items-start gap-3 rounded-lg border border-border bg-card p-4"
+                className="metal-hover flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4"
               >
                 <Check className="mt-0.5 size-5 text-accent" />
                 <span className="text-sm text-foreground">{b}</span>

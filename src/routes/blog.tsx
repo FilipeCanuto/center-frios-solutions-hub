@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CtaBanner } from "@/components/site/CtaBanner";
+import { SectionHeading } from "@/components/site/SectionHeading";
 
 export const Route = createFileRoute("/blog")({
   head: () => ({
@@ -19,17 +20,13 @@ function BlogPage() {
   return (
     <>
       <section className="py-24 md:py-32">
-        <div className="mx-auto max-w-2xl px-6 text-center">
-          <span className="inline-flex items-center rounded-full border border-accent/30 bg-accent/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-accent">
-            Em breve
-          </span>
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-            Blog Center Frios
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Estamos preparando conteúdo técnico sobre equipamentos, eficiência energética, normas
-            sanitárias e tendências do setor alimentício. Volte em breve.
-          </p>
+        <div className="mx-auto max-w-2xl px-6">
+          <SectionHeading
+            align="center"
+            eyebrow="Em breve"
+            title="Blog Center Frios"
+            description="Estamos preparando conteúdo técnico sobre equipamentos, eficiência energética, normas sanitárias e tendências do setor alimentício. Volte em breve."
+          />
         </div>
       </section>
       <CtaBanner source="blog" />

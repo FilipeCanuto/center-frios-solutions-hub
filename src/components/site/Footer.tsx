@@ -21,24 +21,24 @@ export function Footer() {
           <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             Navegação
           </h4>
-          <ul className="mt-4 space-y-2 text-sm">
+          <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             <li>
-              <Link to="/produtos" className="hover:text-accent">
+              <Link to="/produtos" className="transition-colors hover:text-accent">
                 Produtos
               </Link>
             </li>
             <li>
-              <Link to="/segmentos" className="hover:text-accent">
+              <Link to="/segmentos" className="transition-colors hover:text-accent">
                 Segmentos
               </Link>
             </li>
             <li>
-              <Link to="/solucoes" className="hover:text-accent">
+              <Link to="/solucoes" className="transition-colors hover:text-accent">
                 Soluções
               </Link>
             </li>
             <li>
-              <Link to="/contato" className="hover:text-accent">
+              <Link to="/contato" className="transition-colors hover:text-accent">
                 Contato
               </Link>
             </li>
@@ -49,16 +49,16 @@ export function Footer() {
           <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             Contato
           </h4>
-          <ul className="mt-4 space-y-3 text-sm">
+          <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
             <li className="flex items-center gap-2">
               <Phone className="size-4 text-accent" />
-              <a href={CONTACT.phoneHref} className="hover:text-foreground">
+              <a href={CONTACT.phoneHref} className="transition-colors hover:text-foreground">
                 {CONTACT.phone}
               </a>
             </li>
             <li className="flex items-center gap-2">
               <Mail className="size-4 text-accent" />
-              <a href={CONTACT.emailHref} className="hover:text-foreground break-all">
+              <a href={CONTACT.emailHref} className="break-all transition-colors hover:text-foreground">
                 {CONTACT.email}
               </a>
             </li>
@@ -68,7 +68,7 @@ export function Footer() {
                 href={CONTACT.instagramHref}
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-foreground"
+                className="transition-colors hover:text-foreground"
               >
                 {CONTACT.instagram}
               </a>

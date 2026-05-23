@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { CONTACT, SEGMENTS } from "@/data/site";
 import { submitQuote } from "@/lib/leads.functions";
+import { PremiumCard } from "@/components/site/PremiumCard";
 
 export const Route = createFileRoute("/contato")({
   head: () => ({
@@ -92,8 +93,8 @@ function ContatoPage() {
             Atendimento técnico para orçamentos, projetos e consultoria. Resposta em até 1 dia útil.
           </p>
 
-          <ul className="mt-10 space-y-5">
-            <li className="flex items-start gap-3">
+          <ul className="mt-10 grid gap-3">
+            <PremiumCard as="li" className="flex items-start gap-3 p-4">
               <Phone className="mt-1 size-5 text-accent" />
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">Telefone</p>
@@ -104,8 +105,8 @@ function ContatoPage() {
                   {CONTACT.phone}
                 </a>
               </div>
-            </li>
-            <li className="flex items-start gap-3">
+            </PremiumCard>
+            <PremiumCard as="li" className="flex items-start gap-3 p-4">
               <MessageCircle className="mt-1 size-5 text-accent" />
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">WhatsApp</p>
@@ -118,8 +119,8 @@ function ContatoPage() {
                   {CONTACT.phone}
                 </a>
               </div>
-            </li>
-            <li className="flex items-start gap-3">
+            </PremiumCard>
+            <PremiumCard as="li" className="flex items-start gap-3 p-4">
               <Mail className="mt-1 size-5 text-accent" />
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">E-mail</p>
@@ -130,8 +131,8 @@ function ContatoPage() {
                   {CONTACT.email}
                 </a>
               </div>
-            </li>
-            <li className="flex items-start gap-3">
+            </PremiumCard>
+            <PremiumCard as="li" className="flex items-start gap-3 p-4">
               <MapPin className="mt-1 size-5 text-accent" />
               <div>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
@@ -139,13 +140,13 @@ function ContatoPage() {
                 </p>
                 <p className="text-base font-medium text-foreground">{CONTACT.city}</p>
               </div>
-            </li>
+            </PremiumCard>
           </ul>
         </div>
 
         <form
           onSubmit={onSubmit}
-          className="grid gap-4 rounded-2xl border border-border bg-card p-6 md:p-8"
+          className="metal-surface grid gap-4 rounded-2xl border border-white/10 p-6 md:p-8"
         >
           <div className="grid gap-2">
             <Label htmlFor="name">Nome *</Label>

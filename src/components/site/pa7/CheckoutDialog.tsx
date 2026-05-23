@@ -392,7 +392,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                 <form onSubmit={handleStepOne} className="grid gap-4">
                   <h2 className="text-xl font-semibold text-foreground">Seus dados</h2>
                   <p className="text-sm text-muted-foreground">
-                    Atendimento exclusivo B2B com emissão de nota fiscal.
+                    Compra direta B2B com emissão de nota fiscal e pagamento seguro.
                   </p>
                   <div className="grid gap-2">
                     <Label htmlFor="name">Nome completo *</Label>
@@ -436,7 +436,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                     </div>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="cpf">CPF do portador do cartão *</Label>
+                      <Label htmlFor="cpf">CPF do pagador</Label>
                     <Input
                       id="cpf"
                       name="cpf"
@@ -444,7 +444,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                       defaultValue={identity?.cpf}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Obrigatório para autenticação 3DS 2.0 ao pagar com cartão.
+                      Usado na autenticação do cartão e na conciliação do pedido.
                     </p>
                   </div>
                   <Button type="submit" className="mt-2 rounded-full" size="lg">
@@ -775,12 +775,11 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                   <div className="grid size-16 place-items-center rounded-full bg-accent/15 text-accent">
                     <CheckCircle2 className="size-9" />
                   </div>
-                  <h2 className="text-2xl font-semibold text-foreground">Pedido recebido!</h2>
+                  <h2 className="text-2xl font-semibold text-foreground">Compra recebida!</h2>
                   <p className="max-w-md text-sm text-muted-foreground">
-                    Estamos finalizando a integração com nossa plataforma de pagamento. Um consultor
-                    da Center Frios entrará em contato pelo WhatsApp{" "}
-                    <strong className="text-foreground">{identity?.phone}</strong> para confirmar e
-                    liberar o pedido.
+                    Seu pagamento foi registrado e o pedido entrou em processamento. Enviaremos a
+                    confirmação, nota fiscal e próximos passos de entrega pelo WhatsApp{" "}
+                    <strong className="text-foreground">{identity?.phone}</strong>.
                   </p>
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                     <Button asChild className="rounded-full" size="lg">

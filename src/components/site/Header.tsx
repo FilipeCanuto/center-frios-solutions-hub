@@ -28,8 +28,8 @@ export function Header() {
             <Link
               key={item.to}
               to={item.to}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
+              className="rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-all hover:bg-white/[0.04] hover:text-foreground"
+              activeProps={{ className: "bg-accent/10 text-foreground shadow-[var(--shadow-inner-edge)]" }}
             >
               {item.label}
             </Link>
@@ -58,14 +58,14 @@ export function Header() {
       </div>
 
       {open && (
-        <div className="border-t border-border bg-background md:hidden">
+        <div className="border-t border-[color:var(--steel)] bg-brushed-metal md:hidden">
           <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-6 py-4">
             {NAV.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className="rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                className="rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
                 activeProps={{ className: "text-foreground" }}
               >
                 {item.label}

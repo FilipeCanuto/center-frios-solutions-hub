@@ -19,13 +19,13 @@ export function CtaBanner({
 }: Props) {
   return (
     <section className="px-6 py-20">
-      <div className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-[color:var(--steel)] bg-brushed-metal p-10 text-center shadow-[var(--shadow-4)] md:p-14">
+      <div className="metal-surface metal-hover relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-[color:var(--steel)] bg-brushed-metal p-10 text-center shadow-[var(--shadow-4)] md:p-14">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-60"
           style={{ background: "var(--gradient-blue-glow)" }}
         />
-        <div className="relative">
+        <div className="relative z-10">
           <h2 className="text-h1 md:text-display-2 text-foreground">{title}</h2>
           <p className="mx-auto mt-4 max-w-xl text-subtitle text-muted-foreground">
             {description}

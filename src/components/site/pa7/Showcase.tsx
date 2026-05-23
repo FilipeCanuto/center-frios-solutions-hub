@@ -34,7 +34,7 @@ export function Showcase({ item, reverse = false }: { item: Item; reverse?: bool
         <div ref={pRef} className={`${reverse ? "md:order-1" : ""}`}>
           <div
             style={{ transform: `translate3d(0, ${offset}px, 0)` }}
-            className="relative aspect-square overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.07] to-white/[0.01] backdrop-blur-xl"
+            className="metal-surface metal-hover metal-image-stage relative aspect-square overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.07] to-white/[0.01] backdrop-blur-xl"
           >
             <div
               aria-hidden
@@ -48,7 +48,7 @@ export function Showcase({ item, reverse = false }: { item: Item; reverse?: bool
               src={item.image}
               alt={item.title}
               loading="lazy"
-              className="relative h-full w-full object-contain p-8"
+              className="relative z-10 h-full w-full object-contain p-8"
             />
           </div>
         </div>

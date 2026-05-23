@@ -35,7 +35,7 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
   });
 
   return (
-    <section className="relative overflow-hidden border-t border-white/5 bg-background py-20 md:py-28">
+    <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           {/* Lado Esquerdo: Produto e Confian\u00E7a */}
@@ -80,7 +80,7 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
               ].map((item) => (
                 <div
                   key={item.title}
-                  className="flex gap-3 rounded-2xl border border-white/5 bg-white/[0.02] p-4"
+                  className="metal-hover flex gap-3 rounded-2xl border border-white/5 bg-white/[0.02] p-4"
                 >
                   <item.icon className="size-5 shrink-0 text-accent" />
                   <div>
@@ -124,7 +124,7 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
           >
             <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-br from-accent/20 to-transparent blur-2xl" />
 
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl md:p-10">
+            <div className="metal-surface metal-hover relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl md:p-10">
               <div className="flex items-center gap-4 mb-8">
                 <div className="size-16 rounded-xl border border-white/10 bg-white/5 p-2">
                   <img

@@ -45,6 +45,7 @@ type Props = {
 export function QuoteDialog({ trigger, source, defaultProduct, defaultSegment }: Props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const submit = useServerFn(submitQuote);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -62,10 +63,13 @@ export function QuoteDialog({ trigger, source, defaultProduct, defaultSegment }:
 
     const parsed = ClientSchema.safeParse(payload);
     if (!parsed.success) {
-      toast.error(parsed.error.issues[0]?.message ?? "Verifique os campos.");
+      const message = parsed.error.issues[0]?.message ?? "Verifique os campos.";
+      setError(message);
+      toast.error(message);
       return;
     }
 
+    setError(null);
     setLoading(true);
     try {
       await submit({ data: { ...payload, source: source ?? "site" } });
@@ -83,15 +87,20 @@ export function QuoteDialog({ trigger, source, defaultProduct, defaultSegment }:
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="metal-surface max-h-[90vh] overflow-y-auto border-white/10 bg-background/95 sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Solicite seu orçamento</DialogTitle>
+          <DialogTitle className="text-2xl">Solicite seu orçamento</DialogTitle>
           <DialogDescription>
             Preencha os dados abaixo e nossa equipe técnica retorna em até 1 dia útil.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="grid gap-4">
+          {error && (
+            <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {error}
+            </div>
+          )}
           <div className="grid gap-2">
             <Label htmlFor="name">Nome *</Label>
             <Input id="name" name="name" required maxLength={120} />
