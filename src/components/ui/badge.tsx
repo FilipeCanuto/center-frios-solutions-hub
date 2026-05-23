@@ -4,16 +4,25 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "status-dot inline-flex items-center rounded-md border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
+        default:
+          "border-[color:var(--electric)]/40 bg-[color:var(--electric)]/12 text-[color:var(--electric-glow)]",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "border-[color:var(--steel)] bg-[color:var(--graphite)]/60 text-foreground",
+        success:
+          "border-[color:oklch(0.7_0.17_152)]/40 bg-[oklch(0.7_0.17_152)]/12 text-[oklch(0.78_0.17_152)]",
+        warning:
+          "border-[color:oklch(0.78_0.17_75)]/40 bg-[oklch(0.78_0.17_75)]/12 text-[oklch(0.84_0.17_75)]",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
-        outline: "text-foreground",
+          "border-destructive/40 bg-destructive/12 text-[oklch(0.72_0.22_27)]",
+        info:
+          "border-[color:var(--electric)]/40 bg-[color:var(--electric)]/12 text-[color:var(--electric-glow)]",
+        neutral:
+          "border-[color:var(--steel)] bg-transparent text-muted-foreground",
+        outline: "border-[color:var(--steel)] text-foreground",
       },
     },
     defaultVariants: {

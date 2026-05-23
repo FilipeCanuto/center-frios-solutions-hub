@@ -5,10 +5,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius: var(--radius-md);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -28,81 +31,162 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-brand-blue: var(--brand-blue);
-  --color-brand-yellow: var(--brand-yellow);
-  --color-brand-whatsapp: var(--brand-whatsapp);
+
+  --color-midnight: var(--midnight);
+  --color-steel: var(--steel);
+  --color-graphite: var(--graphite);
+  --color-silver: var(--silver);
+  --color-platinum: var(--platinum);
+  --color-electric: var(--electric);
+  --color-brand-blue: var(--electric);
+  --color-brand-yellow: var(--accent);
+  --color-brand-whatsapp: #25d366;
+
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
+/* ============================================================
+   INDUSTRIAL DESIGN SYSTEM — Midnight / Steel / Electric Blue
+   Reference palette:
+     Midnight  #1C222B   Steel    #2A313C   Graphite #3B434F
+     Silver    #AAB1BB   Platinum #E6E9ED   Electric #1A73FF
+   ============================================================ */
+
 :root {
-  --radius: 0.75rem;
+  /* Raw palette tokens (dark default) */
+  --midnight: oklch(0.235 0.013 250);
+  --steel: oklch(0.298 0.013 250);
+  --graphite: oklch(0.365 0.013 250);
+  --silver: oklch(0.745 0.008 250);
+  --platinum: oklch(0.93 0.004 250);
+  --electric: oklch(0.62 0.22 258);
+  --electric-glow: oklch(0.7 0.22 258);
 
-  /* Center Frios — Premium / Executive (dark default, inspirado no PA7 PRO) */
-  --background: oklch(0.12 0.012 270);
-  --foreground: oklch(1 0 0);
+  /* Semantic (shadcn) mappings */
+  --background: var(--midnight);
+  --foreground: var(--platinum);
 
-  --card: oklch(0.18 0.012 270);
-  --card-foreground: oklch(1 0 0);
-  --popover: oklch(0.18 0.012 270);
-  --popover-foreground: oklch(1 0 0);
+  --card: oklch(0.275 0.013 250);
+  --card-foreground: var(--platinum);
+  --popover: oklch(0.275 0.013 250);
+  --popover-foreground: var(--platinum);
 
-  /* Azul elétrico — alta conversão */
-  --primary: oklch(0.58 0.22 258);
+  --primary: var(--electric);
   --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.26 0.012 270);
-  --secondary-foreground: oklch(1 0 0);
+  --secondary: var(--graphite);
+  --secondary-foreground: var(--platinum);
 
-  --muted: oklch(0.26 0.012 270);
-  --muted-foreground: oklch(0.7 0.008 270);
+  --muted: oklch(0.31 0.013 250);
+  --muted-foreground: var(--silver);
 
-  /* Ouro / amarelo premium */
-  --accent: oklch(0.78 0.17 85);
-  --accent-foreground: oklch(0.12 0.012 270);
+  --accent: var(--electric);
+  --accent-foreground: oklch(1 0 0);
 
   --destructive: oklch(0.62 0.22 27);
   --destructive-foreground: oklch(1 0 0);
 
-  --border: oklch(0.26 0.012 270);
-  --input: oklch(0.26 0.012 270);
-  --ring: oklch(0.58 0.22 258);
+  --success: oklch(0.7 0.17 152);
+  --warning: oklch(0.78 0.17 75);
+  --info: var(--electric);
 
-  --brand-blue: oklch(0.58 0.22 258);
-  --brand-yellow: oklch(0.78 0.17 85);
-  --brand-whatsapp: #25d366;
+  --border: var(--steel);
+  --input: var(--steel);
+  --ring: var(--electric);
+
+  --radius: 8px;
+
+  /* Gradients */
+  --gradient-steel: linear-gradient(
+    180deg,
+    oklch(0.34 0.013 250) 0%,
+    oklch(0.27 0.013 250) 50%,
+    oklch(0.22 0.013 250) 100%
+  );
+  --gradient-blue-glow: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in oklab, var(--electric) 55%, transparent) 0%,
+    transparent 70%
+  );
+  --gradient-blue-cta: linear-gradient(
+    180deg,
+    oklch(0.66 0.22 258) 0%,
+    oklch(0.55 0.22 258) 100%
+  );
+  --gradient-dark-surface: linear-gradient(
+    180deg,
+    oklch(0.28 0.013 250) 0%,
+    oklch(0.22 0.013 250) 100%
+  );
+
+  /* Brushed metal: turbulence noise overlay + horizontal grain + steel base */
+  --brushed-noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+
+  /* Elevation scale (matches reference 0..4) */
+  --shadow-1: 0 1px 2px 0 oklch(0 0 0 / 0.35);
+  --shadow-2: 0 2px 6px -1px oklch(0 0 0 / 0.4), 0 1px 2px 0 oklch(0 0 0 / 0.3);
+  --shadow-3: 0 8px 24px -6px oklch(0 0 0 / 0.5), 0 2px 6px -2px oklch(0 0 0 / 0.35);
+  --shadow-4: 0 24px 48px -12px oklch(0 0 0 / 0.6), 0 8px 16px -6px oklch(0 0 0 / 0.4);
+  --shadow-glow-blue: 0 0 0 1px color-mix(in oklab, var(--electric) 45%, transparent),
+    0 8px 24px -6px color-mix(in oklab, var(--electric) 55%, transparent);
+  --shadow-inner-edge: inset 0 1px 0 0 oklch(1 0 0 / 0.06),
+    inset 0 -1px 0 0 oklch(0 0 0 / 0.4);
 }
 
 .light {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.12 0.012 270);
+  --midnight: oklch(0.235 0.013 250);
+  --steel: oklch(0.86 0.008 250);
+  --graphite: oklch(0.96 0.004 250);
+  --silver: oklch(0.55 0.012 250);
+  --platinum: oklch(0.99 0.002 250);
+  --electric: oklch(0.55 0.22 258);
+  --electric-glow: oklch(0.62 0.22 258);
 
-  --card: oklch(0.985 0 0);
-  --card-foreground: oklch(0.12 0.012 270);
+  --background: var(--platinum);
+  --foreground: var(--midnight);
+
+  --card: oklch(1 0 0);
+  --card-foreground: var(--midnight);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.12 0.012 270);
+  --popover-foreground: var(--midnight);
 
-  --primary: oklch(0.58 0.22 258);
+  --primary: var(--electric);
   --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.965 0.003 270);
-  --secondary-foreground: oklch(0.12 0.012 270);
+  --secondary: var(--graphite);
+  --secondary-foreground: var(--midnight);
 
-  --muted: oklch(0.965 0.003 270);
-  --muted-foreground: oklch(0.5 0.008 270);
+  --muted: oklch(0.965 0.003 250);
+  --muted-foreground: var(--silver);
 
-  --accent: oklch(0.78 0.17 85);
-  --accent-foreground: oklch(0.12 0.012 270);
+  --accent: var(--electric);
+  --accent-foreground: oklch(1 0 0);
 
-  --destructive: oklch(0.62 0.22 27);
+  --destructive: oklch(0.58 0.22 27);
   --destructive-foreground: oklch(1 0 0);
 
-  --border: oklch(0.92 0.004 270);
-  --input: oklch(0.92 0.004 270);
-  --ring: oklch(0.58 0.22 258);
+  --border: var(--steel);
+  --input: var(--steel);
+  --ring: var(--electric);
 
-  --brand-blue: oklch(0.58 0.22 258);
-  --brand-yellow: oklch(0.78 0.17 85);
-  --brand-whatsapp: #25d366;
+  --gradient-steel: linear-gradient(
+    180deg,
+    oklch(0.98 0.003 250) 0%,
+    oklch(0.93 0.005 250) 50%,
+    oklch(0.86 0.008 250) 100%
+  );
+  --gradient-dark-surface: linear-gradient(
+    180deg,
+    oklch(1 0 0) 0%,
+    oklch(0.96 0.004 250) 100%
+  );
+
+  --shadow-1: 0 1px 2px 0 oklch(0 0 0 / 0.06);
+  --shadow-2: 0 2px 6px -1px oklch(0 0 0 / 0.08), 0 1px 2px 0 oklch(0 0 0 / 0.04);
+  --shadow-3: 0 8px 24px -6px oklch(0 0 0 / 0.12), 0 2px 6px -2px oklch(0 0 0 / 0.06);
+  --shadow-4: 0 24px 48px -12px oklch(0 0 0 / 0.18), 0 8px 16px -6px oklch(0 0 0 / 0.1);
+  --shadow-glow-blue: 0 0 0 1px color-mix(in oklab, var(--electric) 35%, transparent),
+    0 8px 24px -6px color-mix(in oklab, var(--electric) 35%, transparent);
 }
 
 @layer base {
@@ -119,14 +203,182 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  :focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--color-background),
+      0 0 0 4px color-mix(in oklab, var(--electric) 70%, transparent);
+    border-radius: var(--radius);
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--electric) 45%, transparent);
+    color: var(--color-foreground);
   }
 }
 
+/* ============================================================
+   TYPOGRAPHY SCALE — Inter, matching reference exactly
+   ============================================================ */
+@layer base {
+  .text-display-1 {
+    font-size: 56px;
+    line-height: 64px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .text-display-2 {
+    font-size: 40px;
+    line-height: 48px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .text-h1 {
+    font-size: 28px;
+    line-height: 36px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .text-h2 {
+    font-size: 22px;
+    line-height: 28px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .text-subtitle {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
+  }
+  .text-body {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+  }
+  .text-caption {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
+    color: var(--color-muted-foreground);
+  }
+  .text-overline {
+    font-size: 10px;
+    line-height: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-muted-foreground);
+  }
+}
+
+/* ============================================================
+   INDUSTRIAL UTILITIES
+   ============================================================ */
+
+/* Brushed stainless steel surface */
+.bg-brushed-metal {
+  background-image:
+    var(--brushed-noise),
+    repeating-linear-gradient(
+      90deg,
+      oklch(0.3 0.013 250) 0px,
+      oklch(0.34 0.013 250) 1px,
+      oklch(0.28 0.013 250) 2px,
+      oklch(0.32 0.013 250) 3px
+    ),
+    linear-gradient(180deg, oklch(0.34 0.013 250) 0%, oklch(0.22 0.013 250) 100%);
+  background-size:
+    240px 240px,
+    auto,
+    auto;
+  background-blend-mode: overlay, normal, normal;
+  position: relative;
+}
+.bg-brushed-metal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, oklch(1 0 0) 6%, transparent) 0%,
+    transparent 40%,
+    color-mix(in oklab, oklch(0 0 0) 35%, transparent) 100%
+  );
+}
+
+.light .bg-brushed-metal {
+  background-image:
+    var(--brushed-noise),
+    repeating-linear-gradient(
+      90deg,
+      oklch(0.94 0.004 250) 0px,
+      oklch(0.97 0.003 250) 1px,
+      oklch(0.92 0.005 250) 2px,
+      oklch(0.95 0.004 250) 3px
+    ),
+    linear-gradient(180deg, oklch(0.97 0.003 250) 0%, oklch(0.88 0.008 250) 100%);
+  background-blend-mode: multiply, normal, normal;
+}
+
+.bg-steel-gradient {
+  background: var(--gradient-steel);
+}
+
+.bg-surface-gradient {
+  background: var(--gradient-dark-surface);
+}
+
+.glow-blue {
+  box-shadow: var(--shadow-glow-blue);
+}
+
+.glow-blue-hover {
+  transition:
+    transform 200ms ease-out,
+    box-shadow 200ms ease-out,
+    background-color 200ms ease-out;
+}
+.glow-blue-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow-blue);
+}
+
+.elevation-1 {
+  box-shadow: var(--shadow-1);
+}
+.elevation-2 {
+  box-shadow: var(--shadow-2);
+}
+.elevation-3 {
+  box-shadow: var(--shadow-3);
+}
+.elevation-4 {
+  box-shadow: var(--shadow-4);
+}
+
+/* Subtle technical dot grid, recalibrated for midnight */
 .tech-grid {
   background-image: radial-gradient(
-    circle at 2px 2px,
-    color-mix(in oklab, var(--foreground) 6%, transparent) 1px,
+    circle at 1px 1px,
+    color-mix(in oklab, var(--platinum) 8%, transparent) 1px,
     transparent 0
   );
-  background-size: 40px 40px;
+  background-size: 32px 32px;
+}
+
+/* Status chip dot helper */
+.status-dot::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: currentColor;
+  margin-right: 6px;
+  vertical-align: middle;
+  box-shadow: 0 0 8px currentColor;
 }

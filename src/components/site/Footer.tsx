@@ -5,8 +5,8 @@ import { Logo } from "./Logo";
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-border bg-background">
-      <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-4">
+    <footer className="mt-24 border-t border-[color:var(--steel)] bg-brushed-metal relative">
+      <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-4">
         <div className="md:col-span-2">
           <Link to="/" className="flex items-center">
             <Logo size="md" />
@@ -81,7 +81,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-border">
+      <div className="relative z-10 border-t border-[color:var(--steel)]">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-6 py-6 text-xs text-muted-foreground md:flex-row">
           <p>© {new Date().getFullYear()} Center Frios. Todos os direitos reservados.</p>
           <p>Refrigeração comercial e equipamentos para gastronomia profissional.</p>

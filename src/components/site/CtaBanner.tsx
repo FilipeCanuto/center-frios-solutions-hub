@@ -19,36 +19,40 @@ export function CtaBanner({
 }: Props) {
   return (
     <section className="px-6 py-20">
-      <div className="mx-auto max-w-5xl rounded-3xl bg-primary p-10 text-center md:p-14">
-        <h2 className="text-3xl font-semibold tracking-tight text-primary-foreground md:text-4xl">
-          {title}
-        </h2>
-        <p className="mx-auto mt-4 max-w-xl text-primary-foreground/80">{description}</p>
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <QuoteDialog
-            source={source}
-            defaultProduct={defaultProduct}
-            defaultSegment={defaultSegment}
-            trigger={
-              <Button
-                size="lg"
-                variant="secondary"
-                className="rounded-full bg-background text-foreground hover:bg-background/90"
-              >
-                Solicitar Orçamento
-              </Button>
-            }
-          />
-          <a
-            href={CONTACT.whatsappHref}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-full border border-primary-foreground/30 px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-foreground/10"
-          >
-            Falar no WhatsApp
-          </a>
+      <div className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-[color:var(--steel)] bg-brushed-metal p-10 text-center shadow-[var(--shadow-4)] md:p-14">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-60"
+          style={{ background: "var(--gradient-blue-glow)" }}
+        />
+        <div className="relative">
+          <h2 className="text-h1 md:text-display-2 text-foreground">{title}</h2>
+          <p className="mx-auto mt-4 max-w-xl text-subtitle text-muted-foreground">
+            {description}
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <QuoteDialog
+              source={source}
+              defaultProduct={defaultProduct}
+              defaultSegment={defaultSegment}
+              trigger={
+                <Button size="lg" className="rounded-full">
+                  Solicitar Orçamento
+                </Button>
+              }
+            />
+            <a
+              href={CONTACT.whatsappHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center rounded-full border border-[color:var(--steel)] bg-transparent px-6 py-3 text-sm font-semibold text-foreground transition-all duration-200 hover:border-[color:var(--electric)] hover:shadow-[var(--shadow-glow-blue)]"
+            >
+              Falar no WhatsApp
+            </a>
+          </div>
         </div>
       </div>
     </section>
+
   );
 }

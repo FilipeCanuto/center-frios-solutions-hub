@@ -1,72 +1,110 @@
-## Objetivo
+# Design System Industrial — Aplicação Integral
 
-Implementar 3DS 2.0 na cobrança de crédito via e-Rede (Opção A), mantendo PAN/CVV apenas em memória server-side, sem persistência nem logs, e preservar a telemetria estruturada (`returnCode`, `returnMessage`, `httpStatus`, `tid`).
+Refinamento puramente visual baseado na referência enviada. Zero alteração de texto, rotas, lógica de pagamento, server functions, schemas ou conteúdo.
 
-## Mudanças
+## 1. Tokens — `src/styles.css` (reescrita do bloco de variáveis)
 
-### 1. `src/lib/payments/rede.ts` — adicionar 3DS 2.0 + sanitização de logs
+Paleta exata da referência, convertida para `oklch` (mantendo nomes shadcn para não quebrar componentes):
 
-- Adicionar tipo `ThreeDSInput` com dados do portador exigidos pelo 3DS da e-Rede:
-  - `embedded: true` (fluxo frictionless/challenge embutido)
-  - `onFailure: "continue"` (configurável; default `"decline"` para máxima proteção)
-  - `userAgent`, `device.colorDepth`, `device.deviceType`, `device.javaEnabled`, `device.language`, `device.screenHeight`, `device.screenWidth`, `device.timeZoneOffset`
-  - `billingAddress` (rua, número, cidade, estado, país, CEP — todos via `onlyDigits` quando aplicável)
-  - `cardHolder`: `name`, `email`, `mobilePhone` (com DDI), `documentNumber` (CPF, sanitizado)
-  - `browser`: `acceptHeader`
-- Estender `CreditChargeInput` com `threeDS: ThreeDSInput` (obrigatório).
-- No `chargeCreditCard`, incluir `threeDSecure: { ... }` no payload conforme spec e-Rede.
-- Tratar dois novos campos no `RedeRawResponse`: `threeDSecure.url` e `threeDSecure.paReq` (caso challenge não-embedded) — devolver no `RedeChargeResult` como `threeDS?: { url, paReq } | null`.
-- **Sanitização de logs**: garantir que `console.error/log` NUNCA inclua `cardNumber`, `securityCode`, `expirationMonth`, `expirationYear`, `cardholderName` nem o objeto `payload`. Logar apenas `orderId`, `httpStatus`, `returnCode`, `returnMessage`, `tid`. O `raw` da e-Rede continua sendo persistido em `transactions.raw_response` (resposta — não contém PAN/CVV), mas removeremos qualquer eco de campos sensíveis antes de logar.
-- Adicionar utilitário `redactRawForLog(raw)` que remove chaves `cardNumber`, `securityCode`, `cvv` se a e-Rede algum dia ecoar.
+```text
+Midnight       #1C222B  → --background (dark)
+Steel          #2A313C  → --border, --input
+Graphite       #3B434F  → --card, --popover, --secondary, --muted
+Silver         #AAB1BB  → --muted-foreground
+Platinum       #E6E9ED  → --foreground
+Electric Blue  #1A73FF  → --primary, --ring, --accent (interativo)
+```
 
-### 2. `src/lib/test-charge.functions.ts` — coletar 3DS, não persistir cartão
+Gradientes e sombras (vars reutilizáveis):
+- `--gradient-steel` — linear graphite→steel→graphite (botões secundários, headers de tabela)
+- `--gradient-brushed` — CSS puro: `repeating-linear-gradient` horizontal + overlay SVG turbulence inline (data URI) para o aço escovado
+- `--gradient-blue-glow` — radial electric-blue → transparente
+- `--shadow-elevation-1..4` — escala de elevação igual à da referência
+- `--shadow-glow-blue` — halo azul para foco/hover de CTAs
 
-- Estender o `TestChargeSchema` (Zod) com objeto `threeDS` contendo os campos descritos acima (validados, com limites: `documentNumber` 11 dígitos, `mobilePhone` 10–15, CEP 8, etc.).
-- Repassar `threeDS` para `chargeCreditCard`.
-- Garantir que nenhum campo de cartão (PAN, CVV, expMonth/Year, holderName) seja inserido em `orders` nem em `transactions` (já está assim — manter e adicionar comentário explícito).
-- Em caso de erro, devolver ao cliente apenas: `approved`, `returnCode`, `returnMessage`, `httpStatus`, `tid`, `orderId`, `status`. Nunca devolver `raw`, payload ou eco de cartão.
+Light mode refinado: Platinum como background, Midnight como foreground, Electric Blue mantido como primary (ajuste fino de L para AA), Steel como border.
 
-### 3. `src/routes/_authenticated.admin.teste-pagamento.tsx` — coletar 3DS no browser
+## 2. Tipografia — Inter (escala exata da referência)
 
-- Adicionar coleta automática (em `useEffect` no submit) de:
-  - `navigator.userAgent`
-  - `screen.colorDepth`, `screen.width`, `screen.height`
-  - `navigator.language`
-  - `new Date().getTimezoneOffset()`
-  - `navigator.javaEnabled?.() ?? false`
-  - `"application/json"` como `acceptHeader`
-  - `deviceType: "BROWSER"`
-- Adicionar campos no formulário: **CPF do portador**, **email**, **celular com DDI** (default `+55`), **endereço de cobrança** (CEP, rua, número, cidade, UF, país default `BR`).
-- Sanitizar (apenas dígitos) CPF, telefone, CEP antes de enviar.
-- Submeter `threeDS` montado para `chargeTestPayment`.
-- Render de resultado: se `threeDS.url` voltar, exibir aviso "challenge requerido — abra a URL retornada"; nas demais, mostrar `Aprovado/Negado` como hoje.
+Classes utilitárias em `@layer base`:
+- `.text-display-1` 56/64 SemiBold
+- `.text-display-2` 40/48 SemiBold
+- `.text-h1` 28/36 SemiBold
+- `.text-h2` 22/28 Medium
+- `.text-subtitle` 16/24 Medium
+- `.text-body` 14/20 Regular
+- `.text-caption` 12/16 Regular
+- `.text-overline` 10/12 Medium uppercase tracking 0.12em
 
-### 4. `src/lib/payments.functions.ts` — paridade no checkout público
+Aplicadas em títulos/labels existentes sem mudar o conteúdo.
 
-- Mesma extensão de schema/payload aplicada ao fluxo público em `CheckoutDialog`. Coletar 3DS no front (mesma estratégia) e repassar.
-- Garantir que `cardNumber`, `securityCode`, `expirationMonth`, `expirationYear` não sejam persistidos em `orders`, nem incluídos em `raw_response` enviado ao banco (limpar antes do insert se necessário).
+## 3. Border radius e espaçamento
 
-### 5. `src/components/site/pa7/CheckoutDialog.tsx` — coletar 3DS
+Escala da referência:
+- `--radius-sm` 4px (chips, badges)
+- `--radius` 8px (inputs, botões)
+- `--radius-md` 12px (cards pequenos)
+- `--radius-lg` 16px (cards principais, dialogs)
+- `--radius-xl` 24px (heros)
 
-- Adicionar coleta automática do device/browser igual ao admin.
-- Reaproveitar nome, email, telefone, CPF/CNPJ e endereço já capturados no checkout para popular o objeto `threeDS` (sem novos campos visíveis para o cliente — todos já existem).
+Espaçamento 4pt grid (4/8/12/16/24/32/40/48/64/80/96/128) já compatível com Tailwind.
 
-## Segurança / Garantias
+## 4. Componentes shadcn — variantes (API inalterada)
 
-- **PAN/CVV/expiração**: apenas variáveis locais nas server functions; jamais em `orders`, `transactions.raw_response`, nem em `console.*`.
-- **Logs**: somente `orderId`, `httpStatus`, `returnCode`, `returnMessage`, `tid`, `stack` em erro de rede.
-- **Resposta para cliente**: shape estrito sem `raw`, sem payload de entrada.
-- **3DS `onFailure**`: default `"decline"` (recusa se autenticação falhar) — alinhado a "transferência de responsabilidade".
+Reestilizar somente os arquivos de variante:
+- `button.tsx` — Primary (electric-blue + glow no hover), Secondary (steel-gradient), Tertiary (outline steel), Ghost (transparente, hover graphite). Estados focus com ring electric-blue + offset.
+- `input.tsx`, `textarea.tsx` — fundo graphite, border steel, focus border electric-blue + glow sutil, ícone de clear como na imagem
+- `select.tsx`, `dropdown-menu.tsx` — surface graphite, item ativo com fundo `electric-blue/12` + barra lateral electric-blue
+- `badge.tsx` (status chips) — Success/Info/Warning/Error/Neutral com dot + texto, tons exatos da referência
+- `checkbox.tsx`, `radio-group.tsx`, `switch.tsx` — checked em electric-blue com glow
+- `card.tsx` — graphite + border steel/60 + shadow-elevation-2
+- `table.tsx` — header em steel-gradient, linhas hover graphite, status chips reaproveitando Badge
+- `tabs.tsx` — aba ativa com underline electric-blue + glow (igual à referência)
+- `dialog.tsx`, `sheet.tsx`, `popover.tsx`, `tooltip.tsx` — surface graphite + shadow-elevation-4
 
-## Teste R$ 1,00
+Disabled: opacidade 40%, sem glow.
 
-Após implementação, a rota `/admin/teste-pagamento` aceita cobrança real de R$ 1,00 com 3DS 2.0 ativo. Logs de produção mostrarão `returnCode`, `httpStatus` e `tid` para auditoria.
+## 5. Ícones (Lucide já é o padrão)
 
-## Pergunta para confirmar antes de codar
+Padronização global:
+- stroke-width 2
+- tamanhos 16 (inline) / 20 (botões) / 24 (nav)
+- `currentColor` para herdar o glow azul em hover/ativo
 
-1. `**onFailure**`: `"decline"` (recusa quando 3DS falha — recomendado, máxima proteção) ou `"continue"` (segue mesmo sem autenticação)?
-2. No **checkout público** (CheckoutDialog) hoje **não** há campo de CPF nem endereço de cobrança completo (só envio). Posso adicionar esses campos ao formulário do cliente? Sem eles, o 3DS da e-Rede rejeita o payload.  
-  
-Respostas:  
-1. opção 1 (recomendada)  
-2. Sim
+## 6. Aço escovado em pontos estratégicos
+
+Aplicar `.bg-brushed-metal` apenas em:
+- Header sticky (com blur)
+- Hero das landings (PA7, HS98) — faixa de fundo
+- `StickyBuyBar` PA7
+- `CtaBanner`
+- Footer
+- Topbar/sidebar do admin
+- Cards "Built for precision" / destaque de marca
+
+Não usar em formulários, tabelas e dialogs (preservar legibilidade).
+
+## 7. Micro-interações
+
+- Hover em CTAs primários: `translateY(-1px)` + `shadow-glow-blue`
+- Focus-visible global: ring 2px electric-blue + offset 2px
+- Transições 200ms ease-out
+- `tech-grid` recalibrada para o novo background midnight
+
+## Arquivos editados
+
+- `src/styles.css` — tokens, gradientes, utilities, escala tipográfica
+- `src/components/ui/*.tsx` — apenas variantes (button, input, textarea, select, dropdown-menu, badge, card, table, tabs, checkbox, radio-group, switch, dialog, sheet, popover, tooltip)
+- `src/components/site/Header.tsx`, `Footer.tsx`, `CtaBanner.tsx` — classes de fundo
+- `src/components/site/pa7/StickyBuyBar.tsx`, `Pa7ProLanding.tsx` — classes
+- `src/components/site/hs98/TechHero.tsx`, `Hs98Landing.tsx` — classes
+- `src/routes/_authenticated.tsx`, `_authenticated.admin.pedidos.tsx`, `_authenticated.admin.teste-pagamento.tsx`, `login.tsx` — wrappers/classes
+- `src/components/site/ProductCard.tsx`, `SegmentCard.tsx`, `SpecGrid.tsx`, `SectionHeading.tsx` — alinhar com tokens novos
+
+## Garantias
+
+- Zero alteração em `src/lib/payments/rede.ts`, server functions, rotas, schema Supabase, textos, conteúdo, funcionalidade.
+- Nenhum componente removido, nenhuma rota nova.
+- Contraste AA verificado nos pares principais (Platinum/Midnight, Silver/Graphite, Electric Blue/Midnight).
+- Dark padrão + Light refinado funcionando em paralelo.
+- Verificação visual no preview após implementação.
