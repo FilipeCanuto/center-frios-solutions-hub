@@ -16,13 +16,14 @@ interface Hotspot {
   product: "hs22" | "hs98";
 }
 
-// Coordinates are relative to the full-bleed hero (right-side image stage).
+// Coordinates relative to the stage container.
+// HS-22 sits on the LEFT (~25% center), HS-98 on the RIGHT (~72% center).
 const HOTSPOTS: Hotspot[] = [
-  // HS-98 (back, dominant)
+  // HS-98 (right, dominant)
   {
     id: "hs98-body",
-    x: "78%",
-    y: "22%",
+    x: "72%",
+    y: "26%",
     title: "Aço Inox AISI 304",
     description: "Construção ultra robusta com cavalete integrado para operação intensa 24/7.",
     placement: "left",
@@ -31,7 +32,7 @@ const HOTSPOTS: Hotspot[] = [
   {
     id: "hs98-safety",
     x: "82%",
-    y: "46%",
+    y: "48%",
     title: "Segurança NR-12",
     description: "Chave geral selada IP54 e sensores redundantes de interrupção instantânea.",
     placement: "left",
@@ -39,18 +40,18 @@ const HOTSPOTS: Hotspot[] = [
   },
   {
     id: "hs98-capacity",
-    x: "74%",
-    y: "62%",
+    x: "68%",
+    y: "68%",
     title: "Caçamba de 41 L",
     description: "Homogeneização de 31 kg de carne por ciclo. Acaba com a quebra de cor.",
     placement: "left",
     product: "hs98",
   },
-  // HS-22 (front, smaller)
+  // HS-22 (left, smaller)
   {
     id: "hs22-lid",
-    x: "52%",
-    y: "40%",
+    x: "26%",
+    y: "44%",
     title: "Tampa Translúcida",
     description: "Inspeção em tempo real da homogeneidade da massa sem abrir e parar o motor.",
     placement: "right",
@@ -58,8 +59,8 @@ const HOTSPOTS: Hotspot[] = [
   },
   {
     id: "hs22-pedal",
-    x: "48%",
-    y: "86%",
+    x: "22%",
+    y: "82%",
     title: "Pedal Hands-Free",
     description: "Acionamento seguro pelos pés, liberando ambas as mãos para o manuseio.",
     placement: "right",
@@ -67,7 +68,7 @@ const HOTSPOTS: Hotspot[] = [
   },
   {
     id: "hs22-power",
-    x: "44%",
+    x: "32%",
     y: "62%",
     title: "Motor 2 CV · Boca 22",
     description: "Força industrial e alta produtividade de 600 kg/h no menor espaço físico.",
