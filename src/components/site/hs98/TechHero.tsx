@@ -16,13 +16,14 @@ interface Hotspot {
   product: "hs22" | "hs98";
 }
 
-// Coordinates are relative to the full-bleed hero (right-side image stage).
+// Coordinates relative to the stage container.
+// HS-22 sits on the LEFT (~25% center), HS-98 on the RIGHT (~72% center).
 const HOTSPOTS: Hotspot[] = [
-  // HS-98 (back, dominant)
+  // HS-98 (right, dominant)
   {
     id: "hs98-body",
-    x: "78%",
-    y: "22%",
+    x: "72%",
+    y: "26%",
     title: "Aço Inox AISI 304",
     description: "Construção ultra robusta com cavalete integrado para operação intensa 24/7.",
     placement: "left",
@@ -31,7 +32,7 @@ const HOTSPOTS: Hotspot[] = [
   {
     id: "hs98-safety",
     x: "82%",
-    y: "46%",
+    y: "48%",
     title: "Segurança NR-12",
     description: "Chave geral selada IP54 e sensores redundantes de interrupção instantânea.",
     placement: "left",
@@ -39,18 +40,18 @@ const HOTSPOTS: Hotspot[] = [
   },
   {
     id: "hs98-capacity",
-    x: "74%",
-    y: "62%",
+    x: "68%",
+    y: "68%",
     title: "Caçamba de 41 L",
     description: "Homogeneização de 31 kg de carne por ciclo. Acaba com a quebra de cor.",
     placement: "left",
     product: "hs98",
   },
-  // HS-22 (front, smaller)
+  // HS-22 (left, smaller)
   {
     id: "hs22-lid",
-    x: "52%",
-    y: "40%",
+    x: "26%",
+    y: "44%",
     title: "Tampa Translúcida",
     description: "Inspeção em tempo real da homogeneidade da massa sem abrir e parar o motor.",
     placement: "right",
@@ -58,8 +59,8 @@ const HOTSPOTS: Hotspot[] = [
   },
   {
     id: "hs22-pedal",
-    x: "48%",
-    y: "86%",
+    x: "22%",
+    y: "82%",
     title: "Pedal Hands-Free",
     description: "Acionamento seguro pelos pés, liberando ambas as mãos para o manuseio.",
     placement: "right",
@@ -67,7 +68,7 @@ const HOTSPOTS: Hotspot[] = [
   },
   {
     id: "hs22-power",
-    x: "44%",
+    x: "32%",
     y: "62%",
     title: "Motor 2 CV · Boca 22",
     description: "Força industrial e alta produtividade de 600 kg/h no menor espaço físico.",
@@ -106,13 +107,13 @@ export function TechHero() {
       </div>
 
       {/* ===== FULL-BLEED IMAGE STAGE (z-10) ===== */}
-      <div className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col xl:block xl:min-h-[760px] 2xl:min-h-[min(92vh,920px)]">
+      <div className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col xl:block xl:min-h-[780px] 2xl:min-h-[min(92vh,920px)]">
         {/* Image layer */}
-        <div className="relative order-2 mx-auto h-[62vh] w-full max-w-[720px] xl:absolute xl:inset-y-0 xl:right-0 xl:order-none xl:h-full xl:w-[58%] xl:max-w-none 2xl:w-[60%]">
+        <div className="relative order-2 mx-auto h-[520px] w-full max-w-[820px] sm:h-[600px] md:h-[680px] xl:absolute xl:inset-y-0 xl:right-0 xl:order-none xl:h-full xl:w-[58%] xl:max-w-none 2xl:w-[60%]">
           {/* Wide elliptical brushed-metal stage at the bottom */}
           <div
             aria-hidden
-            className="absolute bottom-[3%] left-[2%] right-[2%] h-[140px] overflow-hidden rounded-[50%] border border-white/[0.08] shadow-[0_30px_70px_rgba(0,0,0,0.95)]"
+            className="absolute bottom-[6%] left-[4%] right-[4%] h-[120px] overflow-hidden rounded-[50%] border border-white/[0.08] shadow-[0_30px_70px_rgba(0,0,0,0.95)] md:h-[150px]"
             style={{
               background:
                 "radial-gradient(ellipse at 50% 0%, rgba(60,60,60,0.45) 0%, rgba(15,15,15,0.96) 72%, rgba(4,4,4,1) 100%)",
@@ -132,52 +133,56 @@ export function TechHero() {
           {/* Ground shadow ellipses */}
           <div
             aria-hidden
-            className="absolute bottom-[6%] right-[4%] h-[60px] w-[55%] rounded-[50%] bg-black/70 blur-2xl"
+            className="absolute bottom-[9%] right-[6%] h-[48px] w-[44%] rounded-[50%] bg-black/70 blur-2xl"
           />
           <div
             aria-hidden
-            className="absolute bottom-[8%] left-[8%] h-[44px] w-[42%] rounded-[50%] bg-black/60 blur-2xl"
+            className="absolute bottom-[10%] left-[6%] h-[40px] w-[36%] rounded-[50%] bg-black/65 blur-2xl"
           />
 
-          {/* HS-98 — dominant, back-right */}
-          <motion.img
-            initial={{ opacity: 0, x: 60, y: 30, scale: 0.96 }}
-            animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-            transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            src={HS98_IMAGES.main}
-            alt="Skymsen HS-98 — homogeneizador industrial 900 kg/h"
-            className="absolute right-[-4%] top-[4%] z-10 h-[92%] w-auto max-w-[78%] object-contain"
-            style={{
-              filter:
-                "drop-shadow(0 40px 50px rgba(0,0,0,0.75)) drop-shadow(0 18px 24px rgba(0,0,0,0.55)) drop-shadow(0 6px 10px rgba(0,0,0,0.4))",
-            }}
-            loading="eager"
-            fetchPriority="high"
-          />
+          {/* Duo container — base-aligned, no overlap */}
+          <div className="absolute inset-x-[2%] bottom-[10%] top-[6%] flex items-end justify-center gap-3 sm:gap-6 md:gap-10">
+            {/* HS-22 — left, smaller */}
+            <motion.img
+              initial={{ opacity: 0, x: -30, y: 20 }}
+              animate={{ opacity: 1, x: 0, y: 0 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              src={HS22_IMAGES.hero}
+              alt="Skymsen HS-22 — homogeneizador compacto"
+              className="relative z-20 h-[70%] w-auto max-w-[44%] object-contain object-bottom"
+              style={{
+                filter:
+                  "drop-shadow(0 32px 40px rgba(0,0,0,0.7)) drop-shadow(0 14px 20px rgba(0,0,0,0.5)) drop-shadow(0 5px 8px rgba(0,0,0,0.4))",
+              }}
+              loading="eager"
+              fetchPriority="high"
+            />
 
-          {/* HS-22 — front, overlapping */}
-          <motion.img
-            initial={{ opacity: 0, x: -40, y: 30 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            src={HS22_IMAGES.hero}
-            alt="Skymsen HS-22 — homogeneizador compacto com tampa em policarbonato"
-            className="absolute bottom-[6%] left-[2%] z-20 h-[72%] w-auto max-w-[52%] object-contain"
-            style={{
-              filter:
-                "drop-shadow(0 32px 40px rgba(0,0,0,0.7)) drop-shadow(0 14px 20px rgba(0,0,0,0.5)) drop-shadow(0 5px 8px rgba(0,0,0,0.4))",
-            }}
-            loading="eager"
-            fetchPriority="high"
-          />
+            {/* HS-98 — right, dominant */}
+            <motion.img
+              initial={{ opacity: 0, x: 30, y: 20, scale: 0.97 }}
+              animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+              transition={{ duration: 0.9, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+              src={HS98_IMAGES.main}
+              alt="Skymsen HS-98 — homogeneizador industrial 900 kg/h"
+              className="relative z-10 h-[100%] w-auto max-w-[54%] object-contain object-bottom"
+              style={{
+                filter:
+                  "drop-shadow(0 40px 50px rgba(0,0,0,0.75)) drop-shadow(0 18px 24px rgba(0,0,0,0.55)) drop-shadow(0 6px 10px rgba(0,0,0,0.4))",
+              }}
+              loading="eager"
+              fetchPriority="high"
+            />
+          </div>
 
           {/* Model tags */}
-          <div className="absolute bottom-[1%] left-[10%] z-30 rounded-full border border-white/15 bg-background/85 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-foreground backdrop-blur-xl">
+          <div className="absolute bottom-[2%] left-[14%] z-30 rounded-full border border-white/15 bg-background/85 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-foreground backdrop-blur-xl">
             HS-22
           </div>
-          <div className="absolute bottom-[1%] right-[8%] z-30 rounded-full border border-accent/40 bg-accent/15 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-accent backdrop-blur-xl">
+          <div className="absolute bottom-[2%] right-[14%] z-30 rounded-full border border-accent/40 bg-accent/15 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-accent backdrop-blur-xl">
             HS-98
           </div>
+
 
           {/* Hotspots */}
           {HOTSPOTS.map((spot) => {
@@ -244,7 +249,10 @@ export function TechHero() {
             <Badge variant="outline" className="mb-6 border-accent/40 bg-accent/10 text-accent">
               Tecnologia de Homogeneização Skymsen · Patente Brasileira
             </Badge>
-            <h1 className="text-balance text-5xl font-semibold leading-[1.04] tracking-tight md:text-6xl xl:text-[72px] xl:leading-[1.02] 2xl:text-[84px] 2xl:leading-[0.98]">
+            <h1
+              className="text-balance font-semibold tracking-tight"
+              style={{ fontSize: "clamp(2.25rem, 4.2vw + 0.5rem, 4.5rem)", lineHeight: 1.04 }}
+            >
               Carne pálida não vende.{" "}
               <span className="text-accent">Funcionário preso no moedor não dá lucro.</span>
             </h1>
