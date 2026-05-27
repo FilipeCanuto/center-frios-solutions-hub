@@ -249,7 +249,10 @@ export function TechHero() {
             <Badge variant="outline" className="mb-6 border-accent/40 bg-accent/10 text-accent">
               Tecnologia de Homogeneização Skymsen · Patente Brasileira
             </Badge>
-            <h1 className="text-balance text-5xl font-semibold leading-[1.04] tracking-tight md:text-6xl xl:text-[72px] xl:leading-[1.02] 2xl:text-[84px] 2xl:leading-[0.98]">
+            <h1
+              className="text-balance font-semibold tracking-tight"
+              style={{ fontSize: "clamp(2.25rem, 4.2vw + 0.5rem, 4.5rem)", lineHeight: 1.04 }}
+            >
               Carne pálida não vende.{" "}
               <span className="text-accent">Funcionário preso no moedor não dá lucro.</span>
             </h1>
