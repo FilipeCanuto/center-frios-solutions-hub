@@ -222,16 +222,16 @@ export function TechHero() {
         {/* ===== READABILITY OVERLAY (desktop only) ===== */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-20 hidden lg:block"
+          className="pointer-events-none absolute inset-0 z-20 hidden xl:block"
           style={{
             background:
-              "linear-gradient(90deg, var(--background) 0%, color-mix(in oklab, var(--background) 92%, transparent) 30%, color-mix(in oklab, var(--background) 55%, transparent) 50%, transparent 72%)",
+              "linear-gradient(90deg, var(--background) 0%, color-mix(in oklab, var(--background) 92%, transparent) 45%, color-mix(in oklab, var(--background) 55%, transparent) 60%, transparent 78%)",
           }}
         />
         {/* Cinematic top/bottom vignette */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-20 hidden lg:block"
+          className="pointer-events-none absolute inset-0 z-20 hidden xl:block"
           style={{
             background:
               "linear-gradient(180deg, color-mix(in oklab, var(--background) 60%, transparent) 0%, transparent 18%, transparent 78%, color-mix(in oklab, var(--background) 70%, transparent) 100%)",
@@ -239,12 +239,12 @@ export function TechHero() {
         />
 
         {/* ===== TEXT BLOCK (z-30) ===== */}
-        <div className="relative z-30 order-1 flex w-full items-center px-6 pb-10 pt-24 lg:absolute lg:inset-y-0 lg:left-0 lg:order-none lg:max-w-[640px] lg:px-12 lg:pb-0 lg:pt-0 xl:max-w-[720px] xl:px-16">
+        <div className="relative z-30 order-1 flex w-full items-center px-6 pb-10 pt-24 xl:absolute xl:inset-y-0 xl:left-0 xl:order-none xl:max-w-[680px] xl:px-14 xl:py-20 2xl:max-w-[760px] 2xl:px-20">
           <div>
             <Badge variant="outline" className="mb-6 border-accent/40 bg-accent/10 text-accent">
               Tecnologia de Homogeneização Skymsen · Patente Brasileira
             </Badge>
-            <h1 className="text-balance text-5xl font-semibold leading-[1.02] tracking-tight md:text-7xl lg:text-[80px] lg:leading-[0.98] xl:text-[88px]">
+            <h1 className="text-balance text-5xl font-semibold leading-[1.04] tracking-tight md:text-6xl xl:text-[72px] xl:leading-[1.02] 2xl:text-[84px] 2xl:leading-[0.98]">
               Carne pálida não vende.{" "}
               <span className="text-accent">Funcionário preso no moedor não dá lucro.</span>
             </h1>
