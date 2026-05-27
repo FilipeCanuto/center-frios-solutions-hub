@@ -106,9 +106,9 @@ export function TechHero() {
       </div>
 
       {/* ===== FULL-BLEED IMAGE STAGE (z-10) ===== */}
-      <div className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col lg:block lg:min-h-[88vh]">
+      <div className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col xl:block xl:min-h-[760px] 2xl:min-h-[min(92vh,920px)]">
         {/* Image layer */}
-        <div className="relative order-2 mx-auto h-[62vh] w-full max-w-[720px] lg:absolute lg:inset-y-0 lg:right-0 lg:order-none lg:h-full lg:w-[62%] lg:max-w-none">
+        <div className="relative order-2 mx-auto h-[62vh] w-full max-w-[720px] xl:absolute xl:inset-y-0 xl:right-0 xl:order-none xl:h-full xl:w-[58%] xl:max-w-none 2xl:w-[60%]">
           {/* Wide elliptical brushed-metal stage at the bottom */}
           <div
             aria-hidden
