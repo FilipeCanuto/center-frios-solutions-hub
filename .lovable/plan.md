@@ -1,110 +1,63 @@
-# Design System Industrial — Aplicação Integral
+## Objetivo
 
-Refinamento puramente visual baseado na referência enviada. Zero alteração de texto, rotas, lógica de pagamento, server functions, schemas ou conteúdo.
+Substituir a hero atual de 2 colunas por uma hero **full-bleed cinematográfica**: as imagens do HS-98 e HS-22 ocupam o fundo inteiro da seção em grande escala, transmitindo a robustez industrial dos equipamentos. O texto fica sobreposto à esquerda, protegido por um gradiente de leitura.
 
-## 1. Tokens — `src/styles.css` (reescrita do bloco de variáveis)
+## Escopo
 
-Paleta exata da referência, convertida para `oklch` (mantendo nomes shadcn para não quebrar componentes):
+Apenas `src/components/site/hs98/TechHero.tsx`. Sem mudanças em dados, rotas, lógica ou outros componentes. Tokens/cores do design system mantidos.
+
+## Estrutura nova da hero
 
 ```text
-Midnight       #1C222B  → --background (dark)
-Steel          #2A313C  → --border, --input
-Graphite       #3B434F  → --card, --popover, --secondary, --muted
-Silver         #AAB1BB  → --muted-foreground
-Platinum       #E6E9ED  → --foreground
-Electric Blue  #1A73FF  → --primary, --ring, --accent (interativo)
+┌────────────────────────────────────────────────────────────┐
+│  [gradient overlay esquerda → direita, escuro→transparente] │
+│                                                            │
+│  BADGE                                          ╔════════╗ │
+│  H1 grande                          [HS-98 GIGANTE em     │
+│  Subcopy                             escala dominante,    │
+│  [CTA] [CTA outline]                 ~90% altura da hero] │
+│  trust strip                                              │
+│                                     [HS-22 sobreposto     │
+│                                      em primeiro plano,   │
+│                                      ~70% altura]         │
+│  hotspots permanecem ancorados nas máquinas               │
+└────────────────────────────────────────────────────────────┘
 ```
 
-Gradientes e sombras (vars reutilizáveis):
-- `--gradient-steel` — linear graphite→steel→graphite (botões secundários, headers de tabela)
-- `--gradient-brushed` — CSS puro: `repeating-linear-gradient` horizontal + overlay SVG turbulence inline (data URI) para o aço escovado
-- `--gradient-blue-glow` — radial electric-blue → transparente
-- `--shadow-elevation-1..4` — escala de elevação igual à da referência
-- `--shadow-glow-blue` — halo azul para foco/hover de CTAs
+### Mudanças concretas
 
-Light mode refinado: Platinum como background, Midnight como foreground, Electric Blue mantido como primary (ajuste fino de L para AA), Steel como border.
+1. **Layout**: trocar `grid lg:grid-cols-12` por um container `relative` full-bleed. Altura mínima `min-h-[88vh]` no desktop, `min-h-[680px]` no mobile.
+2. **Imagens (camada de fundo)**:
+   - HS-98: posicionado `absolute right-[-4%] top-[6%]`, altura `h-[92%]`, `object-contain`, z-10. Drop-shadow reforçado (3 camadas) e ground-shadow elíptico abaixo.
+   - HS-22: `absolute right-[28%] bottom-[4%]`, altura `h-[72%]`, z-20, sobrepondo levemente o HS-98 para criar profundidade.
+   - No mobile (`<lg`): empilhar — máquinas viram um bloco no rodapé com altura `h-[60vh]`, texto acima.
+3. **Pedestal/halos**: mover os halos cônicos e o radial accent para trás das máquinas (z-0), aumentar raio. Pedestal escovado vira uma faixa elíptica larga no rodapé da hero (não mais um círculo).
+4. **Overlay de leitura**: gradiente `linear-gradient(90deg, var(--background) 0%, var(--background)/85 35%, transparent 70%)` cobrindo a metade esquerda para garantir contraste do texto sobre as imagens. Adicional vinheta no topo/base para coesão cinematográfica.
+5. **Bloco de texto**: `absolute inset-y-0 left-0 flex items-center` em coluna `max-w-[620px]` com padding generoso. H1 cresce para `md:text-[88px] leading-[0.98]`. Mantém badge, subcopy, CTAs e trust strip atuais — só ajusta hierarquia.
+6. **Hotspots**: mantidos, mas reposicionados (`x`/`y`) para casarem com as novas posições das máquinas. 6 hotspots preservados.
+7. **Tags HS-22 / HS-98**: realocadas para flutuar ao lado de cada máquina no novo layout.
+8. **Performance/SEO**: `loading="eager"` e `fetchPriority="high"` mantidos. `alt` mantidos.
 
-## 2. Tipografia — Inter (escala exata da referência)
+### Responsivo
 
-Classes utilitárias em `@layer base`:
-- `.text-display-1` 56/64 SemiBold
-- `.text-display-2` 40/48 SemiBold
-- `.text-h1` 28/36 SemiBold
-- `.text-h2` 22/28 Medium
-- `.text-subtitle` 16/24 Medium
-- `.text-body` 14/20 Regular
-- `.text-caption` 12/16 Regular
-- `.text-overline` 10/12 Medium uppercase tracking 0.12em
+- `lg+`: layout descrito acima (texto à esquerda sobre imagens à direita).
+- `md`: imagens em ~55% da largura à direita, gradiente mais agressivo.
+- `<md`: stack vertical — texto no topo (sem overlay), máquinas em bloco abaixo com pedestal elíptico cobrindo a base.
 
-Aplicadas em títulos/labels existentes sem mudar o conteúdo.
+### Acessibilidade
 
-## 3. Border radius e espaçamento
+- Contraste garantido pelo overlay (texto sempre sobre área escura sólida).
+- Hotspots seguem com `aria-label` e foco visível.
+- Reduzir `motion` honra `prefers-reduced-motion` (manter as transições já existentes via framer-motion).
 
-Escala da referência:
-- `--radius-sm` 4px (chips, badges)
-- `--radius` 8px (inputs, botões)
-- `--radius-md` 12px (cards pequenos)
-- `--radius-lg` 16px (cards principais, dialogs)
-- `--radius-xl` 24px (heros)
+## Validação
 
-Espaçamento 4pt grid (4/8/12/16/24/32/40/48/64/80/96/128) já compatível com Tailwind.
+- Visualizar em 1440px, 1024px, 768px e 390px (screenshots).
+- Confirmar zero overlap entre texto e máquinas em todos os breakpoints.
+- Build sem erros.
 
-## 4. Componentes shadcn — variantes (API inalterada)
+## Fora de escopo
 
-Reestilizar somente os arquivos de variante:
-- `button.tsx` — Primary (electric-blue + glow no hover), Secondary (steel-gradient), Tertiary (outline steel), Ghost (transparente, hover graphite). Estados focus com ring electric-blue + offset.
-- `input.tsx`, `textarea.tsx` — fundo graphite, border steel, focus border electric-blue + glow sutil, ícone de clear como na imagem
-- `select.tsx`, `dropdown-menu.tsx` — surface graphite, item ativo com fundo `electric-blue/12` + barra lateral electric-blue
-- `badge.tsx` (status chips) — Success/Info/Warning/Error/Neutral com dot + texto, tons exatos da referência
-- `checkbox.tsx`, `radio-group.tsx`, `switch.tsx` — checked em electric-blue com glow
-- `card.tsx` — graphite + border steel/60 + shadow-elevation-2
-- `table.tsx` — header em steel-gradient, linhas hover graphite, status chips reaproveitando Badge
-- `tabs.tsx` — aba ativa com underline electric-blue + glow (igual à referência)
-- `dialog.tsx`, `sheet.tsx`, `popover.tsx`, `tooltip.tsx` — surface graphite + shadow-elevation-4
-
-Disabled: opacidade 40%, sem glow.
-
-## 5. Ícones (Lucide já é o padrão)
-
-Padronização global:
-- stroke-width 2
-- tamanhos 16 (inline) / 20 (botões) / 24 (nav)
-- `currentColor` para herdar o glow azul em hover/ativo
-
-## 6. Aço escovado em pontos estratégicos
-
-Aplicar `.bg-brushed-metal` apenas em:
-- Header sticky (com blur)
-- Hero das landings (PA7, HS98) — faixa de fundo
-- `StickyBuyBar` PA7
-- `CtaBanner`
-- Footer
-- Topbar/sidebar do admin
-- Cards "Built for precision" / destaque de marca
-
-Não usar em formulários, tabelas e dialogs (preservar legibilidade).
-
-## 7. Micro-interações
-
-- Hover em CTAs primários: `translateY(-1px)` + `shadow-glow-blue`
-- Focus-visible global: ring 2px electric-blue + offset 2px
-- Transições 200ms ease-out
-- `tech-grid` recalibrada para o novo background midnight
-
-## Arquivos editados
-
-- `src/styles.css` — tokens, gradientes, utilities, escala tipográfica
-- `src/components/ui/*.tsx` — apenas variantes (button, input, textarea, select, dropdown-menu, badge, card, table, tabs, checkbox, radio-group, switch, dialog, sheet, popover, tooltip)
-- `src/components/site/Header.tsx`, `Footer.tsx`, `CtaBanner.tsx` — classes de fundo
-- `src/components/site/pa7/StickyBuyBar.tsx`, `Pa7ProLanding.tsx` — classes
-- `src/components/site/hs98/TechHero.tsx`, `Hs98Landing.tsx` — classes
-- `src/routes/_authenticated.tsx`, `_authenticated.admin.pedidos.tsx`, `_authenticated.admin.teste-pagamento.tsx`, `login.tsx` — wrappers/classes
-- `src/components/site/ProductCard.tsx`, `SegmentCard.tsx`, `SpecGrid.tsx`, `SectionHeading.tsx` — alinhar com tokens novos
-
-## Garantias
-
-- Zero alteração em `src/lib/payments/rede.ts`, server functions, rotas, schema Supabase, textos, conteúdo, funcionalidade.
-- Nenhum componente removido, nenhuma rota nova.
-- Contraste AA verificado nos pares principais (Platinum/Midnight, Silver/Graphite, Electric Blue/Midnight).
-- Dark padrão + Light refinado funcionando em paralelo.
-- Verificação visual no preview após implementação.
+- Não trocar assets de imagem.
+- Não mexer em outras seções (`UniversalBenefits`, `ModelBifurcation`, etc.).
+- Não alterar copy.
