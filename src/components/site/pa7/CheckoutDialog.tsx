@@ -554,7 +554,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
               )}
 
               {step === 3 && (
-                <div className="grid gap-5">
+                <div className="grid gap-6">
                   <h2 className="text-xl font-semibold text-foreground">Forma de pagamento</h2>
 
                   <Tabs
@@ -602,6 +602,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                               </span>
                             </div>
                           </div>
+                          <TrustStrip />
                           <PayCta
                             onClick={() => handlePayment()}
                             loading={submitting}
@@ -650,9 +651,14 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                                 Copiar
                               </Button>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-accent/10 border border-accent/20 rounded-lg p-2.5">
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-accent/10 border border-accent/20 rounded-lg p-2.5 animate-pulse">
                               <Loader2 className="size-4 animate-spin text-accent" />
-                              <span>Aguardando detecção do pagamento via Rede...</span>
+                              <span className="flex-1">Aguardando detecção do pagamento via Rede…</span>
+                              <span className="flex items-center gap-1">
+                                <span className="size-1.5 rounded-full bg-accent animate-pulse" style={{ animationDelay: "0ms" }} />
+                                <span className="size-1.5 rounded-full bg-accent animate-pulse" style={{ animationDelay: "200ms" }} />
+                                <span className="size-1.5 rounded-full bg-accent animate-pulse" style={{ animationDelay: "400ms" }} />
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -662,89 +668,92 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                     <TabsContent value="credit_card" className="mt-5">
                       <form
                         onSubmit={handlePayment}
-                        className="grid gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5"
+                        className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
                       >
-                        <div className="grid gap-2">
-                          <Label htmlFor="cardholderName">Nome impresso no cartão *</Label>
-                          <Input
-                            id="cardholderName"
-                            required
-                            placeholder="NOME DO TITULAR"
-                            value={cardholderName}
-                            onChange={(e) => setCardholderName(e.target.value.toUpperCase())}
-                            className="bg-background border-white/10 text-foreground"
-                          />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="cardNumber">Número do cartão *</Label>
-                          <div className="relative">
+                        <fieldset
+                          disabled={submitting}
+                          className="grid gap-4 disabled:opacity-60 disabled:pointer-events-none transition-opacity"
+                        >
+                          <div className="grid gap-2">
+                            <Label htmlFor="cardholderName">Nome impresso no cartão *</Label>
                             <Input
-                              id="cardNumber"
+                              id="cardholderName"
                               required
-                              placeholder="0000 0000 0000 0000"
-                              value={cardNumber}
-                              onChange={handleCardNumberChange}
-                              className="bg-background border-white/10 text-foreground pr-10"
+                              placeholder="NOME DO TITULAR"
+                              value={cardholderName}
+                              onChange={(e) => setCardholderName(e.target.value.toUpperCase())}
                             />
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
-                              <CreditCard className="size-5" />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="cardNumber">Número do cartão *</Label>
+                            <div className="relative">
+                              <Input
+                                id="cardNumber"
+                                required
+                                placeholder="0000 0000 0000 0000"
+                                value={cardNumber}
+                                onChange={handleCardNumberChange}
+                                className="peer pr-10"
+                              />
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 pointer-events-none transition-colors peer-focus:text-[color:var(--electric)]">
+                                <CreditCard className="size-5" />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="grid gap-2">
-                            <Label htmlFor="expiryDate">Validade *</Label>
-                            <Input
-                              id="expiryDate"
-                              required
-                              placeholder="MM/AA"
-                              value={expiryDate}
-                              onChange={handleExpiryChange}
-                              maxLength={5}
-                              className="bg-background border-white/10 text-foreground"
-                            />
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                              <Label htmlFor="expiryDate">Validade *</Label>
+                              <Input
+                                id="expiryDate"
+                                required
+                                placeholder="MM/AA"
+                                value={expiryDate}
+                                onChange={handleExpiryChange}
+                                maxLength={5}
+                              />
+                            </div>
+                            <div className="grid gap-2">
+                              <Label htmlFor="securityCode">CVV *</Label>
+                              <Input
+                                id="securityCode"
+                                required
+                                placeholder="000"
+                                value={securityCode}
+                                onChange={handleCvvChange}
+                                maxLength={4}
+                              />
+                            </div>
                           </div>
                           <div className="grid gap-2">
-                            <Label htmlFor="securityCode">CVV *</Label>
-                            <Input
-                              id="securityCode"
-                              required
-                              placeholder="000"
-                              value={securityCode}
-                              onChange={handleCvvChange}
-                              maxLength={4}
-                              className="bg-background border-white/10 text-foreground"
-                            />
+                            <Label htmlFor="installments">Opções de Parcelamento *</Label>
+                            <select
+                              id="installments"
+                              value={installments}
+                              onChange={(e) => setInstallments(Number(e.target.value))}
+                              className="select-field"
+                            >
+                              {Array.from({ length: 12 }, (_, i) => {
+                                const count = i + 1;
+                                const val = total / count;
+                                return (
+                                  <option
+                                    key={count}
+                                    value={count}
+                                    className="bg-background text-foreground"
+                                  >
+                                    {count}x de {formatBRL(val)} sem juros
+                                  </option>
+                                );
+                              })}
+                            </select>
                           </div>
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="installments">Opções de Parcelamento *</Label>
-                          <select
-                            id="installments"
-                            value={installments}
-                            onChange={(e) => setInstallments(Number(e.target.value))}
-                            className="flex h-10 w-full rounded-md border border-white/10 bg-background px-3 py-2 text-sm text-foreground ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            {Array.from({ length: 12 }, (_, i) => {
-                              const count = i + 1;
-                              const val = total / count;
-                              return (
-                                <option
-                                  key={count}
-                                  value={count}
-                                  className="bg-background text-foreground"
-                                >
-                                  {count}x de {formatBRL(val)} sem juros
-                                </option>
-                              );
-                            })}
-                          </select>
-                        </div>
-                        <PayCta
-                          type="submit"
-                          loading={submitting}
-                          label={`Pagar ${formatBRL(total)}`}
-                        />
+                          <TrustStrip />
+                          <PayCta
+                            type="submit"
+                            loading={submitting}
+                            label={`Pagar ${formatBRL(total)}`}
+                          />
+                        </fieldset>
                       </form>
                     </TabsContent>
                   </Tabs>
@@ -759,8 +768,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                       <ArrowLeft className="mr-2 size-4" /> Voltar
                     </Button>
                     <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                      <Lock className="size-3.5" /> Conexão segura SSL · Transação encriptada PCI
-                      Compliance
+                      <ShieldCheck className="size-3.5 text-accent" /> Ambiente certificado
                     </p>
                   </div>
                 </div>
@@ -829,31 +837,54 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
               </dl>
 
               <div className="rounded-xl border border-white/10 bg-background/60 p-4">
-                <p className="text-[11px] uppercase tracking-widest text-muted-foreground">
-                  Total no PIX
+                <p className="text-[10px] uppercase tracking-[0.22em] text-[color:var(--electric)] font-semibold">
+                  Você paga
                 </p>
-                <p className="mt-1 text-2xl font-semibold text-foreground">{formatBRL(totalPix)}</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Ou {formatBRL(total)} em até 12x sem juros no cartão.
+                <p className="mt-1.5 text-3xl font-bold text-foreground tracking-tight">{formatBRL(totalPix)}</p>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  no PIX · ou {formatBRL(total)} em até 12x sem juros no cartão.
                 </p>
               </div>
 
-              <div className="mt-auto grid gap-2 text-xs text-muted-foreground">
-                <p className="flex items-center gap-2">
-                  <ShieldCheck className="size-4 text-accent" /> Compra protegida
+              <div className="mt-auto rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">
+                  Garantias da transação
                 </p>
-                <p className="flex items-center gap-2">
-                  <Lock className="size-4 text-accent" /> Conexão SSL 256 bits
-                </p>
-                <p className="flex items-center gap-2">
-                  <Truck className="size-4 text-accent" /> Entrega em todo Brasil
-                </p>
+                <div className="mt-3 grid gap-2 text-xs text-muted-foreground">
+                  <p className="flex items-center gap-2">
+                    <ShieldCheck className="size-4 text-accent" /> Compra protegida · PCI-DSS
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Lock className="size-4 text-accent" /> Conexão SSL 256 bits
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Truck className="size-4 text-accent" /> Entrega em todo Brasil
+                  </p>
+                </div>
               </div>
             </div>
           </aside>
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function TrustStrip() {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[11px] text-muted-foreground">
+      <span className="inline-flex items-center gap-1.5">
+        <Lock className="size-3.5 text-accent" /> SSL 256-bit
+      </span>
+      <span className="size-1 rounded-full bg-white/15" aria-hidden />
+      <span className="inline-flex items-center gap-1.5">
+        <ShieldCheck className="size-3.5 text-accent" /> PCI-DSS
+      </span>
+      <span className="size-1 rounded-full bg-white/15" aria-hidden />
+      <span className="inline-flex items-center gap-1.5">
+        <Landmark className="size-3.5 text-accent" /> Processado por <strong className="text-foreground font-semibold">e-Rede</strong>
+      </span>
+    </div>
   );
 }
 
@@ -874,11 +905,14 @@ function PayCta({
       onClick={onClick}
       disabled={loading}
       size="lg"
-      className="mt-5 w-full rounded-full"
+      variant="conversion"
+      aria-busy={loading}
+      data-loading={loading || undefined}
+      className="mt-1 h-14 w-full rounded-full text-base data-[loading=true]:cursor-progress data-[loading=true]:opacity-95 data-[loading=true]:cta-progress-bar"
     >
       {loading ? (
         <>
-          <Loader2 className="mr-2 size-4 animate-spin" /> Processando…
+          <Loader2 className="mr-2 size-4 animate-spin" /> Processando pagamento com segurança…
         </>
       ) : (
         label
