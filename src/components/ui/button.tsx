@@ -20,6 +20,8 @@ const buttonVariants = cva(
         ghost:
           "text-foreground hover:bg-[color:var(--graphite)]/60 hover:text-foreground",
         link: "text-[color:var(--electric)] underline-offset-4 hover:underline",
+        conversion:
+          "bg-[color:var(--brand-yellow)] text-[color:var(--brand-yellow-foreground)] shadow-[var(--shadow-2)] font-semibold tracking-tight hover:-translate-y-px hover:shadow-[0_12px_30px_-6px_color-mix(in_oklab,var(--brand-yellow)_55%,transparent)] active:translate-y-0 focus-visible:ring-2 focus-visible:ring-[color:var(--brand-yellow)]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       },
       size: {
         default: "h-10 px-5 py-2",

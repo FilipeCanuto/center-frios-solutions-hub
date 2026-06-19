@@ -168,7 +168,8 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
 
                 <Button
                   size="lg"
-                  className="w-full rounded-full py-7 text-lg font-bold shadow-lg shadow-accent/20 hover:shadow-accent/40 transition-all duration-300"
+                  variant="conversion"
+                  className="w-full rounded-full h-14 text-base shadow-lg"
                   onClick={() => setOpen(true)}
                 >
                   Finalizar Compra
