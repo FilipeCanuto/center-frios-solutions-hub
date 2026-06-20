@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { rateLimit } from "@/lib/rate-limit.server";
+import { rateLimit, rateLimitDb } from "@/lib/rate-limit.server";
 
 const QuoteSchema = z.object({
   name: z.string().trim().min(2, "Informe seu nome").max(120),
@@ -25,17 +25,23 @@ export const submitQuote = createServerFn({ method: "POST" })
       return { ok: true };
     }
 
-    // Rate limit by IP and email.
+    // Fast in-memory pre-check (per-isolate), then durable DB-backed check.
     const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
-    const ipLimit = rateLimit(`quote:ip:${ip}`, { limit: 8, windowMs: 60_000 });
-    if (!ipLimit.ok) {
+    const ipFast = rateLimit(`quote:ip:${ip}`, { limit: 8, windowMs: 60_000 });
+    if (!ipFast.ok) {
       throw new Error("Muitas solicitações. Aguarde um minuto e tente novamente.");
     }
-    const emailLimit = rateLimit(`quote:email:${data.email.toLowerCase()}`, {
-      limit: 5,
-      windowMs: 5 * 60_000,
-    });
-    if (!emailLimit.ok) {
+    const ipDb = await rateLimitDb(`quote:ip:${ip}`, 12, 60);
+    if (!ipDb.ok) {
+      throw new Error("Muitas solicitações. Aguarde um minuto e tente novamente.");
+    }
+    const emailKey = `quote:email:${data.email.toLowerCase()}`;
+    const emailFast = rateLimit(emailKey, { limit: 5, windowMs: 5 * 60_000 });
+    if (!emailFast.ok) {
+      throw new Error("Você já enviou várias solicitações. Aguarde alguns minutos.");
+    }
+    const emailDb = await rateLimitDb(emailKey, 5, 5 * 60);
+    if (!emailDb.ok) {
       throw new Error("Você já enviou várias solicitações. Aguarde alguns minutos.");
     }
 
