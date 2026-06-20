@@ -186,7 +186,12 @@ export const processPayment = createServerFn({ method: "POST" })
 
       await supabaseAdmin.from("orders").update({ status: "failed" }).eq("id", order.id);
       throw new Error(
-        `Transação recusada (${result.returnCode ?? "—"}): ${result.returnMessage}`,
+        JSON.stringify({
+          kind: "rede_declined",
+          code: result.returnCode ?? null,
+          message: result.returnMessage ?? null,
+          http: result.httpStatus ?? null,
+        }),
       );
     }
 
@@ -206,7 +211,13 @@ export const processPayment = createServerFn({ method: "POST" })
 
     if (!pix.ok) {
       await supabaseAdmin.from("orders").update({ status: "failed" }).eq("id", order.id);
-      throw new Error(`Falha ao gerar PIX: ${pix.returnMessage}`);
+      throw new Error(
+        JSON.stringify({
+          kind: "pix_failed",
+          code: pix.returnCode ?? null,
+          message: pix.returnMessage ?? null,
+        }),
+      );
     }
 
     return {
