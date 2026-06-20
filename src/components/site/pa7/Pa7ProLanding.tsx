@@ -24,6 +24,11 @@ import { StickyBuyBar } from "./StickyBuyBar";
 import { CheckoutDialog } from "./CheckoutDialog";
 import { CheckoutSection } from "./CheckoutSection";
 import { FaqPa7 } from "./FaqPa7";
+import { LazyVideo } from "./LazyVideo";
+import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
+import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
+import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
+import calabresaVideo from "@/assets/pa7/videos/calabresa.mp4.asset.json";
 import {
   PA7_GALLERY,
   PA7_HIGHLIGHTS,
@@ -108,6 +113,12 @@ export function Pa7ProLanding() {
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             >
               <Gallery items={PA7_GALLERY} />
+              <LazyVideo
+                src={heroVideo.url}
+                aspect="aspect-video"
+                showMuteToggle
+                className="mt-4 border border-white/10 metal-surface"
+              />
             </motion.div>
 
             <motion.div
@@ -325,6 +336,37 @@ export function Pa7ProLanding() {
         />
 
         <div className="relative mx-auto max-w-7xl px-6">
+          <div className="mb-16 grid items-center gap-8 md:grid-cols-[1.4fr_1fr]">
+            <LazyVideo
+              src={versatilidadeVideo.url}
+              aspect="aspect-video"
+              showMuteToggle
+              className="border border-white/10 metal-surface"
+            />
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
+                Versatilidade em ação
+              </span>
+              <h3 className="mt-3 text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+                Do palito de batata à folha mais delicada — em segundos
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Um único equipamento substitui horas de preparo manual: batata palha,
+                vegetais folhosos e mix para vinagrete, sem trocar de máquina.
+              </p>
+              <ul className="mt-5 grid gap-2 text-sm text-foreground">
+                {["Batata palha contínua", "Folhas e verduras delicadas", "Mix para vinagrete em segundos"].map((t) => (
+                  <li key={t} className="flex items-start gap-2.5">
+                    <div className="mt-1 flex size-5 shrink-0 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-accent">
+                      <Check className="size-3" />
+                    </div>
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -410,7 +452,7 @@ export function Pa7ProLanding() {
         transition={{ duration: 0.6 }}
         className="border-t border-white/5 py-20 md:py-28"
       >
-        <div className="mx-auto max-w-5xl px-6">
+        <div className="mx-auto max-w-6xl px-6">
           <div className="flex items-end justify-between gap-6">
             <div>
               <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
@@ -421,8 +463,21 @@ export function Pa7ProLanding() {
               </h2>
             </div>
           </div>
-          <div className="mt-8">
+          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
             <SpecGrid specs={product.specs} columns={3} />
+            <aside className="flex flex-col gap-4">
+              <LazyVideo
+                src={circuitoVideo.url}
+                aspect="aspect-[9/16]"
+                showMuteToggle
+                className="border border-white/10 metal-surface"
+              />
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                <strong className="text-foreground">Provado ao vivo no Circuito Experience 2026:</strong>{" "}
+                veja o especialista da fábrica demonstrando que o corte acontece 100% por
+                gravidade, eliminando o esforço físico do operador.
+              </p>
+            </aside>
           </div>
         </div>
       </motion.section>
@@ -532,17 +587,32 @@ export function Pa7ProLanding() {
       <FaqPa7 />
 
       {/* CHECKOUT SECTION */}
-      <CheckoutSection
-        product={{
-          id: product.slug,
-          name: product.name,
-          image: PA7_IMAGES.main,
-          price: PA7_PRICE.amount,
-          installments: PA7_PRICE.installments,
-          pixDiscount: 5,
-          subtitle: "Linha Industrial · Bivolt",
-        }}
-      />
+      <div className="relative">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute right-6 top-16 z-0 hidden w-[200px] xl:block"
+        >
+          <LazyVideo
+            src={calabresaVideo.url}
+            aspect="aspect-[9/16]"
+            rounded={false}
+            className="opacity-60 mix-blend-luminosity"
+          />
+        </div>
+        <div className="relative z-10">
+          <CheckoutSection
+            product={{
+              id: product.slug,
+              name: product.name,
+              image: PA7_IMAGES.main,
+              price: PA7_PRICE.amount,
+              installments: PA7_PRICE.installments,
+              pixDiscount: 5,
+              subtitle: "Linha Industrial · Bivolt",
+            }}
+          />
+        </div>
+      </div>
 
       <StickyBuyBar
         name="PA7 Pro Skymsen"
