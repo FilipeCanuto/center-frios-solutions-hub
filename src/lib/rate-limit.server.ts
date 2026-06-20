@@ -45,7 +45,10 @@ export async function rateLimitDb(
 ): Promise<{ ok: boolean }> {
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin.rpc("check_rate_limit", {
+    const { data, error } = await (supabaseAdmin.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>,
+    ) => Promise<{ data: boolean | null; error: unknown }>)("check_rate_limit", {
       _bucket: bucket,
       _limit: limit,
       _window_seconds: windowSeconds,
