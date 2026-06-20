@@ -1,6 +1,10 @@
 /**
  * Cliente compartilhado da e-Rede.
  * SERVER-ONLY (lê process.env). PAN/CVV nunca são logados nem persistidos.
+ *
+ * TODO (v2 pós-launch): migrar para e-Rede Zero (tokenização client-side)
+ * para reduzir o escopo PCI-DSS de SAQ D para SAQ A — o servidor passa a
+ * receber apenas um token de cartão de uso único, nunca o PAN/CVV cru.
  */
 
 export const REDE_OAUTH_URL = "https://api.userede.com.br/redelabs/oauth2/token";
