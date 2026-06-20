@@ -24,6 +24,11 @@ import { StickyBuyBar } from "./StickyBuyBar";
 import { CheckoutDialog } from "./CheckoutDialog";
 import { CheckoutSection } from "./CheckoutSection";
 import { FaqPa7 } from "./FaqPa7";
+import { LazyVideo } from "./LazyVideo";
+import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
+import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
+import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
+import calabresaVideo from "@/assets/pa7/videos/calabresa.mp4.asset.json";
 import {
   PA7_GALLERY,
   PA7_HIGHLIGHTS,
