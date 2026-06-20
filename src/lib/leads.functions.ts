@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { rateLimit } from "@/lib/rate-limit.server";
+import { rateLimit, rateLimitDb } from "@/lib/rate-limit.server";
 
 const QuoteSchema = z.object({
   name: z.string().trim().min(2, "Informe seu nome").max(120),
