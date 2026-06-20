@@ -67,19 +67,29 @@ const PaymentSchema = z.object({
 export const processPayment = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => PaymentSchema.parse(input))
   .handler(async ({ data }) => {
-    // Rate limit: best-effort IP throttle + per-email throttle.
+    // Rate limit: in-memory fast path + durable DB-backed check.
     const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
-    const ipLimit = rateLimit(`pay:ip:${ip}`, { limit: 10, windowMs: 60_000 });
-    if (!ipLimit.ok) {
+    const ipFast = rateLimit(`pay:ip:${ip}`, { limit: 10, windowMs: 60_000 });
+    if (!ipFast.ok) {
       throw new Error(
         "Muitas tentativas de pagamento. Aguarde alguns instantes e tente novamente.",
       );
     }
-    const emailLimit = rateLimit(`pay:email:${data.customer_email.toLowerCase()}`, {
-      limit: 5,
-      windowMs: 60_000,
-    });
-    if (!emailLimit.ok) {
+    const ipDb = await rateLimitDb(`pay:ip:${ip}`, 15, 60);
+    if (!ipDb.ok) {
+      throw new Error(
+        "Muitas tentativas de pagamento. Aguarde alguns instantes e tente novamente.",
+      );
+    }
+    const emailKey = `pay:email:${data.customer_email.toLowerCase()}`;
+    const emailFast = rateLimit(emailKey, { limit: 5, windowMs: 60_000 });
+    if (!emailFast.ok) {
+      throw new Error(
+        "Muitas tentativas de pagamento para este e-mail. Aguarde um minuto e tente novamente.",
+      );
+    }
+    const emailDb = await rateLimitDb(emailKey, 5, 60);
+    if (!emailDb.ok) {
       throw new Error(
         "Muitas tentativas de pagamento para este e-mail. Aguarde um minuto e tente novamente.",
       );
