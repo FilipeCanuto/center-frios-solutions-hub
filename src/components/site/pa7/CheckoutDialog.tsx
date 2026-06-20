@@ -705,6 +705,8 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                               placeholder="NOME DO TITULAR"
                               value={cardholderName}
                               onChange={(e) => setCardholderName(e.target.value.toUpperCase())}
+                              autoComplete="cc-name"
+                              spellCheck={false}
                             />
                           </div>
                           <div className="grid gap-2">
@@ -717,6 +719,10 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                                 value={cardNumber}
                                 onChange={handleCardNumberChange}
                                 className="peer pr-10"
+                                autoComplete="cc-number"
+                                inputMode="numeric"
+                                pattern="[0-9 ]*"
+                                spellCheck={false}
                               />
                               <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 pointer-events-none transition-colors peer-focus:text-[color:var(--electric)]">
                                 <CreditCard className="size-5" />
@@ -733,6 +739,8 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                                 value={expiryDate}
                                 onChange={handleExpiryChange}
                                 maxLength={5}
+                                autoComplete="cc-exp"
+                                inputMode="numeric"
                               />
                             </div>
                             <div className="grid gap-2">
@@ -744,6 +752,9 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                                 value={securityCode}
                                 onChange={handleCvvChange}
                                 maxLength={4}
+                                autoComplete="cc-csc"
+                                inputMode="numeric"
+                                spellCheck={false}
                               />
                             </div>
                           </div>
