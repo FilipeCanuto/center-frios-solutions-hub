@@ -378,10 +378,6 @@ export function Pa7ProLanding() {
               variants={itemVariants}
               className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent"
             >
-            <motion.span
-              variants={itemVariants}
-              className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent"
-            >
               Já vem completo
             </motion.span>
             <motion.h2
