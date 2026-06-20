@@ -587,17 +587,32 @@ export function Pa7ProLanding() {
       <FaqPa7 />
 
       {/* CHECKOUT SECTION */}
-      <CheckoutSection
-        product={{
-          id: product.slug,
-          name: product.name,
-          image: PA7_IMAGES.main,
-          price: PA7_PRICE.amount,
-          installments: PA7_PRICE.installments,
-          pixDiscount: 5,
-          subtitle: "Linha Industrial · Bivolt",
-        }}
-      />
+      <div className="relative">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute right-6 top-16 z-0 hidden w-[200px] xl:block"
+        >
+          <LazyVideo
+            src={calabresaVideo.url}
+            aspect="aspect-[9/16]"
+            rounded={false}
+            className="opacity-60 mix-blend-luminosity"
+          />
+        </div>
+        <div className="relative z-10">
+          <CheckoutSection
+            product={{
+              id: product.slug,
+              name: product.name,
+              image: PA7_IMAGES.main,
+              price: PA7_PRICE.amount,
+              installments: PA7_PRICE.installments,
+              pixDiscount: 5,
+              subtitle: "Linha Industrial · Bivolt",
+            }}
+          />
+        </div>
+      </div>
 
       <StickyBuyBar
         name="PA7 Pro Skymsen"
