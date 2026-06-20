@@ -632,6 +632,7 @@ export function Pa7ProLanding() {
         name="PA7 Pro Skymsen"
         image={PA7_IMAGES.main}
         price={PA7_PRICE.amount}
+        pixPrice={PA7_PRICE.pixAmount}
         onBuy={() => setOpen(true)}
       />
 
