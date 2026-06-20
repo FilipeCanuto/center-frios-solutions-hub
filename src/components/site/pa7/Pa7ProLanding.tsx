@@ -28,7 +28,7 @@ import { LazyVideo } from "./LazyVideo";
 import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
 import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
 import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
-import calabresaVideo from "@/assets/pa7/videos/calabresa.mp4.asset.json";
+
 import {
   PA7_GALLERY,
   PA7_HIGHLIGHTS,
@@ -46,11 +46,19 @@ const USE_CASE_ICONS = { Pizza, Beef, Salad, Carrot } as const;
 export function Pa7ProLanding() {
   const product = getProduct("processador-pa7-pro-skymsen")!;
   const [open, setOpen] = useState(false);
-  const installment = (PA7_PRICE.amount / PA7_PRICE.installments).toLocaleString("pt-BR", {
+  const installment = PA7_PRICE.installmentValue.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
   const totalBRL = PA7_PRICE.amount.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+  const pixBRL = PA7_PRICE.pixAmount.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+  const savingsBRL = PA7_PRICE.savings.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
@@ -106,26 +114,13 @@ export function Pa7ProLanding() {
             <ArrowLeft className="size-4" /> Catálogo
           </Link>
 
-          <div className="mt-8 grid gap-12 lg:grid-cols-2 lg:gap-16">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <Gallery items={PA7_GALLERY} />
-              <LazyVideo
-                src={heroVideo.url}
-                aspect="aspect-video"
-                showMuteToggle
-                className="mt-4 border border-white/10 metal-surface"
-              />
-            </motion.div>
-
+          <div className="mt-8 grid gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16 lg:items-start">
+            {/* LEFT — Conversion copy + benefits + trust */}
             <motion.div
               initial="hidden"
               animate="visible"
               variants={containerVariants}
-              className="flex flex-col justify-center"
+              className="flex flex-col"
             >
               <motion.div
                 variants={itemVariants}
@@ -177,65 +172,7 @@ export function Pa7ProLanding() {
 
               <motion.div
                 variants={itemVariants}
-                className="metal-surface metal-hover mt-7 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.01] p-6 backdrop-blur-xl relative overflow-hidden group shadow-[0_8px_30px_rgba(0,0,0,0.2)]"
-              >
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute -right-12 -top-12 size-36 rounded-full opacity-10 blur-2xl transition-opacity duration-700 group-hover:opacity-20"
-                  style={{
-                    background: "radial-gradient(circle, var(--accent) 50%, transparent)",
-                  }}
-                />
-                <div className="flex items-end justify-between gap-4 relative z-10">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-widest text-accent">
-                      À vista no PIX
-                    </p>
-                    <p className="mt-1 text-3xl font-semibold text-foreground md:text-4xl tracking-tight">
-                      {(PA7_PRICE.amount * 0.95).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </p>
-                    <p className="mt-1.5 text-sm text-muted-foreground">
-                      ou {totalBRL} em até{" "}
-                      <strong className="text-foreground">
-                        {PA7_PRICE.installments}x de {installment}
-                      </strong>{" "}
-                      sem juros
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row relative z-10">
-                  <Button
-                    size="lg"
-                    className="w-full rounded-full sm:w-auto sm:flex-1 font-semibold shadow-lg shadow-accent/20 group/btn"
-                    onClick={() => setOpen(true)}
-                  >
-                    Comprar agora
-                    <ChevronRight className="ml-1 size-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
-                  </Button>
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="w-full rounded-full sm:w-auto font-semibold"
-                  >
-                    <a
-                      href="https://wa.me/558232232497?text=Olá! Tenho interesse no Processador PA7 Pro Skymsen."
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Falar com especialista
-                    </a>
-                  </Button>
-                </div>
-              </motion.div>
-
-              <motion.div
-                variants={itemVariants}
-                className="mt-6 grid grid-cols-2 gap-2 text-xs text-muted-foreground sm:grid-cols-4"
+                className="mt-7 grid grid-cols-2 gap-2 text-xs text-muted-foreground sm:grid-cols-4"
               >
                 {[
                   { icon: ShieldCheck, label: "NR-12" },
@@ -247,18 +184,118 @@ export function Pa7ProLanding() {
                     key={label}
                     className="metal-hover flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.04]"
                   >
-                    <Icon
-                      className="size-4 text-accent animate-pulse"
-                      style={{ animationDuration: "3s" }}
-                    />{" "}
+                    <Icon className="size-4 text-accent" />
                     {label}
                   </div>
                 ))}
               </motion.div>
             </motion.div>
+
+            {/* RIGHT — Circuito Experience video + Pricing card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col gap-5 lg:sticky lg:top-24"
+            >
+              {/* Elegant video frame */}
+              <div className="relative mx-auto w-full max-w-[360px]">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute -inset-2 rounded-[2rem] bg-gradient-to-br from-accent/25 via-transparent to-transparent blur-2xl"
+                />
+                <div className="metal-surface relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-white/[0.03] p-2 shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
+                  <LazyVideo
+                    src={circuitoVideo.url}
+                    aspect="aspect-[9/16]"
+                    showMuteToggle
+                    className="rounded-[1.25rem]"
+                  />
+                </div>
+                <div className="mt-3 flex items-center justify-center gap-2">
+                  <span className="size-1.5 rounded-full bg-red-500 animate-pulse" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                    Ao vivo · Circuito Experience 2026
+                  </span>
+                </div>
+              </div>
+
+              {/* Pricing Card */}
+              <div className="metal-surface metal-hover relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.01] p-6 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute -right-12 -top-12 size-36 rounded-full opacity-15 blur-2xl"
+                  style={{ background: "radial-gradient(circle, var(--accent) 50%, transparent)" }}
+                />
+                <div className="relative z-10">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-accent">
+                    PREÇO À VISTA NO PIX
+                  </p>
+                  <p className="mt-1.5 text-4xl md:text-5xl font-black text-foreground tracking-tighter leading-none">
+                    {pixBRL}
+                  </p>
+                  <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-accent">
+                      Economia imediata de {savingsBRL} no PIX
+                    </span>
+                  </div>
+
+                  <div className="mt-5 border-t border-white/5 pt-4 opacity-90">
+                    <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                      OU PARCELADO NO CARTÃO
+                    </p>
+                    <p className="mt-1 text-base font-medium text-muted-foreground">{totalBRL}</p>
+                    <p className="mt-0.5 text-sm text-foreground/80">
+                      Ou em até {PA7_PRICE.installments}x de {installment} sem juros no cartão
+                    </p>
+                  </div>
+
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                    <Button
+                      size="lg"
+                      className="w-full rounded-full sm:flex-1 font-semibold shadow-lg shadow-accent/20 group/btn"
+                      onClick={() => setOpen(true)}
+                    >
+                      Comprar agora
+                      <ChevronRight className="ml-1 size-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                    </Button>
+                    <Button
+                      asChild
+                      size="lg"
+                      variant="outline"
+                      className="w-full rounded-full sm:w-auto font-semibold"
+                    >
+                      <a
+                        href="https://wa.me/558232232497?text=Olá! Tenho interesse no Processador PA7 Pro Skymsen."
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Falar com especialista
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </motion.section>
+
+      {/* GALLERY */}
+      <section className="border-b border-white/5 py-16 md:py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+            <Gallery items={PA7_GALLERY} />
+            <LazyVideo
+              src={heroVideo.url}
+              aspect="aspect-video"
+              showMuteToggle
+              className="border border-white/10 metal-surface"
+            />
+          </div>
+        </div>
+      </section>
+
 
       {/* HIGHLIGHTS */}
       <section className="relative overflow-hidden border-b border-white/5 py-20 md:py-28">
@@ -463,22 +500,10 @@ export function Pa7ProLanding() {
               </h2>
             </div>
           </div>
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
+          <div className="mt-8">
             <SpecGrid specs={product.specs} columns={3} />
-            <aside className="flex flex-col gap-4">
-              <LazyVideo
-                src={circuitoVideo.url}
-                aspect="aspect-[9/16]"
-                showMuteToggle
-                className="border border-white/10 metal-surface"
-              />
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                <strong className="text-foreground">Provado ao vivo no Circuito Experience 2026:</strong>{" "}
-                veja o especialista da fábrica demonstrando que o corte acontece 100% por
-                gravidade, eliminando o esforço físico do operador.
-              </p>
-            </aside>
           </div>
+
         </div>
       </motion.section>
 
@@ -587,37 +612,27 @@ export function Pa7ProLanding() {
       <FaqPa7 />
 
       {/* CHECKOUT SECTION */}
-      <div className="relative">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute right-6 top-16 z-0 hidden w-[200px] xl:block"
-        >
-          <LazyVideo
-            src={calabresaVideo.url}
-            aspect="aspect-[9/16]"
-            rounded={false}
-            className="opacity-60 mix-blend-luminosity"
-          />
-        </div>
-        <div className="relative z-10">
-          <CheckoutSection
-            product={{
-              id: product.slug,
-              name: product.name,
-              image: PA7_IMAGES.main,
-              price: PA7_PRICE.amount,
-              installments: PA7_PRICE.installments,
-              pixDiscount: 5,
-              subtitle: "Linha Industrial · Bivolt",
-            }}
-          />
-        </div>
-      </div>
+      <CheckoutSection
+        product={{
+          id: product.slug,
+          name: product.name,
+          image: PA7_IMAGES.main,
+          price: PA7_PRICE.amount,
+          installments: PA7_PRICE.installments,
+          installmentValue: PA7_PRICE.installmentValue,
+          pixDiscount: PA7_PRICE.pixDiscountPct,
+          pixPrice: PA7_PRICE.pixAmount,
+          savings: PA7_PRICE.savings,
+          subtitle: "Linha Industrial · Bivolt",
+        }}
+      />
+
 
       <StickyBuyBar
         name="PA7 Pro Skymsen"
         image={PA7_IMAGES.main}
         price={PA7_PRICE.amount}
+        pixPrice={PA7_PRICE.pixAmount}
         onBuy={() => setOpen(true)}
       />
 

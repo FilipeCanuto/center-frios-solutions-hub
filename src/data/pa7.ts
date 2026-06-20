@@ -46,10 +46,13 @@ export const PA7_GALLERY = [
 ];
 
 export const PA7_PRICE = {
-  // Preço fictício para visual do checkout. Trocar quando integrar gateway.
-  amount: 4490,
+  // Preço de cartão (à prazo). PIX recebe desconto explícito de R$ 600,00.
+  amount: 6299,
+  pixAmount: 5699,
+  savings: 600,
   installments: 12,
-  pixDiscountPct: 5,
+  installmentValue: 524.91,
+  pixDiscountPct: 9.525,
 };
 
 export const PA7_HIGHLIGHTS = [
