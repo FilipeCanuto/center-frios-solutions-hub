@@ -68,7 +68,7 @@ export function LazyVideo({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden bg-black/40 ${aspect} ${rounded ? "rounded-3xl" : ""} ${className}`}
+      className={`relative overflow-hidden bg-black/20 backdrop-blur-sm ${aspect} ${rounded ? "rounded-3xl" : ""} ${className}`}
     >
       <video
         ref={videoRef}
@@ -80,7 +80,7 @@ export function LazyVideo({
         playsInline
         preload="none"
         disableRemotePlayback
-        className="h-full w-full object-cover"
+        className="h-full w-full object-contain"
       />
       {showMuteToggle && inView && (
         <button
