@@ -14,7 +14,7 @@ import {
   PRODUCT_CATALOG,
   getCatalogProduct,
 } from "@/lib/catalog.server";
-import { rateLimit } from "@/lib/rate-limit.server";
+import { rateLimit, rateLimitDb } from "@/lib/rate-limit.server";
 
 const ThreeDSSchema = z.object({
   userAgent: z.string().min(1).max(500),
