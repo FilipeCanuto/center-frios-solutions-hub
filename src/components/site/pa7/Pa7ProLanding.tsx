@@ -113,6 +113,12 @@ export function Pa7ProLanding() {
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             >
               <Gallery items={PA7_GALLERY} />
+              <LazyVideo
+                src={heroVideo.url}
+                aspect="aspect-video"
+                showMuteToggle
+                className="mt-4 border border-white/10 metal-surface"
+              />
             </motion.div>
 
             <motion.div
