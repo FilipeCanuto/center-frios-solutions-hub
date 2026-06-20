@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PA7_BANK } from "@/data/pa7";
 import { processPayment } from "@/lib/payments.functions";
+import { humanizeRedeError } from "@/lib/payments/error-messages";
 import { supabase } from "@/integrations/supabase/client";
 
 type Props = {
@@ -331,9 +332,29 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
       }
     } catch (err: unknown) {
       console.error("Erro no pagamento:", err);
-      const msg =
-        err instanceof Error ? err.message : "Erro ao processar o pagamento. Tente novamente.";
-      toast.error(msg);
+      const raw = err instanceof Error ? err.message : String(err ?? "");
+      const humanized = humanizeRedeError({ raw });
+
+      // PCI hygiene: limpar PAN/CVV após qualquer falha no fluxo de cartão.
+      if (paymentMethod === "credit_card") {
+        setCardNumber("");
+        setSecurityCode("");
+      }
+
+      if (humanized.category === "use_pix" && paymentMethod === "credit_card") {
+        toast.error(humanized.message, {
+          description: humanized.title,
+          action: {
+            label: "Pagar com PIX",
+            onClick: () => {
+              setPaymentMethod("pix");
+              setTimeout(() => handlePayment(), 50);
+            },
+          },
+        });
+      } else {
+        toast.error(humanized.message, { description: humanized.title });
+      }
     } finally {
       setSubmitting(false);
     }
