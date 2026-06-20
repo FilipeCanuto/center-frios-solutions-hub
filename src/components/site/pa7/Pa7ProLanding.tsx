@@ -46,11 +46,19 @@ const USE_CASE_ICONS = { Pizza, Beef, Salad, Carrot } as const;
 export function Pa7ProLanding() {
   const product = getProduct("processador-pa7-pro-skymsen")!;
   const [open, setOpen] = useState(false);
-  const installment = (PA7_PRICE.amount / PA7_PRICE.installments).toLocaleString("pt-BR", {
+  const installment = PA7_PRICE.installmentValue.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
   const totalBRL = PA7_PRICE.amount.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+  const pixBRL = PA7_PRICE.pixAmount.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+  const savingsBRL = PA7_PRICE.savings.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
