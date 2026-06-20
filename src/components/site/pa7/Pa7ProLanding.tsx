@@ -336,6 +336,37 @@ export function Pa7ProLanding() {
         />
 
         <div className="relative mx-auto max-w-7xl px-6">
+          <div className="mb-16 grid items-center gap-8 md:grid-cols-[1.4fr_1fr]">
+            <LazyVideo
+              src={versatilidadeVideo.url}
+              aspect="aspect-video"
+              showMuteToggle
+              className="border border-white/10 metal-surface"
+            />
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
+                Versatilidade em ação
+              </span>
+              <h3 className="mt-3 text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+                Do palito de batata à folha mais delicada — em segundos
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Um único equipamento substitui horas de preparo manual: batata palha,
+                vegetais folhosos e mix para vinagrete, sem trocar de máquina.
+              </p>
+              <ul className="mt-5 grid gap-2 text-sm text-foreground">
+                {["Batata palha contínua", "Folhas e verduras delicadas", "Mix para vinagrete em segundos"].map((t) => (
+                  <li key={t} className="flex items-start gap-2.5">
+                    <div className="mt-1 flex size-5 shrink-0 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-accent">
+                      <Check className="size-3" />
+                    </div>
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -343,6 +374,10 @@ export function Pa7ProLanding() {
             variants={containerVariants}
             className="mx-auto max-w-2xl text-center"
           >
+            <motion.span
+              variants={itemVariants}
+              className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent"
+            >
             <motion.span
               variants={itemVariants}
               className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent"
