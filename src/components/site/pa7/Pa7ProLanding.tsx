@@ -500,22 +500,10 @@ export function Pa7ProLanding() {
               </h2>
             </div>
           </div>
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
+          <div className="mt-8">
             <SpecGrid specs={product.specs} columns={3} />
-            <aside className="flex flex-col gap-4">
-              <LazyVideo
-                src={circuitoVideo.url}
-                aspect="aspect-[9/16]"
-                showMuteToggle
-                className="border border-white/10 metal-surface"
-              />
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                <strong className="text-foreground">Provado ao vivo no Circuito Experience 2026:</strong>{" "}
-                veja o especialista da fábrica demonstrando que o corte acontece 100% por
-                gravidade, eliminando o esforço físico do operador.
-              </p>
-            </aside>
           </div>
+
         </div>
       </motion.section>
 
