@@ -68,32 +68,20 @@ export const processPayment = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => PaymentSchema.parse(input))
   .handler(async ({ data }) => {
     // Rate limit: in-memory fast path + durable DB-backed check.
+    // Error payloads são JSON serializável para que o cliente humanize sem vazar internals.
+    const rateLimitError = () =>
+      new Error(JSON.stringify({ kind: "rate_limit" }));
+
     const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
     const ipFast = rateLimit(`pay:ip:${ip}`, { limit: 10, windowMs: 60_000 });
-    if (!ipFast.ok) {
-      throw new Error(
-        "Muitas tentativas de pagamento. Aguarde alguns instantes e tente novamente.",
-      );
-    }
+    if (!ipFast.ok) throw rateLimitError();
     const ipDb = await rateLimitDb(`pay:ip:${ip}`, 15, 60);
-    if (!ipDb.ok) {
-      throw new Error(
-        "Muitas tentativas de pagamento. Aguarde alguns instantes e tente novamente.",
-      );
-    }
+    if (!ipDb.ok) throw rateLimitError();
     const emailKey = `pay:email:${data.customer_email.toLowerCase()}`;
     const emailFast = rateLimit(emailKey, { limit: 5, windowMs: 60_000 });
-    if (!emailFast.ok) {
-      throw new Error(
-        "Muitas tentativas de pagamento para este e-mail. Aguarde um minuto e tente novamente.",
-      );
-    }
+    if (!emailFast.ok) throw rateLimitError();
     const emailDb = await rateLimitDb(emailKey, 5, 60);
-    if (!emailDb.ok) {
-      throw new Error(
-        "Muitas tentativas de pagamento para este e-mail. Aguarde um minuto e tente novamente.",
-      );
-    }
+    if (!emailDb.ok) throw rateLimitError();
 
     // Authoritative product lookup — never trust client-supplied prices.
     const catalog = getCatalogProduct(data.product_slug);
