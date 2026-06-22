@@ -182,12 +182,13 @@ export function Pa7ProLanding() {
                 ].map(({ icon: Icon, label }) => (
                   <div
                     key={label}
-                    className="metal-hover flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.04]"
+                    className="group flex items-center gap-2 rounded-xl border border-white/5 bg-neutral-900/40 px-4 py-2 text-xs font-medium tracking-wide text-foreground/90 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-all duration-300 hover:border-accent/30 hover:bg-neutral-900/60"
                   >
-                    <Icon className="size-4 text-accent" />
-                    {label}
+                    <Icon className="size-3.5 text-accent transition-transform group-hover:scale-110" />
+                    <span className="uppercase tracking-[0.12em]">{label}</span>
                   </div>
                 ))}
+
               </motion.div>
             </motion.div>
 
