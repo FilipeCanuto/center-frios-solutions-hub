@@ -8,7 +8,7 @@ type Props = {
   className?: string;
   showMuteToggle?: boolean;
   rounded?: boolean;
-  variant?: "default" | "phone";
+  variant?: "default" | "phone" | "monitor";
 };
 
 export function LazyVideo({
@@ -68,19 +68,14 @@ export function LazyVideo({
   };
 
   if (variant === "phone") {
-    // Luxurious smartphone mockup — premium device frame for vertical (9:16) media.
     return (
       <div className={`relative mx-auto ${className}`} ref={containerRef}>
-        {/* Radial ambient glow */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -inset-10 -z-10 bg-[radial-gradient(circle_at_center,rgba(10,81,168,0.18)_0%,transparent_70%)] blur-2xl"
+          className="pointer-events-none absolute -inset-16 -z-10 bg-[radial-gradient(circle_at_center,rgba(10,81,168,0.28)_0%,transparent_65%)] blur-3xl"
         />
-        {/* Device outer bezel */}
         <div className="relative mx-auto w-full max-w-[320px] rounded-[2.4rem] border border-white/15 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-black/40 p-[6px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.7),_inset_0_1px_0_rgba(255,255,255,0.08)]">
-          {/* Inner bezel */}
           <div className="relative overflow-hidden rounded-[2.05rem] border border-white/10 bg-black shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04),inset_0_8px_24px_rgba(0,0,0,0.6)]">
-            {/* Notch */}
             <div
               aria-hidden
               className="pointer-events-none absolute left-1/2 top-2 z-20 h-5 w-24 -translate-x-1/2 rounded-full bg-black/95 ring-1 ring-white/10"
@@ -110,20 +105,51 @@ export function LazyVideo({
               )}
             </div>
           </div>
-          {/* Side power button accent */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute right-[-3px] top-24 h-14 w-[3px] rounded-l-sm bg-white/15"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-[-3px] top-20 h-8 w-[3px] rounded-r-sm bg-white/15"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-[-3px] top-32 h-14 w-[3px] rounded-r-sm bg-white/15"
-          />
+          <div aria-hidden className="pointer-events-none absolute right-[-3px] top-24 h-14 w-[3px] rounded-l-sm bg-white/15" />
+          <div aria-hidden className="pointer-events-none absolute left-[-3px] top-20 h-8 w-[3px] rounded-r-sm bg-white/15" />
+          <div aria-hidden className="pointer-events-none absolute left-[-3px] top-32 h-14 w-[3px] rounded-r-sm bg-white/15" />
         </div>
+      </div>
+    );
+  }
+
+  if (variant === "monitor") {
+    return (
+      <div className={`relative ${className}`} ref={containerRef}>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -inset-12 -z-10 bg-[radial-gradient(circle_at_center,rgba(10,81,168,0.22)_0%,transparent_70%)] blur-3xl"
+        />
+        <div className="metal-surface relative rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-black/40 p-2 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.75),_inset_0_1px_0_rgba(255,255,255,0.06)]">
+          <div className="relative overflow-hidden rounded-xl border border-white/10 bg-black shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04),inset_0_6px_18px_rgba(0,0,0,0.55)]">
+            <div className={`relative ${aspect} w-full bg-black`}>
+              <video
+                ref={videoRef}
+                src={inView ? src : undefined}
+                poster={poster}
+                autoPlay
+                muted={muted}
+                loop
+                playsInline
+                preload="none"
+                disableRemotePlayback
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              {showMuteToggle && inView && (
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  aria-label={muted ? "Ativar som" : "Silenciar"}
+                  className="absolute right-3 bottom-3 z-30 inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-black/50 text-white/90 backdrop-blur-md transition-colors hover:bg-black/70"
+                >
+                  {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+        <div aria-hidden className="pointer-events-none mx-auto mt-1 h-2 w-1/3 rounded-b-2xl bg-gradient-to-b from-white/10 to-transparent" />
+        <div aria-hidden className="pointer-events-none mx-auto h-1 w-1/4 rounded-full bg-white/5" />
       </div>
     );
   }
@@ -131,30 +157,36 @@ export function LazyVideo({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden bg-black/20 backdrop-blur-sm ${aspect} ${rounded ? "rounded-3xl" : ""} ${className}`}
+      className={`relative ${aspect} ${rounded ? "rounded-3xl" : ""} ${className}`}
     >
-      <video
-        ref={videoRef}
-        src={inView ? src : undefined}
-        poster={poster}
-        autoPlay
-        muted={muted}
-        loop
-        playsInline
-        preload="none"
-        disableRemotePlayback
-        className="h-full w-full object-contain"
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-8 -z-10 bg-[radial-gradient(circle_at_center,rgba(10,81,168,0.18)_0%,transparent_70%)] blur-2xl"
       />
-      {showMuteToggle && inView && (
-        <button
-          type="button"
-          onClick={toggleMute}
-          aria-label={muted ? "Ativar som" : "Silenciar"}
-          className="absolute right-3 top-3 z-10 inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-black/40 text-white/90 backdrop-blur-md transition-colors hover:bg-black/60"
-        >
-          {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
-        </button>
-      )}
+      <div className={`absolute inset-0 overflow-hidden bg-black/30 backdrop-blur-sm ${rounded ? "rounded-3xl" : ""}`}>
+        <video
+          ref={videoRef}
+          src={inView ? src : undefined}
+          poster={poster}
+          autoPlay
+          muted={muted}
+          loop
+          playsInline
+          preload="none"
+          disableRemotePlayback
+          className="h-full w-full object-contain"
+        />
+        {showMuteToggle && inView && (
+          <button
+            type="button"
+            onClick={toggleMute}
+            aria-label={muted ? "Ativar som" : "Silenciar"}
+            className="absolute right-3 top-3 z-10 inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-black/40 text-white/90 backdrop-blur-md transition-colors hover:bg-black/60"
+          >
+            {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
