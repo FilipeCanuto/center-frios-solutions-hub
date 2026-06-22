@@ -369,13 +369,15 @@ export function Pa7ProLanding() {
         />
 
         <div className="relative mx-auto max-w-7xl px-6">
-          <div className="mb-16 grid items-center gap-8 md:grid-cols-[1.4fr_1fr]">
-            <LazyVideo
-              src={versatilidadeVideo.url}
-              aspect="aspect-video"
-              showMuteToggle
-              className="border border-white/10 metal-surface"
-            />
+          <div className="mb-16 grid items-center gap-12 md:grid-cols-[auto_1fr] md:gap-16">
+            <div className="relative">
+              <LazyVideo
+                src={versatilidadeVideo.url}
+                aspect="aspect-[9/16]"
+                showMuteToggle
+                variant="phone"
+              />
+            </div>
             <div>
               <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
                 Versatilidade em ação
@@ -399,6 +401,7 @@ export function Pa7ProLanding() {
               </ul>
             </div>
           </div>
+
 
           <motion.div
             initial="hidden"
