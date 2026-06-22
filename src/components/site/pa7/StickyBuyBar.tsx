@@ -23,6 +23,14 @@ export function StickyBuyBar({ name, image, price, pixPrice, onBuy }: Props) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const cls = "sticky-buybar-active";
+    if (show) document.body.classList.add(cls);
+    else document.body.classList.remove(cls);
+    return () => document.body.classList.remove(cls);
+  }, [show]);
+
+
   const displayPrice = pixPrice ?? price;
 
   return (

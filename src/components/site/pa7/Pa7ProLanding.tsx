@@ -182,12 +182,13 @@ export function Pa7ProLanding() {
                 ].map(({ icon: Icon, label }) => (
                   <div
                     key={label}
-                    className="metal-hover flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.04]"
+                    className="group flex items-center gap-2 rounded-xl border border-white/5 bg-neutral-900/40 px-4 py-2 text-xs font-medium tracking-wide text-foreground/90 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-all duration-300 hover:border-accent/30 hover:bg-neutral-900/60"
                   >
-                    <Icon className="size-4 text-accent" />
-                    {label}
+                    <Icon className="size-3.5 text-accent transition-transform group-hover:scale-110" />
+                    <span className="uppercase tracking-[0.12em]">{label}</span>
                   </div>
                 ))}
+
               </motion.div>
             </motion.div>
 
@@ -198,27 +199,22 @@ export function Pa7ProLanding() {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="flex flex-col gap-5 lg:sticky lg:top-24"
             >
-              {/* Elegant video frame */}
-              <div className="relative mx-auto w-full max-w-[360px]">
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute -inset-2 rounded-[2rem] bg-gradient-to-br from-accent/25 via-transparent to-transparent blur-2xl"
+              {/* Premium smartphone-mockup video frame */}
+              <div className="relative mx-auto w-full">
+                <LazyVideo
+                  src={circuitoVideo.url}
+                  aspect="aspect-[9/16]"
+                  showMuteToggle
+                  variant="phone"
                 />
-                <div className="metal-surface relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-white/[0.03] p-2 shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
-                  <LazyVideo
-                    src={circuitoVideo.url}
-                    aspect="aspect-[9/16]"
-                    showMuteToggle
-                    className="rounded-[1.25rem]"
-                  />
-                </div>
-                <div className="mt-3 flex items-center justify-center gap-2">
+                <div className="mt-4 flex items-center justify-center gap-2">
                   <span className="size-1.5 rounded-full bg-red-500 animate-pulse" />
                   <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
                     Ao vivo · Circuito Experience 2026
                   </span>
                 </div>
               </div>
+
 
               {/* Pricing Card */}
               <div className="metal-surface metal-hover relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.01] p-6 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
@@ -373,13 +369,15 @@ export function Pa7ProLanding() {
         />
 
         <div className="relative mx-auto max-w-7xl px-6">
-          <div className="mb-16 grid items-center gap-8 md:grid-cols-[1.4fr_1fr]">
-            <LazyVideo
-              src={versatilidadeVideo.url}
-              aspect="aspect-video"
-              showMuteToggle
-              className="border border-white/10 metal-surface"
-            />
+          <div className="mb-16 grid items-center gap-12 md:grid-cols-[auto_1fr] md:gap-16">
+            <div className="relative">
+              <LazyVideo
+                src={versatilidadeVideo.url}
+                aspect="aspect-[9/16]"
+                showMuteToggle
+                variant="phone"
+              />
+            </div>
             <div>
               <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
                 Versatilidade em ação
@@ -403,6 +401,7 @@ export function Pa7ProLanding() {
               </ul>
             </div>
           </div>
+
 
           <motion.div
             initial="hidden"

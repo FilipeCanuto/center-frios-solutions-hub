@@ -92,18 +92,36 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
           >
             <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-br from-accent/20 to-transparent blur-2xl" />
 
+            {/* Floating premium product cutout */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-24 right-2 z-20 hidden sm:block"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(10,81,168,0.35)_0%,transparent_70%)] blur-2xl" />
+                <img
+                  src={product.image}
+                  alt=""
+                  className="h-48 w-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] motion-safe:animate-[float_6s_ease-in-out_infinite] md:h-60"
+                />
+              </div>
+            </div>
+
             <div className="metal-surface metal-hover relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl md:p-10">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="size-16 shrink-0 rounded-xl border border-white/10 bg-white/5 p-2">
-                  <img src={product.image} alt={product.name} className="h-full w-full object-contain" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-foreground leading-tight truncate">{product.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-1">
+              <div className="mb-8 flex items-center gap-4">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent">
+                    Skymsen · Linha Profissional
+                  </p>
+                  <h3 className="mt-1.5 text-xl font-semibold leading-tight text-foreground">
+                    {product.name}
+                  </h3>
+                  <p className="mt-1 text-xs text-muted-foreground">
                     {product.subtitle || "Linha Profissional Center Frios"}
                   </p>
                 </div>
               </div>
+
 
               <div className="space-y-6">
                 {/* PIX — destaque máximo */}
