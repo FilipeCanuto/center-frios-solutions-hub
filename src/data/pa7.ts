@@ -95,15 +95,24 @@ export const PA7_SHOWCASE = [
   },
 ];
 
+import discE1 from "@/assets/pa7/discs/e1.png.asset.json";
+import discE3 from "@/assets/pa7/discs/e3.png.asset.json";
+import discV from "@/assets/pa7/discs/v.png.asset.json";
+import discZ3 from "@/assets/pa7/discs/z3.png.asset.json";
+import discZ5 from "@/assets/pa7/discs/z5.png.asset.json";
+import discZ8 from "@/assets/pa7/discs/z8.png.asset.json";
+import discH7 from "@/assets/pa7/discs/h7.png.asset.json";
+
 export const PA7_INCLUDED_DISCS = [
-  { code: "E1", group: "Fatiador", desc: "1 mm" },
-  { code: "E3", group: "Fatiador", desc: "3 mm" },
-  { code: "V", group: "Ralador fino", desc: "Queijo, coco" },
-  { code: "Z3", group: "Ralador", desc: "3 mm" },
-  { code: "Z5", group: "Ralador", desc: "5 mm" },
-  { code: "Z8", group: "Ralador", desc: "8 mm" },
-  { code: "H7", group: "Julienne", desc: "7 × 7 mm" },
+  { code: "E1", group: "Fatiador", desc: "1 mm", image: discE1.url },
+  { code: "E3", group: "Fatiador", desc: "3 mm", image: discE3.url },
+  { code: "V", group: "Ralador fino", desc: "Queijo, coco", image: discV.url },
+  { code: "Z3", group: "Ralador", desc: "3 mm", image: discZ3.url },
+  { code: "Z5", group: "Ralador", desc: "5 mm", image: discZ5.url },
+  { code: "Z8", group: "Ralador", desc: "8 mm", image: discZ8.url },
+  { code: "H7", group: "Julienne", desc: "7 × 7 mm", image: discH7.url },
 ];
+
 
 export const PA7_USE_CASES = [
   {
