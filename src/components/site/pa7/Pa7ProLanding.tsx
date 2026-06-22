@@ -443,22 +443,33 @@ export function Pa7ProLanding() {
                 className="group metal-surface metal-hover relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-500 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
               >
                 <motion.div
-                  whileHover={{ rotate: 180 }}
-                  transition={{ duration: 0.8, ease: "easeInOut" }}
-                  className="relative grid size-16 place-items-center rounded-full border border-white/15 bg-gradient-to-br from-white/[0.08] to-white/[0.02] shadow-inner transition-transform duration-300 group-hover:scale-105"
+                  whileHover={{ rotate: 12 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  className="relative grid size-20 place-items-center rounded-full transition-transform duration-300 group-hover:scale-105"
                   aria-hidden
                 >
                   <div
-                    className="absolute inset-1 rounded-full border border-white/10"
+                    className="absolute inset-0 rounded-full"
                     style={{
                       background:
-                        "radial-gradient(circle at 30% 30%, color-mix(in oklab, var(--brand-blue) 22%, transparent), transparent 70%)",
+                        "radial-gradient(circle at 50% 55%, color-mix(in oklab, var(--brand-blue) 28%, transparent), transparent 70%)",
                     }}
                   />
-                  <span className="relative text-base font-bold tracking-tight text-foreground">
-                    {d.code}
-                  </span>
+                  {("image" in d && (d as { image?: string }).image) ? (
+                    <img
+                      src={(d as { image: string }).image}
+                      alt={`Disco ${d.code} — ${d.group} ${d.desc}`}
+                      loading="lazy"
+                      decoding="async"
+                      className="relative size-20 object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.55)]"
+                    />
+                  ) : (
+                    <span className="relative text-base font-bold tracking-tight text-foreground">
+                      {d.code}
+                    </span>
+                  )}
                 </motion.div>
+
                 <p className="mt-4 text-[11px] font-semibold uppercase tracking-widest text-accent">
                   {d.group}
                 </p>
