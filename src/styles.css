@@ -534,3 +534,10 @@
   vertical-align: middle;
   box-shadow: 0 0 8px currentColor;
 }
+
+/* Hide global floating WhatsApp when PA7 sticky buy bar is visible */
+body.sticky-buybar-active [data-floating-whatsapp] {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(120%);
+}
