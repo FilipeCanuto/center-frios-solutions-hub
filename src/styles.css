@@ -537,9 +537,7 @@
 
 /* Hide global floating WhatsApp when PA7 sticky buy bar is visible */
 body.sticky-buybar-active [data-floating-whatsapp] {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(120%);
+  display: none !important;
 }
 
 @keyframes float {

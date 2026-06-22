@@ -28,6 +28,7 @@ import { LazyVideo } from "./LazyVideo";
 import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
 import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
 import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
+import calabresaVideo from "@/assets/pa7/videos/calabresa.mp4.asset.json";
 
 import {
   PA7_GALLERY,
@@ -286,7 +287,7 @@ export function Pa7ProLanding() {
               src={heroVideo.url}
               aspect="aspect-video"
               showMuteToggle
-              className="border border-white/10 metal-surface"
+              variant="monitor"
             />
           </div>
         </div>
@@ -609,6 +610,52 @@ export function Pa7ProLanding() {
 
       {/* FAQ */}
       <FaqPa7 />
+
+      {/* IMMERSIVE PRE-CHECKOUT — Slot D (Calabresa) */}
+      <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-24">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--brand-blue)_10%,transparent),transparent_75%)] opacity-60"
+        />
+        <div className="relative mx-auto max-w-7xl px-6">
+          <div className="grid items-center gap-12 md:grid-cols-[1fr_auto] md:gap-16">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
+                Velocidade industrial
+              </span>
+              <h3 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+                Calabresa fatiada em segundos — sem esforço
+              </h3>
+              <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                Ritmo de produção real numa pizzaria. O PA7 Pro transforma minutos de faca em
+                segundos de máquina — fatias uniformes, cortes precisos, padronização absoluta.
+              </p>
+              <ul className="mt-6 grid gap-2.5 text-sm text-foreground">
+                {[
+                  "Bocal extra largo · alimentação contínua",
+                  "Fatias uniformes para padronização do produto final",
+                  "Higiene simplificada · câmara injetada em aço inox",
+                ].map((t) => (
+                  <li key={t} className="flex items-start gap-2.5">
+                    <div className="mt-1 flex size-5 shrink-0 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-accent">
+                      <Check className="size-3" />
+                    </div>
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="relative">
+              <LazyVideo
+                src={calabresaVideo.url}
+                aspect="aspect-[9/16]"
+                showMuteToggle
+                variant="phone"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* CHECKOUT SECTION */}
       <CheckoutSection

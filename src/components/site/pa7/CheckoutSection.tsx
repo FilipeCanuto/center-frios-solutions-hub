@@ -37,22 +37,38 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
   return (
     <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          {/* Lado Esquerdo: Produto e Confiança */}
+        <div className="mb-12 max-w-2xl">
+          <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl text-pretty">
+            Adquira o seu <span className="text-accent">{product.name}</span> agora
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            O equipamento que vai transformar a produtividade da sua cozinha. Pronta entrega com
+            garantia total Center Frios.
+          </p>
+        </div>
+
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+          {/* LEFT — Dedicated product canvas */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="flex flex-col gap-8"
           >
-            <div>
-              <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl text-pretty">
-                Adquira o seu <span className="text-accent">{product.name}</span> agora
-              </h2>
-              <p className="mt-4 text-lg text-muted-foreground">
-                O equipamento que vai transformar a produtividade da sua cozinha. Pronta entrega com
-                garantia total Center Frios.
-              </p>
+            <div className="relative flex items-center justify-center rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-8 md:p-12 backdrop-blur-xl overflow-hidden">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_60%,rgba(10,81,168,0.28)_0%,transparent_65%)]"
+              />
+              <img
+                src={product.image}
+                alt={product.name}
+                className="relative z-10 h-80 md:h-[28rem] w-auto object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.4)] motion-safe:animate-[float_6s_ease-in-out_infinite]"
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute bottom-6 left-1/2 h-6 w-2/3 -translate-x-1/2 rounded-[50%] bg-black/50 blur-2xl"
+              />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -74,16 +90,9 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
                 </div>
               ))}
             </div>
-
-            <div className="flex items-center gap-6 grayscale opacity-50">
-              <img src="https://img.icons8.com/color/48/000000/visa.png" alt="Visa" className="h-6 w-auto" />
-              <img src="https://img.icons8.com/color/48/000000/mastercard.png" alt="Mastercard" className="h-6 w-auto" />
-              <img src="https://img.icons8.com/color/48/000000/pix.png" alt="PIX" className="h-6 w-auto" />
-              <img src="https://img.icons8.com/color/48/000000/barcode.png" alt="Boleto" className="h-6 w-auto" />
-            </div>
           </motion.div>
 
-          {/* Lado Direito: Card de Preço */}
+          {/* RIGHT — Pricing card */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -92,45 +101,25 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
           >
             <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-br from-accent/20 to-transparent blur-2xl" />
 
-            {/* Floating premium product cutout */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -top-24 right-2 z-20 hidden sm:block"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(10,81,168,0.35)_0%,transparent_70%)] blur-2xl" />
-                <img
-                  src={product.image}
-                  alt=""
-                  className="h-48 w-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] motion-safe:animate-[float_6s_ease-in-out_infinite] md:h-60"
-                />
-              </div>
-            </div>
-
             <div className="metal-surface metal-hover relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl md:p-10">
-              <div className="mb-8 flex items-center gap-4">
-                <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent">
-                    Skymsen · Linha Profissional
-                  </p>
-                  <h3 className="mt-1.5 text-xl font-semibold leading-tight text-foreground">
-                    {product.name}
-                  </h3>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {product.subtitle || "Linha Profissional Center Frios"}
-                  </p>
-                </div>
+              <div className="mb-8">
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent">
+                  Skymsen · Linha Profissional
+                </p>
+                <h3 className="mt-1.5 text-xl font-semibold leading-tight text-foreground">
+                  {product.name}
+                </h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {product.subtitle || "Linha Profissional Center Frios"}
+                </p>
               </div>
-
 
               <div className="space-y-6">
-                {/* PIX — destaque máximo */}
+                {/* PIX */}
                 <div className="pb-6 border-b border-white/5">
-                  <div className="flex items-center gap-2">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-accent">
-                      PREÇO À VISTA NO PIX
-                    </p>
-                  </div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-accent">
+                    PREÇO À VISTA NO PIX
+                  </p>
                   <div className="mt-2 flex items-baseline gap-3 flex-wrap">
                     <span className="text-5xl md:text-6xl font-black text-foreground tracking-tighter leading-none">
                       {pixPrice}
@@ -144,7 +133,7 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
                   </div>
                 </div>
 
-                {/* Cartão — visual mais discreto */}
+                {/* Cartão */}
                 <div className="opacity-90">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                     OU PARCELADO NO CARTÃO
