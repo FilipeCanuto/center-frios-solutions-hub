@@ -95,6 +95,11 @@ function TurbineDisc({ disc, index, scrollYProgress, itemVariants }: TurbineDisc
 export function Pa7ProLanding() {
   const product = getProduct("processador-pa7-pro-skymsen")!;
   const [open, setOpen] = useState(false);
+  const discsGridRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: discsScrollProgress } = useScroll({
+    target: discsGridRef,
+    offset: ["start end", "end start"],
+  });
   const installment = PA7_PRICE.installmentValue.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
