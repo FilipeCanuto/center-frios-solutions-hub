@@ -25,6 +25,8 @@ import { CheckoutDialog } from "./CheckoutDialog";
 import { CheckoutSection } from "./CheckoutSection";
 import { FaqPa7 } from "./FaqPa7";
 import { LazyVideo } from "./LazyVideo";
+import { HardwareGrid } from "./HardwareGrid";
+import { UgcWall } from "./UgcWall";
 import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
 import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
 import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
@@ -362,6 +364,9 @@ export function Pa7ProLanding() {
         <Showcase key={i} item={item} reverse={i % 2 === 1} />
       ))}
 
+      {/* HARDWARE ENGINEERING INTERACTIVE GRID */}
+      <HardwareGrid />
+
       {/* INCLUDED DISCS */}
       <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
         <div
@@ -667,6 +672,9 @@ export function Pa7ProLanding() {
           </div>
         </div>
       </section>
+
+      {/* UGC VIDEO TESTIMONIAL WALL */}
+      <UgcWall />
 
       {/* CHECKOUT SECTION */}
       <CheckoutSection
