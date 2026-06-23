@@ -35,7 +35,7 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
   const savings = product.savings ?? Math.round(product.price * (product.pixDiscount / 100));
 
   return (
-    <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
+    <section id="checkout-pa7" className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-12 max-w-2xl">
           <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl text-pretty">

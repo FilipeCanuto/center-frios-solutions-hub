@@ -102,6 +102,42 @@ import discZ3 from "@/assets/pa7/discs/z3.png.asset.json";
 import discZ5 from "@/assets/pa7/discs/z5.png.asset.json";
 import discZ8 from "@/assets/pa7/discs/z8.png.asset.json";
 import discH7 from "@/assets/pa7/discs/h7.png.asset.json";
+import discE5 from "@/assets/pa7/discs-optional/e5.png.asset.json";
+import discE8 from "@/assets/pa7/discs-optional/e8.png.asset.json";
+import discE10 from "@/assets/pa7/discs-optional/e10.png.asset.json";
+import discE14 from "@/assets/pa7/discs-optional/e14.png.asset.json";
+import discGC8 from "@/assets/pa7/discs-optional/gc8.png.asset.json";
+import discGC10 from "@/assets/pa7/discs-optional/gc10.png.asset.json";
+import discGC14 from "@/assets/pa7/discs-optional/gc14.png.asset.json";
+import discGC20 from "@/assets/pa7/discs-optional/gc20.png.asset.json";
+
+export type OptionalDisc = {
+  code: string;
+  group: "Fatiador" | "Grade de cubo";
+  desc: string;
+  price: number;
+  image: string;
+  requiresSlicer?: boolean;
+  recommendedWith?: string;
+};
+
+export const PA7_OPTIONAL_DISCS: OptionalDisc[] = [
+  { code: "E5", group: "Fatiador", desc: "5 mm", price: 404.6, image: discE5.url },
+  { code: "E8", group: "Fatiador", desc: "8 mm", price: 404.6, image: discE8.url },
+  { code: "E10", group: "Fatiador", desc: "10 mm", price: 366.01, image: discE10.url },
+  { code: "E14", group: "Fatiador", desc: "14 mm", price: 366.01, image: discE14.url },
+  { code: "GC8", group: "Grade de cubo", desc: "8 × 8 mm", price: 523.91, image: discGC8.url, requiresSlicer: true, recommendedWith: "E5" },
+  { code: "GC10", group: "Grade de cubo", desc: "10 × 10 mm", price: 596.92, image: discGC10.url, requiresSlicer: true, recommendedWith: "E8" },
+  { code: "GC14", group: "Grade de cubo", desc: "14 × 14 mm", price: 555.76, image: discGC14.url, requiresSlicer: true, recommendedWith: "E14" },
+  { code: "GC20", group: "Grade de cubo", desc: "20 × 20 mm", price: 591.82, image: discGC20.url, requiresSlicer: true, recommendedWith: "E14" },
+];
+
+export const PA7_NICHE_PRESETS = [
+  { id: "pizzaria", label: "Pizzaria", picks: ["E5", "GC8"] },
+  { id: "hamburgueria", label: "Hamburgueria", picks: ["E8", "GC10"] },
+  { id: "buffet", label: "Buffet livre", picks: ["E5", "GC8", "GC14"] },
+  { id: "seleta", label: "Seleta de legumes", picks: ["E10", "GC14", "GC20"] },
+] as const;
 
 export const PA7_INCLUDED_DISCS = [
   { code: "E1", group: "Fatiador", desc: "1 mm", image: discE1.url },
