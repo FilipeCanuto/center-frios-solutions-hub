@@ -4,15 +4,11 @@ import { motion, useScroll, useTransform, type MotionValue } from "framer-motion
 
 import {
   ArrowLeft,
-  Beef,
-  Carrot,
   Check,
   ChevronRight,
   Disc3,
   Gauge,
-  Pizza,
   Power,
-  Salad,
   ShieldCheck,
   Truck,
   Wrench,
@@ -28,6 +24,7 @@ import { FaqPa7 } from "./FaqPa7";
 import { LazyVideo } from "./LazyVideo";
 import { HardwareGrid } from "./HardwareGrid";
 import { UgcWall } from "./UgcWall";
+import { CrossSellConfigurator } from "./CrossSellConfigurator";
 import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
 import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
 import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
@@ -40,12 +37,60 @@ import {
   PA7_INCLUDED_DISCS,
   PA7_PRICE,
   PA7_SHOWCASE,
-  PA7_USE_CASES,
 } from "@/data/pa7";
 import { getProduct } from "@/data/site";
 
 const HIGHLIGHT_ICONS = [Gauge, Disc3, ShieldCheck, Power];
-const USE_CASE_ICONS = { Pizza, Beef, Salad, Carrot } as const;
+
+type TurbineDiscProps = {
+  disc: { code: string; group: string; desc: string; image?: string };
+  index: number;
+  scrollYProgress: MotionValue<number>;
+  itemVariants: Record<string, unknown>;
+};
+
+function TurbineDisc({ disc, index, scrollYProgress, itemVariants }: TurbineDiscProps) {
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 180 + index * 35]);
+  const hasImage = !!disc.image;
+  return (
+    <motion.div
+      variants={itemVariants as never}
+      className="group metal-surface metal-hover relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-500 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
+    >
+      <div className="relative grid size-20 place-items-center rounded-full" aria-hidden>
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 55%, color-mix(in oklab, var(--brand-blue) 28%, transparent), transparent 70%)",
+          }}
+        />
+        {hasImage ? (
+          <motion.img
+            src={disc.image as string}
+            alt={`Disco ${disc.code} — ${disc.group} ${disc.desc}`}
+            loading="lazy"
+            decoding="async"
+            style={{ rotate }}
+            className="relative size-20 object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.55)] will-change-transform motion-reduce:rotate-0"
+          />
+        ) : (
+          <span className="relative text-base font-bold tracking-tight text-foreground">
+            {disc.code}
+          </span>
+        )}
+      </div>
+
+      <p className="mt-4 text-[11px] font-semibold uppercase tracking-widest text-accent">
+        {disc.group}
+      </p>
+      <p className="mt-1 text-center text-xs text-muted-foreground leading-relaxed">
+        {disc.desc}
+      </p>
+    </motion.div>
+  );
+}
+
 
 export function Pa7ProLanding() {
   const product = getProduct("processador-pa7-pro-skymsen")!;
