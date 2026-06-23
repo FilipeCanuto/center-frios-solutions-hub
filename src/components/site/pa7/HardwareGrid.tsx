@@ -178,17 +178,25 @@ export function HardwareGrid() {
                 </div>
 
                 <div className="relative order-1 md:order-2 flex items-center justify-center">
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,rgba(10,81,168,0.25)_0%,transparent_65%)] blur-3xl"
-                  />
-                  <img
-                    src={current.image}
-                    alt={current.title}
-                    loading="lazy"
-                    decoding="async"
-                    className="relative h-auto w-full max-w-[460px] object-contain drop-shadow-[0_22px_45px_rgba(0,0,0,0.55)]"
-                  />
+                  <div className="relative w-full max-w-[480px] rounded-2xl border border-white/10 bg-neutral-900/60 p-6 shadow-2xl backdrop-blur-md">
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_center,rgba(10,81,168,0.22),transparent_70%)]"
+                    />
+                    <img
+                      src={current.image}
+                      alt={current.title}
+                      loading="lazy"
+                      decoding="async"
+                      className="relative mx-auto h-auto w-full object-contain mix-blend-luminosity drop-shadow-[0_22px_45px_rgba(0,0,0,0.55)]"
+                      style={{
+                        maskImage:
+                          "radial-gradient(circle at center, #000 65%, transparent 100%)",
+                        WebkitMaskImage:
+                          "radial-gradient(circle at center, #000 65%, transparent 100%)",
+                      }}
+                    />
+                  </div>
                 </div>
               </motion.div>
             </AnimatePresence>

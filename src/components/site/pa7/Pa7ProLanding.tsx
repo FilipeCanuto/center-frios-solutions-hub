@@ -1,17 +1,14 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+
 import {
   ArrowLeft,
-  Beef,
-  Carrot,
   Check,
   ChevronRight,
   Disc3,
   Gauge,
-  Pizza,
   Power,
-  Salad,
   ShieldCheck,
   Truck,
   Wrench,
@@ -27,6 +24,7 @@ import { FaqPa7 } from "./FaqPa7";
 import { LazyVideo } from "./LazyVideo";
 import { HardwareGrid } from "./HardwareGrid";
 import { UgcWall } from "./UgcWall";
+import { CrossSellConfigurator } from "./CrossSellConfigurator";
 import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
 import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
 import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
@@ -39,16 +37,69 @@ import {
   PA7_INCLUDED_DISCS,
   PA7_PRICE,
   PA7_SHOWCASE,
-  PA7_USE_CASES,
 } from "@/data/pa7";
 import { getProduct } from "@/data/site";
 
 const HIGHLIGHT_ICONS = [Gauge, Disc3, ShieldCheck, Power];
-const USE_CASE_ICONS = { Pizza, Beef, Salad, Carrot } as const;
+
+type TurbineDiscProps = {
+  disc: { code: string; group: string; desc: string; image?: string };
+  index: number;
+  scrollYProgress: MotionValue<number>;
+  itemVariants: Record<string, unknown>;
+};
+
+function TurbineDisc({ disc, index, scrollYProgress, itemVariants }: TurbineDiscProps) {
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 180 + index * 35]);
+  const hasImage = !!disc.image;
+  return (
+    <motion.div
+      variants={itemVariants as never}
+      className="group metal-surface metal-hover relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-500 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
+    >
+      <div className="relative grid size-20 place-items-center rounded-full" aria-hidden>
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 55%, color-mix(in oklab, var(--brand-blue) 28%, transparent), transparent 70%)",
+          }}
+        />
+        {hasImage ? (
+          <motion.img
+            src={disc.image as string}
+            alt={`Disco ${disc.code} — ${disc.group} ${disc.desc}`}
+            loading="lazy"
+            decoding="async"
+            style={{ rotate }}
+            className="relative size-20 object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.55)] will-change-transform motion-reduce:rotate-0"
+          />
+        ) : (
+          <span className="relative text-base font-bold tracking-tight text-foreground">
+            {disc.code}
+          </span>
+        )}
+      </div>
+
+      <p className="mt-4 text-[11px] font-semibold uppercase tracking-widest text-accent">
+        {disc.group}
+      </p>
+      <p className="mt-1 text-center text-xs text-muted-foreground leading-relaxed">
+        {disc.desc}
+      </p>
+    </motion.div>
+  );
+}
+
 
 export function Pa7ProLanding() {
   const product = getProduct("processador-pa7-pro-skymsen")!;
   const [open, setOpen] = useState(false);
+  const discsGridRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: discsScrollProgress } = useScroll({
+    target: discsGridRef,
+    offset: ["start end", "end start"],
+  });
   const installment = PA7_PRICE.installmentValue.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
@@ -435,53 +486,21 @@ export function Pa7ProLanding() {
           </motion.div>
 
           <motion.div
+            ref={discsGridRef}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
             variants={containerVariants}
             className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-7"
           >
-            {PA7_INCLUDED_DISCS.map((d) => (
-              <motion.div
+            {PA7_INCLUDED_DISCS.map((d, i) => (
+              <TurbineDisc
                 key={d.code}
-                variants={itemVariants}
-                className="group metal-surface metal-hover relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-500 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
-              >
-                <motion.div
-                  whileHover={{ rotate: 12 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                  className="relative grid size-20 place-items-center rounded-full transition-transform duration-300 group-hover:scale-105"
-                  aria-hidden
-                >
-                  <div
-                    className="absolute inset-0 rounded-full"
-                    style={{
-                      background:
-                        "radial-gradient(circle at 50% 55%, color-mix(in oklab, var(--brand-blue) 28%, transparent), transparent 70%)",
-                    }}
-                  />
-                  {("image" in d && (d as { image?: string }).image) ? (
-                    <img
-                      src={(d as { image: string }).image}
-                      alt={`Disco ${d.code} — ${d.group} ${d.desc}`}
-                      loading="lazy"
-                      decoding="async"
-                      className="relative size-20 object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.55)]"
-                    />
-                  ) : (
-                    <span className="relative text-base font-bold tracking-tight text-foreground">
-                      {d.code}
-                    </span>
-                  )}
-                </motion.div>
-
-                <p className="mt-4 text-[11px] font-semibold uppercase tracking-widest text-accent">
-                  {d.group}
-                </p>
-                <p className="mt-1 text-center text-xs text-muted-foreground leading-relaxed">
-                  {d.desc}
-                </p>
-              </motion.div>
+                disc={d}
+                index={i}
+                scrollYProgress={discsScrollProgress}
+                itemVariants={itemVariants}
+              />
             ))}
           </motion.div>
           <motion.p
@@ -523,81 +542,9 @@ export function Pa7ProLanding() {
         </div>
       </motion.section>
 
-      {/* USE CASES */}
-      <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
-        <div className="mx-auto max-w-7xl px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-            className="mx-auto max-w-2xl text-center"
-          >
-            <motion.span
-              variants={itemVariants}
-              className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent"
-            >
-              Ideal para o seu negócio
-            </motion.span>
-            <motion.h2
-              variants={itemVariants}
-              className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl"
-            >
-              Os cortes certos para cada operação
-            </motion.h2>
-            <motion.p variants={itemVariants} className="mt-3 text-base text-muted-foreground">
-              Combinações de discos recomendadas pela Skymsen para os principais segmentos.
-            </motion.p>
-          </motion.div>
+      {/* USE CASES — Pre-Checkout Configurator */}
+      <CrossSellConfigurator />
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={containerVariants}
-            className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {PA7_USE_CASES.map((u) => {
-              const Icon = USE_CASE_ICONS[u.icon as keyof typeof USE_CASE_ICONS];
-              return (
-                <motion.div
-                  key={u.name}
-                  variants={itemVariants}
-                  className="group metal-surface metal-hover relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-500 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
-                >
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute -right-10 -top-10 size-32 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
-                    style={{
-                      background:
-                        "radial-gradient(circle, color-mix(in oklab, var(--brand-blue) 55%, transparent), transparent 70%)",
-                    }}
-                  />
-                  <div className="relative z-10 flex size-12 items-center justify-center rounded-xl bg-white/[0.03] border border-white/10 text-accent transition-all duration-300 group-hover:scale-110 group-hover:bg-accent group-hover:text-accent-foreground">
-                    <Icon className="size-6" />
-                  </div>
-                  <h3 className="relative z-10 mt-5 text-lg font-semibold text-foreground transition-colors group-hover:text-accent">
-                    {u.name}
-                  </h3>
-                  <p className="relative z-10 mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {u.desc}
-                  </p>
-                  <div className="relative z-10 mt-5 flex flex-wrap gap-1.5">
-                    {u.discs.map((d) => (
-                      <span
-                        key={d}
-                        className="rounded-md border border-white/10 bg-white/[0.05] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-foreground transition-colors duration-300 group-hover:border-accent/30 group-hover:bg-accent/10 group-hover:text-accent"
-                      >
-                        {d}
-                      </span>
-                    ))}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
 
       {/* APPLICATIONS */}
       {product.applications && (
