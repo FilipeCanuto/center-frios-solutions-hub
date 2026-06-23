@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+
 import {
   ArrowLeft,
   Beef,
