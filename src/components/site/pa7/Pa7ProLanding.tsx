@@ -569,81 +569,9 @@ export function Pa7ProLanding() {
         </div>
       </motion.section>
 
-      {/* USE CASES */}
-      <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
-        <div className="mx-auto max-w-7xl px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-            className="mx-auto max-w-2xl text-center"
-          >
-            <motion.span
-              variants={itemVariants}
-              className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent"
-            >
-              Ideal para o seu negócio
-            </motion.span>
-            <motion.h2
-              variants={itemVariants}
-              className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl"
-            >
-              Os cortes certos para cada operação
-            </motion.h2>
-            <motion.p variants={itemVariants} className="mt-3 text-base text-muted-foreground">
-              Combinações de discos recomendadas pela Skymsen para os principais segmentos.
-            </motion.p>
-          </motion.div>
+      {/* USE CASES — Pre-Checkout Configurator */}
+      <CrossSellConfigurator />
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={containerVariants}
-            className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {PA7_USE_CASES.map((u) => {
-              const Icon = USE_CASE_ICONS[u.icon as keyof typeof USE_CASE_ICONS];
-              return (
-                <motion.div
-                  key={u.name}
-                  variants={itemVariants}
-                  className="group metal-surface metal-hover relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-500 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
-                >
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute -right-10 -top-10 size-32 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
-                    style={{
-                      background:
-                        "radial-gradient(circle, color-mix(in oklab, var(--brand-blue) 55%, transparent), transparent 70%)",
-                    }}
-                  />
-                  <div className="relative z-10 flex size-12 items-center justify-center rounded-xl bg-white/[0.03] border border-white/10 text-accent transition-all duration-300 group-hover:scale-110 group-hover:bg-accent group-hover:text-accent-foreground">
-                    <Icon className="size-6" />
-                  </div>
-                  <h3 className="relative z-10 mt-5 text-lg font-semibold text-foreground transition-colors group-hover:text-accent">
-                    {u.name}
-                  </h3>
-                  <p className="relative z-10 mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {u.desc}
-                  </p>
-                  <div className="relative z-10 mt-5 flex flex-wrap gap-1.5">
-                    {u.discs.map((d) => (
-                      <span
-                        key={d}
-                        className="rounded-md border border-white/10 bg-white/[0.05] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-foreground transition-colors duration-300 group-hover:border-accent/30 group-hover:bg-accent/10 group-hover:text-accent"
-                      >
-                        {d}
-                      </span>
-                    ))}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
 
       {/* APPLICATIONS */}
       {product.applications && (
