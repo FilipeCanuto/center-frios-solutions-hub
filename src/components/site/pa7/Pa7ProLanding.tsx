@@ -486,53 +486,21 @@ export function Pa7ProLanding() {
           </motion.div>
 
           <motion.div
+            ref={discsGridRef}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
             variants={containerVariants}
             className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-7"
           >
-            {PA7_INCLUDED_DISCS.map((d) => (
-              <motion.div
+            {PA7_INCLUDED_DISCS.map((d, i) => (
+              <TurbineDisc
                 key={d.code}
-                variants={itemVariants}
-                className="group metal-surface metal-hover relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-500 hover:border-accent/40 hover:bg-white/[0.07] hover:shadow-[0_12px_25px_rgba(0,0,0,0.2)]"
-              >
-                <motion.div
-                  whileHover={{ rotate: 12 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                  className="relative grid size-20 place-items-center rounded-full transition-transform duration-300 group-hover:scale-105"
-                  aria-hidden
-                >
-                  <div
-                    className="absolute inset-0 rounded-full"
-                    style={{
-                      background:
-                        "radial-gradient(circle at 50% 55%, color-mix(in oklab, var(--brand-blue) 28%, transparent), transparent 70%)",
-                    }}
-                  />
-                  {("image" in d && (d as { image?: string }).image) ? (
-                    <img
-                      src={(d as { image: string }).image}
-                      alt={`Disco ${d.code} — ${d.group} ${d.desc}`}
-                      loading="lazy"
-                      decoding="async"
-                      className="relative size-20 object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.55)]"
-                    />
-                  ) : (
-                    <span className="relative text-base font-bold tracking-tight text-foreground">
-                      {d.code}
-                    </span>
-                  )}
-                </motion.div>
-
-                <p className="mt-4 text-[11px] font-semibold uppercase tracking-widest text-accent">
-                  {d.group}
-                </p>
-                <p className="mt-1 text-center text-xs text-muted-foreground leading-relaxed">
-                  {d.desc}
-                </p>
-              </motion.div>
+                disc={d}
+                index={i}
+                scrollYProgress={discsScrollProgress}
+                itemVariants={itemVariants}
+              />
             ))}
           </motion.div>
           <motion.p
