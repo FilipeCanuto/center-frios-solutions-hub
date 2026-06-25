@@ -138,6 +138,9 @@ export function CheckoutSection({
           >
             <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-br from-accent/20 to-transparent blur-2xl" />
 
+            <p className="mb-3 text-center text-[11px] font-semibold text-emerald-500">
+              🚚 Frete Grátis para todo o estado de Alagoas ativo para este lote.
+            </p>
             <div className="metal-surface metal-hover relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl md:p-10">
               <div className="mb-8">
                 <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent">
