@@ -117,27 +117,90 @@ export type OptionalDisc = {
   desc: string;
   price: number;
   image: string;
+  utility: string;
   requiresSlicer?: boolean;
   recommendedWith?: string;
+  pairOptions?: string[];
 };
 
 export const PA7_OPTIONAL_DISCS: OptionalDisc[] = [
-  { code: "E5", group: "Fatiador", desc: "5 mm", price: 404.6, image: discE5.url },
-  { code: "E8", group: "Fatiador", desc: "8 mm", price: 404.6, image: discE8.url },
-  { code: "E10", group: "Fatiador", desc: "10 mm", price: 366.01, image: discE10.url },
-  { code: "E14", group: "Fatiador", desc: "14 mm", price: 366.01, image: discE14.url },
-  { code: "GC8", group: "Grade de cubo", desc: "8 × 8 mm", price: 523.91, image: discGC8.url, requiresSlicer: true, recommendedWith: "E5" },
-  { code: "GC10", group: "Grade de cubo", desc: "10 × 10 mm", price: 596.92, image: discGC10.url, requiresSlicer: true, recommendedWith: "E8" },
-  { code: "GC14", group: "Grade de cubo", desc: "14 × 14 mm", price: 555.76, image: discGC14.url, requiresSlicer: true, recommendedWith: "E14" },
-  { code: "GC20", group: "Grade de cubo", desc: "20 × 20 mm", price: 591.82, image: discGC20.url, requiresSlicer: true, recommendedWith: "E14" },
+  {
+    code: "E5",
+    group: "Fatiador",
+    desc: "5 mm",
+    price: 404.6,
+    image: discE5.url,
+    utility: "Fatias perfeitas para rodelas de tomate, pepino e alface para hambúrguer",
+  },
+  {
+    code: "E8",
+    group: "Fatiador",
+    desc: "8 mm",
+    price: 404.6,
+    image: discE8.url,
+    utility: "Fatias grossas para limão de copo, repolho e vegetais estruturados",
+  },
+  {
+    code: "E10",
+    group: "Fatiador",
+    desc: "10 mm",
+    price: 366.01,
+    image: discE10.url,
+    utility: "Corte ideal para rodelas grossas de legumes e bases de cozidos",
+  },
+  {
+    code: "E14",
+    group: "Fatiador",
+    desc: "14 mm",
+    price: 366.01,
+    image: discE14.url,
+    utility: "Fatiamento pesado para porcionamento industrial de vegetais grandes",
+  },
+  {
+    code: "GC8",
+    group: "Grade de cubo",
+    desc: "8 × 8 mm",
+    price: 523.91,
+    image: discGC8.url,
+    utility: "Cubos de Vinagrete — Tomate e cebola cortados perfeitamente sem soltar água",
+    requiresSlicer: true,
+    recommendedWith: "E5",
+    pairOptions: ["E5", "E8"],
+  },
+  {
+    code: "GC10",
+    group: "Grade de cubo",
+    desc: "10 × 10 mm",
+    price: 596.92,
+    image: discGC10.url,
+    utility: "Tamanho ideal para seletas de legumes de sopas, caldos e recheios",
+    requiresSlicer: true,
+    recommendedWith: "E10",
+    pairOptions: ["E10"],
+  },
+  {
+    code: "GC14",
+    group: "Grade de cubo",
+    desc: "14 × 14 mm",
+    price: 555.76,
+    image: discGC14.url,
+    utility: "Cubos médios/grandes para picar frutas de buffets e vinagrete grosso",
+    requiresSlicer: true,
+    recommendedWith: "E14",
+    pairOptions: ["E14"],
+  },
+  {
+    code: "GC20",
+    group: "Grade de cubo",
+    desc: "20 × 20 mm",
+    price: 591.82,
+    image: discGC20.url,
+    utility: "Cubos robustos para saladas de frutas pesadas e ensopados industriais",
+    requiresSlicer: true,
+    recommendedWith: "E14",
+    pairOptions: ["E14"],
+  },
 ];
-
-export const PA7_NICHE_PRESETS = [
-  { id: "pizzaria", label: "Pizzaria", picks: ["E5", "GC8"] },
-  { id: "hamburgueria", label: "Hamburgueria", picks: ["E8", "GC10"] },
-  { id: "buffet", label: "Buffet livre", picks: ["E5", "GC8", "GC14"] },
-  { id: "seleta", label: "Seleta de legumes", picks: ["E10", "GC14", "GC20"] },
-] as const;
 
 export const PA7_INCLUDED_DISCS = [
   {
