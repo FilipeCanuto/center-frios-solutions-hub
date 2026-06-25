@@ -323,5 +323,5 @@ export const PA7_BANK = {
   account: "12345-6",
   cnpj: "00.000.000/0001-00",
   holder: "Center Frios Comércio Ltda.",
-  pixKey: "marketing@centerfrios.com",
+  pixKey: "vendasweb01@centerfrios.com",
 };
