@@ -286,7 +286,7 @@ export function CrossSellConfigurator({ selected, onChange }: CrossSellConfigura
 
               <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
                 Os adicionais selecionados aparecem no orçamento final emitido pelo time
-                Center Frios. O checkout abaixo cobra o equipamento base; os acessórios
+                CENTERFRIOS. O checkout abaixo cobra o equipamento base; os acessórios
                 entram na nota junto.
               </p>
             </div>

@@ -80,7 +80,7 @@ export function CheckoutSection({
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             O equipamento que vai transformar a produtividade da sua cozinha. Pronta entrega com
-            garantia total Center Frios.
+            garantia total CENTERFRIOS.
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export function CheckoutSection({
 
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                { icon: Truck, title: "Entrega Rápida", desc: "Logística especializada em todo Brasil" },
+                { icon: Truck, title: "🚚 Frete Grátis para AL", desc: "Pronta entrega com consulta de rota para todo o Brasil" },
                 { icon: ShieldCheck, title: "Compra Segura", desc: "Ambiente criptografado e NF-e" },
                 { icon: CreditCard, title: "Até 12x Sem Juros", desc: "Parcelamento facilitado no cartão" },
                 { icon: Check, title: "Garantia 12 Meses", desc: "Suporte técnico próprio em campo" },
@@ -138,6 +138,9 @@ export function CheckoutSection({
           >
             <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-br from-accent/20 to-transparent blur-2xl" />
 
+            <p className="mb-3 text-center text-[11px] font-semibold text-emerald-500">
+              🚚 Frete Grátis para todo o estado de Alagoas ativo para este lote.
+            </p>
             <div className="metal-surface metal-hover relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl md:p-10">
               <div className="mb-8">
                 <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent">
@@ -147,7 +150,7 @@ export function CheckoutSection({
                   {product.name}
                 </h3>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {product.subtitle || "Linha Profissional Center Frios"}
+                  {product.subtitle || "Linha Profissional CENTERFRIOS"}
                 </p>
               </div>
 
@@ -231,8 +234,8 @@ export function CheckoutSection({
                 {/* B2B Scarcity */}
                 <p className="text-center text-[11px] font-medium leading-relaxed text-amber-200/90">
                   ⚡ Lote promocional do Circuito Experience 2026: restam apenas{" "}
-                  <span className="font-bold text-amber-100">4 unidades</span> em estoque com
-                  frete prioritário para envio imediato.
+                  <span className="font-bold text-amber-100">4 unidades</span> com despacho
+                  prioritário programado pela rota de entrega.
                 </p>
 
                 <p className="text-center text-[10px] text-muted-foreground uppercase tracking-widest font-medium">

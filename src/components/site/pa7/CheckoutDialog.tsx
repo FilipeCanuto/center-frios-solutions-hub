@@ -61,7 +61,11 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
   const [address, setAddress] = useState<z.infer<typeof StepTwo> | null>(null);
   const [cepLoading, setCepLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [shipping] = useState(89.9);
+  const [cepDraft, setCepDraft] = useState("");
+  const effectiveCep = (address?.cep ?? cepDraft).replace(/\D/g, "");
+  const isFreeShippingAL = effectiveCep.startsWith("57");
+  const shipping = isFreeShippingAL ? 0 : 89.9;
+  const shippingLabel = isFreeShippingAL ? "Grátis (Benefício Alagoas)" : formatBRL(shipping);
 
   const [paymentMethod, setPaymentMethod] = useState<"pix" | "credit_card">("pix");
 
@@ -476,8 +480,11 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                   onSubmit={handleStepTwo}
                   onChangeCapture={(e) => {
                     const t = e.target as unknown as HTMLInputElement;
-                    if (t?.name === "cep" && t.value.replace(/\D/g, "").length === 8) {
-                      lookupCep(t.value, e.currentTarget);
+                    if (t?.name === "cep") {
+                      setCepDraft(t.value);
+                      if (t.value.replace(/\D/g, "").length === 8) {
+                        lookupCep(t.value, e.currentTarget);
+                      }
                     }
                   }}
                   className="grid gap-4"
@@ -548,14 +555,17 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                           Transportadora parceira
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Entrega em todo Brasil · 5 a 10 dias úteis
+                          Despacho para todo o Brasil · prazo validado pela rota do município
                         </p>
                       </div>
-                      <span className="text-sm font-semibold text-foreground">
-                        {formatBRL(shipping)}
+                      <span
+                        className={`text-sm font-semibold ${isFreeShippingAL ? "text-emerald-400" : "text-foreground"}`}
+                      >
+                        {shippingLabel}
                       </span>
                     </div>
                   </div>
+
 
                   <div className="flex items-center justify-between gap-3 pt-2">
                     <Button
@@ -862,7 +872,9 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Frete</dt>
-                  <dd className="text-foreground">{formatBRL(shipping)}</dd>
+                  <dd className={isFreeShippingAL ? "text-emerald-400 font-semibold" : "text-foreground"}>
+                    {shippingLabel}
+                  </dd>
                 </div>
                 <div className="flex justify-between text-accent">
                   <dt>Desconto PIX (5%)</dt>

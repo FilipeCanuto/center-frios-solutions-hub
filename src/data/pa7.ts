@@ -301,7 +301,7 @@ export const PA7_FAQ = [
   },
   {
     q: "Qual é a garantia?",
-    a: "12 meses de garantia de fábrica Skymsen. A Center Frios oferece suporte técnico próprio em campo durante e após o período de garantia.",
+    a: "12 meses de garantia de fábrica Skymsen. A CENTERFRIOS oferece suporte técnico próprio em campo durante e após o período de garantia.",
   },
   {
     q: "Vocês emitem nota fiscal para CPF e CNPJ?",
@@ -309,7 +309,7 @@ export const PA7_FAQ = [
   },
   {
     q: "Como funciona a entrega?",
-    a: "Entregamos em todo o Brasil com transportadoras parceiras. Prazo e valor do frete são calculados pelo CEP no checkout. Peso bruto: 29,70 kg.",
+    a: "Contamos com pronta entrega do maquinário base e despachamos para todo o Brasil através de transportadoras parceiras. O prazo final e o envio são programados e validados de acordo com a rota de entrega do seu município para garantir a máxima segurança da carga. Para clientes do estado de Alagoas (CEP iniciado em 57), o frete é cortesia CENTERFRIOS.",
   },
   {
     q: "Posso parcelar?",
@@ -322,6 +322,6 @@ export const PA7_BANK = {
   agency: "0001-2",
   account: "12345-6",
   cnpj: "00.000.000/0001-00",
-  holder: "Center Frios Comércio Ltda.",
+  holder: "CENTERFRIOS Comércio Ltda.",
   pixKey: "vendasweb01@centerfrios.com",
 };
