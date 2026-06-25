@@ -304,8 +304,8 @@ export const PA7_FAQ = [
     a: "12 meses de garantia de fábrica Skymsen. A Center Frios oferece suporte técnico próprio em campo durante e após o período de garantia.",
   },
   {
-    q: "Vocês emitem nota fiscal e atendem CNPJ?",
-    a: "Sim. Operamos exclusivamente B2B com emissão de nota fiscal, condições especiais para CNPJ e atendimento técnico consultivo.",
+    q: "Vocês emitem nota fiscal para CPF e CNPJ?",
+    a: "Sim. Atendemos tanto pessoas físicas (CPF) quanto jurídicas (CNPJ). Toda venda acompanha Nota Fiscal Eletrônica (NF-e) integral emitida de acordo com os seus dados, garantindo total regularidade e tranquilidade para o seu negócio.",
   },
   {
     q: "Como funciona a entrega?",
