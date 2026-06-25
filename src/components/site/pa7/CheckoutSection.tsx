@@ -1,13 +1,27 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, CreditCard, ShieldCheck, Sparkles, Truck } from "lucide-react";
+import { Check, ChevronRight, CreditCard, Flame, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CheckoutDialog } from "./CheckoutDialog";
 import productHero from "@/assets/products/pa7-pro/main.png";
+import { PA7_OPTIONAL_DISCS } from "@/data/pa7";
 
 interface CheckoutSectionProps {
   product: {
     id: string;
+    name: string;
+    image: string;
+    price: number;
+    installments: number;
+    pixDiscount: number;
+    subtitle?: string;
+    pixPrice?: number;
+    installmentValue?: number;
+    savings?: number;
+  };
+  selectedOptionalDiscs?: string[];
+  additionalTotal?: number;
+}
     name: string;
     image: string;
     price: number;
