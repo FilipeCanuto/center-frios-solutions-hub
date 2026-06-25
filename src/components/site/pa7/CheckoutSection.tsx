@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Check, CreditCard, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CheckoutDialog } from "./CheckoutDialog";
-import img01 from "@/assets/products/pa7-pro/01.png";
+import productHero from "@/assets/products/pa7-pro/main.png";
 
 interface CheckoutSectionProps {
   product: {
@@ -62,7 +62,7 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
                 className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_60%,rgba(10,81,168,0.28)_0%,transparent_65%)]"
               />
               <img
-                src={img01}
+                src={productHero}
                 alt={`${product.name} — vista isométrica`}
                 className="relative z-10 h-[28rem] w-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.55)] motion-safe:animate-[float_6s_ease-in-out_infinite]"
               />
