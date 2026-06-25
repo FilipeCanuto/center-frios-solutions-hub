@@ -110,7 +110,7 @@ export function CheckoutSection({
 
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                { icon: Truck, title: "Entrega Rápida", desc: "Logística especializada em todo Brasil" },
+                { icon: Truck, title: "🚚 Frete Grátis para AL", desc: "Pronta entrega com consulta de rota para todo o Brasil" },
                 { icon: ShieldCheck, title: "Compra Segura", desc: "Ambiente criptografado e NF-e" },
                 { icon: CreditCard, title: "Até 12x Sem Juros", desc: "Parcelamento facilitado no cartão" },
                 { icon: Check, title: "Garantia 12 Meses", desc: "Suporte técnico próprio em campo" },
