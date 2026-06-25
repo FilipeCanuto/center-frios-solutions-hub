@@ -32,7 +32,7 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
   }, [show]);
 
 
-  const displayPrice = pixPrice ?? price;
+  const displayPrice = (pixPrice ?? price) + additionalTotal;
 
   return (
     <div
@@ -51,6 +51,11 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
           <div className="relative z-10 min-w-0 flex-1">
             <p className="truncate text-[11px] font-medium text-muted-foreground sm:text-sm">
               {name}
+              {additionalTotal > 0 && (
+                <span className="ml-1.5 hidden rounded-full border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent sm:inline-block">
+                  + acessórios
+                </span>
+              )}
             </p>
             <p className="truncate text-sm font-semibold text-foreground sm:text-base">
               {fmtBRL(displayPrice)}
