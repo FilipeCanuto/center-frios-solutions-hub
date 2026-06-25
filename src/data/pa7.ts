@@ -309,7 +309,7 @@ export const PA7_FAQ = [
   },
   {
     q: "Como funciona a entrega?",
-    a: "Entregamos em todo o Brasil com transportadoras parceiras. Prazo e valor do frete são calculados pelo CEP no checkout. Peso bruto: 29,70 kg.",
+    a: "Contamos com pronta entrega do maquinário base e despachamos para todo o Brasil através de transportadoras parceiras. O prazo final e o envio são programados e validados de acordo com a rota de entrega do seu município para garantir a máxima segurança da carga. Para clientes do estado de Alagoas (CEP iniciado em 57), o frete é cortesia CENTERFRIOS.",
   },
   {
     q: "Posso parcelar?",
