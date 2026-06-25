@@ -22,32 +22,34 @@ interface CheckoutSectionProps {
   selectedOptionalDiscs?: string[];
   additionalTotal?: number;
 }
-    name: string;
-    image: string;
-    price: number;
-    installments: number;
-    pixDiscount: number;
-    subtitle?: string;
-    pixPrice?: number;
-    installmentValue?: number;
-    savings?: number;
-  };
-}
 
 const fmtBRL = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-export function CheckoutSection({ product }: CheckoutSectionProps) {
+export function CheckoutSection({
+  product,
+  selectedOptionalDiscs = [],
+  additionalTotal = 0,
+}: CheckoutSectionProps) {
   const [open, setOpen] = useState(false);
 
-  const totalBRL = fmtBRL(product.price);
-  const pixPrice = fmtBRL(
-    product.pixPrice ?? product.price * (1 - product.pixDiscount / 100),
-  );
-  const installmentValue = fmtBRL(
-    product.installmentValue ?? product.price / product.installments,
-  );
+  const basePix = product.pixPrice ?? product.price * (1 - product.pixDiscount / 100);
+  const baseCard = product.price;
+  const baseInstallment =
+    product.installmentValue ?? product.price / product.installments;
+
+  const dynamicPix = basePix + additionalTotal;
+  const dynamicCard = baseCard + additionalTotal;
+  const dynamicInstallment = baseInstallment + additionalTotal / product.installments;
+
+  const totalBRL = fmtBRL(dynamicCard);
+  const pixPrice = fmtBRL(dynamicPix);
+  const installmentValue = fmtBRL(dynamicInstallment);
   const savings = product.savings ?? Math.round(product.price * (product.pixDiscount / 100));
+
+  const selectedDiscs = selectedOptionalDiscs
+    .map((code) => PA7_OPTIONAL_DISCS.find((d) => d.code === code))
+    .filter(Boolean) as (typeof PA7_OPTIONAL_DISCS)[number][];
 
   return (
     <section id="checkout-pa7" className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
