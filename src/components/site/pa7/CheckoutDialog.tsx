@@ -61,7 +61,11 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
   const [address, setAddress] = useState<z.infer<typeof StepTwo> | null>(null);
   const [cepLoading, setCepLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [shipping] = useState(89.9);
+  const [cepDraft, setCepDraft] = useState("");
+  const effectiveCep = (address?.cep ?? cepDraft).replace(/\D/g, "");
+  const isFreeShippingAL = effectiveCep.startsWith("57");
+  const shipping = isFreeShippingAL ? 0 : 89.9;
+  const shippingLabel = isFreeShippingAL ? "Grátis (Benefício Alagoas)" : formatBRL(shipping);
 
   const [paymentMethod, setPaymentMethod] = useState<"pix" | "credit_card">("pix");
 
