@@ -41,6 +41,10 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
       }`}
     >
       <div className="mx-auto max-w-7xl px-3 pb-3">
+        <p className="mb-1.5 hidden text-center text-[10px] font-medium leading-snug text-amber-200/90 sm:block">
+          ⚡ Lote Circuito Experience 2026 — restam apenas{" "}
+          <span className="font-bold text-amber-100">4 unidades</span> com frete prioritário.
+        </p>
         <div className="flex items-center gap-2 rounded-xl border border-[color:var(--steel)] bg-brushed-metal p-2 shadow-[var(--shadow-4)] backdrop-blur-xl sm:gap-3 sm:p-3">
           {/* Thumb */}
           <div className="relative z-10 hidden size-12 shrink-0 overflow-hidden rounded-lg border border-[color:var(--steel)] bg-card md:block">
