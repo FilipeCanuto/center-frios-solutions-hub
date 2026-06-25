@@ -44,7 +44,7 @@ import { getProduct } from "@/data/site";
 const HIGHLIGHT_ICONS = [Gauge, Disc3, ShieldCheck, Power];
 
 type TurbineDiscProps = {
-  disc: { code: string; group: string; desc: string; image?: string };
+  disc: { code: string; group: string; desc: string; image?: string; utility?: string };
   index: number;
   scrollYProgress: MotionValue<number>;
   itemVariants: Record<string, unknown>;
