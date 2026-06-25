@@ -54,6 +54,26 @@ export function CheckoutSection({
   return (
     <section id="checkout-pa7" className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
+        {/* Value Anchor & Progress Tracker */}
+        <ol className="mb-10 flex flex-wrap items-center gap-x-2 gap-y-2 text-[11px] font-semibold uppercase tracking-[0.14em]">
+          <li className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-emerald-300">
+            <span className="grid size-4 place-items-center rounded-full bg-emerald-400/20">
+              <Check className="size-3" />
+            </span>
+            1. Configuração do Maquinário
+            <span className="text-emerald-300/70">(Concluído)</span>
+          </li>
+          <ChevronRight className="size-3.5 text-muted-foreground" />
+          <li className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-accent">
+            <span className="size-1.5 rounded-full bg-accent animate-pulse" />
+            2. Dados de Entrega
+          </li>
+          <ChevronRight className="size-3.5 text-muted-foreground" />
+          <li className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-muted-foreground">
+            3. Faturamento com Emissão de NF-e
+          </li>
+        </ol>
+
         <div className="mb-12 max-w-2xl">
           <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl text-pretty">
             Adquira o seu <span className="text-accent">{product.name}</span> agora
