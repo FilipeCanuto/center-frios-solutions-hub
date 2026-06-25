@@ -7,13 +7,14 @@ type Props = {
   image: string;
   price: number;
   pixPrice?: number;
+  additionalTotal?: number;
   onBuy: () => void;
 };
 
 const fmtBRL = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-export function StickyBuyBar({ name, image, price, pixPrice, onBuy }: Props) {
+export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0, onBuy }: Props) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
