@@ -35,6 +35,7 @@ import {
   PA7_HIGHLIGHTS,
   PA7_IMAGES,
   PA7_INCLUDED_DISCS,
+  PA7_OPTIONAL_DISCS,
   PA7_PRICE,
   PA7_SHOWCASE,
 } from "@/data/pa7";
