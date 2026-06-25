@@ -872,7 +872,9 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Frete</dt>
-                  <dd className="text-foreground">{formatBRL(shipping)}</dd>
+                  <dd className={isFreeShippingAL ? "text-emerald-400 font-semibold" : "text-foreground"}>
+                    {shippingLabel}
+                  </dd>
                 </div>
                 <div className="flex justify-between text-accent">
                   <dt>Desconto PIX (5%)</dt>
