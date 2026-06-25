@@ -549,7 +549,10 @@ export function Pa7ProLanding() {
       </motion.section>
 
       {/* USE CASES — Pre-Checkout Configurator */}
-      <CrossSellConfigurator />
+      <CrossSellConfigurator
+        selected={selectedOptionalDiscs}
+        onChange={setSelectedOptionalDiscs}
+      />
 
 
       {/* APPLICATIONS */}
