@@ -480,8 +480,11 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                   onSubmit={handleStepTwo}
                   onChangeCapture={(e) => {
                     const t = e.target as unknown as HTMLInputElement;
-                    if (t?.name === "cep" && t.value.replace(/\D/g, "").length === 8) {
-                      lookupCep(t.value, e.currentTarget);
+                    if (t?.name === "cep") {
+                      setCepDraft(t.value);
+                      if (t.value.replace(/\D/g, "").length === 8) {
+                        lookupCep(t.value, e.currentTarget);
+                      }
                     }
                   }}
                   className="grid gap-4"
