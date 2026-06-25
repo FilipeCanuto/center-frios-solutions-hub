@@ -96,6 +96,11 @@ function TurbineDisc({ disc, index, scrollYProgress, itemVariants }: TurbineDisc
 export function Pa7ProLanding() {
   const product = getProduct("processador-pa7-pro-skymsen")!;
   const [open, setOpen] = useState(false);
+  const [selectedOptionalDiscs, setSelectedOptionalDiscs] = useState<string[]>([]);
+  const additionalTotal = selectedOptionalDiscs.reduce((acc, code) => {
+    const d = PA7_OPTIONAL_DISCS.find((x) => x.code === code);
+    return acc + (d?.price ?? 0);
+  }, 0);
   const discsGridRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: discsScrollProgress } = useScroll({
     target: discsGridRef,
