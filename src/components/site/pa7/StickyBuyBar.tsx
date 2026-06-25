@@ -7,13 +7,14 @@ type Props = {
   image: string;
   price: number;
   pixPrice?: number;
+  additionalTotal?: number;
   onBuy: () => void;
 };
 
 const fmtBRL = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-export function StickyBuyBar({ name, image, price, pixPrice, onBuy }: Props) {
+export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0, onBuy }: Props) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -31,7 +32,7 @@ export function StickyBuyBar({ name, image, price, pixPrice, onBuy }: Props) {
   }, [show]);
 
 
-  const displayPrice = pixPrice ?? price;
+  const displayPrice = (pixPrice ?? price) + additionalTotal;
 
   return (
     <div
@@ -40,6 +41,10 @@ export function StickyBuyBar({ name, image, price, pixPrice, onBuy }: Props) {
       }`}
     >
       <div className="mx-auto max-w-7xl px-3 pb-3">
+        <p className="mb-1.5 hidden text-center text-[10px] font-medium leading-snug text-amber-200/90 sm:block">
+          ⚡ Lote Circuito Experience 2026 — restam apenas{" "}
+          <span className="font-bold text-amber-100">4 unidades</span> com frete prioritário.
+        </p>
         <div className="flex items-center gap-2 rounded-xl border border-[color:var(--steel)] bg-brushed-metal p-2 shadow-[var(--shadow-4)] backdrop-blur-xl sm:gap-3 sm:p-3">
           {/* Thumb */}
           <div className="relative z-10 hidden size-12 shrink-0 overflow-hidden rounded-lg border border-[color:var(--steel)] bg-card md:block">
@@ -50,6 +55,11 @@ export function StickyBuyBar({ name, image, price, pixPrice, onBuy }: Props) {
           <div className="relative z-10 min-w-0 flex-1">
             <p className="truncate text-[11px] font-medium text-muted-foreground sm:text-sm">
               {name}
+              {additionalTotal > 0 && (
+                <span className="ml-1.5 hidden rounded-full border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent sm:inline-block">
+                  + acessórios
+                </span>
+              )}
             </p>
             <p className="truncate text-sm font-semibold text-foreground sm:text-base">
               {fmtBRL(displayPrice)}

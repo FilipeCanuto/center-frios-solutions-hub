@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, CreditCard, ShieldCheck, Sparkles, Truck } from "lucide-react";
+import { Check, ChevronRight, CreditCard, Flame, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CheckoutDialog } from "./CheckoutDialog";
 import productHero from "@/assets/products/pa7-pro/main.png";
+import { PA7_OPTIONAL_DISCS } from "@/data/pa7";
 
 interface CheckoutSectionProps {
   product: {
@@ -18,26 +19,61 @@ interface CheckoutSectionProps {
     installmentValue?: number;
     savings?: number;
   };
+  selectedOptionalDiscs?: string[];
+  additionalTotal?: number;
 }
 
 const fmtBRL = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-export function CheckoutSection({ product }: CheckoutSectionProps) {
+export function CheckoutSection({
+  product,
+  selectedOptionalDiscs = [],
+  additionalTotal = 0,
+}: CheckoutSectionProps) {
   const [open, setOpen] = useState(false);
 
-  const totalBRL = fmtBRL(product.price);
-  const pixPrice = fmtBRL(
-    product.pixPrice ?? product.price * (1 - product.pixDiscount / 100),
-  );
-  const installmentValue = fmtBRL(
-    product.installmentValue ?? product.price / product.installments,
-  );
+  const basePix = product.pixPrice ?? product.price * (1 - product.pixDiscount / 100);
+  const baseCard = product.price;
+  const baseInstallment =
+    product.installmentValue ?? product.price / product.installments;
+
+  const dynamicPix = basePix + additionalTotal;
+  const dynamicCard = baseCard + additionalTotal;
+  const dynamicInstallment = baseInstallment + additionalTotal / product.installments;
+
+  const totalBRL = fmtBRL(dynamicCard);
+  const pixPrice = fmtBRL(dynamicPix);
+  const installmentValue = fmtBRL(dynamicInstallment);
   const savings = product.savings ?? Math.round(product.price * (product.pixDiscount / 100));
+
+  const selectedDiscs = selectedOptionalDiscs
+    .map((code) => PA7_OPTIONAL_DISCS.find((d) => d.code === code))
+    .filter(Boolean) as (typeof PA7_OPTIONAL_DISCS)[number][];
 
   return (
     <section id="checkout-pa7" className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
+        {/* Value Anchor & Progress Tracker */}
+        <ol className="mb-10 flex flex-wrap items-center gap-x-2 gap-y-2 text-[11px] font-semibold uppercase tracking-[0.14em]">
+          <li className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-emerald-300">
+            <span className="grid size-4 place-items-center rounded-full bg-emerald-400/20">
+              <Check className="size-3" />
+            </span>
+            1. Configuração do Maquinário
+            <span className="text-emerald-300/70">(Concluído)</span>
+          </li>
+          <ChevronRight className="size-3.5 text-muted-foreground" />
+          <li className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-accent">
+            <span className="size-1.5 rounded-full bg-accent animate-pulse" />
+            2. Dados de Entrega
+          </li>
+          <ChevronRight className="size-3.5 text-muted-foreground" />
+          <li className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-muted-foreground">
+            3. Faturamento com Emissão de NF-e
+          </li>
+        </ol>
+
         <div className="mb-12 max-w-2xl">
           <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl text-pretty">
             Adquira o seu <span className="text-accent">{product.name}</span> agora
@@ -134,6 +170,33 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
                   </div>
                 </div>
 
+                {/* Optionals breakdown */}
+                {selectedDiscs.length > 0 && (
+                  <div className="rounded-2xl border border-accent/20 bg-accent/[0.04] p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-accent">
+                      Acessórios adicionados
+                    </p>
+                    <ul className="mt-2 space-y-1.5">
+                      {selectedDiscs.map((d) => (
+                        <li
+                          key={d.code}
+                          className="flex items-center justify-between text-xs text-foreground/90"
+                        >
+                          <span>
+                            + Disco {d.code}{" "}
+                            <span className="text-muted-foreground/70">({d.desc})</span>
+                          </span>
+                          <span className="font-semibold">{fmtBRL(d.price)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-2 text-xs font-bold text-foreground">
+                      <span className="uppercase tracking-widest">Subtotal acessórios</span>
+                      <span>+ {fmtBRL(additionalTotal)}</span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Cartão */}
                 <div className="opacity-90">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
@@ -147,6 +210,15 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
                   </p>
                 </div>
 
+                {/* Dynamic Savings Notification */}
+                <div className="flex items-start gap-2.5 rounded-2xl border border-amber-400/30 bg-gradient-to-r from-amber-500/15 via-amber-500/[0.06] to-transparent p-3.5">
+                  <Flame className="mt-0.5 size-4 shrink-0 text-amber-300" />
+                  <p className="text-[11px] font-bold uppercase leading-snug tracking-wider text-amber-100">
+                    Você está economizando {fmtBRL(savings)} no PIX + Suporte organizador
+                    de fábrica incluso grátis.
+                  </p>
+                </div>
+
                 <Button
                   size="lg"
                   variant="conversion"
@@ -155,6 +227,13 @@ export function CheckoutSection({ product }: CheckoutSectionProps) {
                 >
                   Finalizar Compra
                 </Button>
+
+                {/* B2B Scarcity */}
+                <p className="text-center text-[11px] font-medium leading-relaxed text-amber-200/90">
+                  ⚡ Lote promocional do Circuito Experience 2026: restam apenas{" "}
+                  <span className="font-bold text-amber-100">4 unidades</span> em estoque com
+                  frete prioritário para envio imediato.
+                </p>
 
                 <p className="text-center text-[10px] text-muted-foreground uppercase tracking-widest font-medium">
                   🔒 PAGAMENTO 100% SEGURO • NOTA FISCAL INCLUSA

@@ -15,38 +15,40 @@ const fmtBRL = (n: number) =>
 const findDisc = (code: string): OptionalDisc | undefined =>
   PA7_OPTIONAL_DISCS.find((d) => d.code === code);
 
-export function CrossSellConfigurator() {
-  const [selected, setSelected] = useState<string[]>([]);
+type CrossSellConfiguratorProps = {
+  selected: string[];
+  onChange: (next: string[]) => void;
+};
+
+export function CrossSellConfigurator({ selected, onChange }: CrossSellConfiguratorProps) {
   const [activePreset, setActivePreset] = useState<string | null>(null);
 
   const toggle = (code: string) => {
     setActivePreset(null);
-    setSelected((prev) =>
-      prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code],
+    onChange(
+      selected.includes(code) ? selected.filter((c) => c !== code) : [...selected, code],
     );
   };
 
   const applyPreset = (id: string, picks: readonly string[]) => {
     setActivePreset(id);
-    setSelected([...picks]);
+    onChange([...picks]);
   };
 
   const addCombo = (cube: string, slicer: string) => {
     setActivePreset(null);
-    setSelected((prev) => {
-      const next = new Set(prev);
-      next.add(cube);
-      next.add(slicer);
-      return Array.from(next);
-    });
+    const next = new Set(selected);
+    next.add(cube);
+    next.add(slicer);
+    onChange(Array.from(next));
   };
 
-  const { total, hasCube, hasSlicer, missingPair } = useMemo(() => {
+  const { total, missingPair } = useMemo(() => {
     const items = selected.map(findDisc).filter(Boolean) as OptionalDisc[];
     const total = items.reduce((acc, d) => acc + d.price, 0);
     const hasCube = items.some((d) => d.requiresSlicer);
     const hasSlicer = items.some((d) => d.group === "Fatiador");
-    return { total, hasCube, hasSlicer, missingPair: hasCube && !hasSlicer };
+    return { total, missingPair: hasCube && !hasSlicer };
   }, [selected]);
 
   const grandTotal = PA7_PRICE.amount + total;
@@ -94,7 +96,7 @@ export function CrossSellConfigurator() {
             <button
               type="button"
               onClick={() => {
-                setSelected([]);
+                onChange([]);
                 setActivePreset(null);
               }}
               className="rounded-full border border-white/10 bg-transparent px-4 py-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground hover:text-foreground"

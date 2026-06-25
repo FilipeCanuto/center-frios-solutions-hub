@@ -35,6 +35,7 @@ import {
   PA7_HIGHLIGHTS,
   PA7_IMAGES,
   PA7_INCLUDED_DISCS,
+  PA7_OPTIONAL_DISCS,
   PA7_PRICE,
   PA7_SHOWCASE,
 } from "@/data/pa7";
@@ -95,6 +96,11 @@ function TurbineDisc({ disc, index, scrollYProgress, itemVariants }: TurbineDisc
 export function Pa7ProLanding() {
   const product = getProduct("processador-pa7-pro-skymsen")!;
   const [open, setOpen] = useState(false);
+  const [selectedOptionalDiscs, setSelectedOptionalDiscs] = useState<string[]>([]);
+  const additionalTotal = selectedOptionalDiscs.reduce((acc, code) => {
+    const d = PA7_OPTIONAL_DISCS.find((x) => x.code === code);
+    return acc + (d?.price ?? 0);
+  }, 0);
   const discsGridRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: discsScrollProgress } = useScroll({
     target: discsGridRef,
@@ -543,7 +549,10 @@ export function Pa7ProLanding() {
       </motion.section>
 
       {/* USE CASES — Pre-Checkout Configurator */}
-      <CrossSellConfigurator />
+      <CrossSellConfigurator
+        selected={selectedOptionalDiscs}
+        onChange={setSelectedOptionalDiscs}
+      />
 
 
       {/* APPLICATIONS */}
@@ -637,6 +646,8 @@ export function Pa7ProLanding() {
           savings: PA7_PRICE.savings,
           subtitle: "Linha Industrial · Bivolt",
         }}
+        selectedOptionalDiscs={selectedOptionalDiscs}
+        additionalTotal={additionalTotal}
       />
 
 
@@ -645,6 +656,7 @@ export function Pa7ProLanding() {
         image={PA7_IMAGES.main}
         price={PA7_PRICE.amount}
         pixPrice={PA7_PRICE.pixAmount}
+        additionalTotal={additionalTotal}
         onBuy={() => setOpen(true)}
       />
 
