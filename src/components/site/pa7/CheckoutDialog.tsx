@@ -555,14 +555,17 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                           Transportadora parceira
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Entrega em todo Brasil · 5 a 10 dias úteis
+                          Despacho para todo o Brasil · prazo validado pela rota do município
                         </p>
                       </div>
-                      <span className="text-sm font-semibold text-foreground">
-                        {formatBRL(shipping)}
+                      <span
+                        className={`text-sm font-semibold ${isFreeShippingAL ? "text-emerald-400" : "text-foreground"}`}
+                      >
+                        {shippingLabel}
                       </span>
                     </div>
                   </div>
+
 
                   <div className="flex items-center justify-between gap-3 pt-2">
                     <Button
