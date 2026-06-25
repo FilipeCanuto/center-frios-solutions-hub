@@ -313,7 +313,7 @@ export const PA7_FAQ = [
   },
   {
     q: "Posso parcelar?",
-    a: "Sim. O checkout aceita cartão de crédito em até 12x sem juros, além de PIX (com desconto), boleto e transferência bancária.",
+    a: "Sim. O checkout aceita cartão de crédito em até 12x sem juros, além de PIX (com desconto).",
   },
 ];
 
