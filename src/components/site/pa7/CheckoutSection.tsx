@@ -147,7 +147,7 @@ export function CheckoutSection({
                   {product.name}
                 </h3>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {product.subtitle || "Linha Profissional Center Frios"}
+                  {product.subtitle || "Linha Profissional CENTERFRIOS"}
                 </p>
               </div>
 
