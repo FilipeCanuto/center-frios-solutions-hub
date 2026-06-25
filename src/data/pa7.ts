@@ -140,13 +140,55 @@ export const PA7_NICHE_PRESETS = [
 ] as const;
 
 export const PA7_INCLUDED_DISCS = [
-  { code: "E1", group: "Fatiador", desc: "1 mm", image: discE1.url },
-  { code: "E3", group: "Fatiador", desc: "3 mm", image: discE3.url },
-  { code: "V", group: "Ralador fino", desc: "Queijo, coco", image: discV.url },
-  { code: "Z3", group: "Ralador", desc: "3 mm", image: discZ3.url },
-  { code: "Z5", group: "Ralador", desc: "5 mm", image: discZ5.url },
-  { code: "Z8", group: "Ralador", desc: "8 mm", image: discZ8.url },
-  { code: "H7", group: "Julienne", desc: "7 × 7 mm", image: discH7.url },
+  {
+    code: "E1",
+    group: "Fatiador",
+    desc: "1 mm",
+    image: discE1.url,
+    utility: "Batata chips ultra-fina e couve fina para feijoada",
+  },
+  {
+    code: "E3",
+    group: "Fatiador",
+    desc: "3 mm",
+    image: discE3.url,
+    utility: "Calabresa padronizada, rodelas de tomate e cebola para hambúrguer",
+  },
+  {
+    code: "V",
+    group: "Ralador fino",
+    desc: "Queijo, coco",
+    image: discV.url,
+    utility: "Ralação fina e precisa de queijo parmesão, coco e chocolates",
+  },
+  {
+    code: "Z3",
+    group: "Ralador",
+    desc: "3 mm",
+    image: discZ3.url,
+    utility: "Cenoura e abobrinha em fios finos e delicados para saladas",
+  },
+  {
+    code: "Z5",
+    group: "Ralador",
+    desc: "5 mm",
+    image: discZ5.url,
+    utility: "O disco ideal para ralar muçarela para pizzas, pastéis e lasanhas",
+  },
+  {
+    code: "Z8",
+    group: "Ralador",
+    desc: "8 mm",
+    image: discZ8.url,
+    utility: "Ralo grosso para queijos macios, vegetais e repolho",
+  },
+  {
+    code: "H7",
+    group: "Julienne",
+    desc: "7 × 7 mm",
+    image: discH7.url,
+    utility: "Batata palito perfeita para fritura crocante e vegetais em palito",
+  },
 ];
 
 

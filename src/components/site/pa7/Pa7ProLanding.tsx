@@ -44,7 +44,7 @@ import { getProduct } from "@/data/site";
 const HIGHLIGHT_ICONS = [Gauge, Disc3, ShieldCheck, Power];
 
 type TurbineDiscProps = {
-  disc: { code: string; group: string; desc: string; image?: string };
+  disc: { code: string; group: string; desc: string; image?: string; utility?: string };
   index: number;
   scrollYProgress: MotionValue<number>;
   itemVariants: Record<string, unknown>;
@@ -85,9 +85,14 @@ function TurbineDisc({ disc, index, scrollYProgress, itemVariants }: TurbineDisc
       <p className="mt-4 text-[11px] font-semibold uppercase tracking-widest text-accent">
         {disc.group}
       </p>
-      <p className="mt-1 text-center text-xs text-muted-foreground leading-relaxed">
-        {disc.desc}
+      <p className="mt-1 text-center text-sm font-semibold text-foreground">
+        {disc.code} <span className="text-xs font-normal text-muted-foreground">· {disc.desc}</span>
       </p>
+      {disc.utility && (
+        <p className="mt-2 text-center text-[11px] leading-snug text-muted-foreground/90">
+          {disc.utility}
+        </p>
+      )}
     </motion.div>
   );
 }
