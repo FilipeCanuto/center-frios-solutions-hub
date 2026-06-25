@@ -301,7 +301,7 @@ export const PA7_FAQ = [
   },
   {
     q: "Qual é a garantia?",
-    a: "12 meses de garantia de fábrica Skymsen. A Center Frios oferece suporte técnico próprio em campo durante e após o período de garantia.",
+    a: "12 meses de garantia de fábrica Skymsen. A CENTERFRIOS oferece suporte técnico próprio em campo durante e após o período de garantia.",
   },
   {
     q: "Vocês emitem nota fiscal para CPF e CNPJ?",
