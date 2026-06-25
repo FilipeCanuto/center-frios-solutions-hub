@@ -234,8 +234,8 @@ export function CheckoutSection({
                 {/* B2B Scarcity */}
                 <p className="text-center text-[11px] font-medium leading-relaxed text-amber-200/90">
                   ⚡ Lote promocional do Circuito Experience 2026: restam apenas{" "}
-                  <span className="font-bold text-amber-100">4 unidades</span> em estoque com
-                  frete prioritário para envio imediato.
+                  <span className="font-bold text-amber-100">4 unidades</span> com despacho
+                  prioritário programado pela rota de entrega.
                 </p>
 
                 <p className="text-center text-[10px] text-muted-foreground uppercase tracking-widest font-medium">
