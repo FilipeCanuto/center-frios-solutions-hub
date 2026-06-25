@@ -80,7 +80,7 @@ export function CheckoutSection({
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             O equipamento que vai transformar a produtividade da sua cozinha. Pronta entrega com
-            garantia total Center Frios.
+            garantia total CENTERFRIOS.
           </p>
         </div>
 
