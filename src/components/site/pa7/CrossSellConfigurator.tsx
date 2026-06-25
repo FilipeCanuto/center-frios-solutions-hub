@@ -96,7 +96,7 @@ export function CrossSellConfigurator({ selected, onChange }: CrossSellConfigura
             <button
               type="button"
               onClick={() => {
-                setSelected([]);
+                onChange([]);
                 setActivePreset(null);
               }}
               className="rounded-full border border-white/10 bg-transparent px-4 py-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground hover:text-foreground"
