@@ -646,6 +646,8 @@ export function Pa7ProLanding() {
           savings: PA7_PRICE.savings,
           subtitle: "Linha Industrial · Bivolt",
         }}
+        selectedOptionalDiscs={selectedOptionalDiscs}
+        additionalTotal={additionalTotal}
       />
 
 
@@ -654,6 +656,7 @@ export function Pa7ProLanding() {
         image={PA7_IMAGES.main}
         price={PA7_PRICE.amount}
         pixPrice={PA7_PRICE.pixAmount}
+        additionalTotal={additionalTotal}
         onBuy={() => setOpen(true)}
       />
 
