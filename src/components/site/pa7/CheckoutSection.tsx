@@ -222,29 +222,6 @@ export function CheckoutSection({
                   </p>
                 </div>
 
-                {/* ============ TEMP QA Sandbox Coupon ============ */}
-                <div className="mb-4 border-b border-white/5 pb-4">
-                  <label className="block text-xs text-neutral-400 mb-1.5 font-medium">
-                    Possui um cupom de teste?
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      placeholder="Digite VALIDATE20"
-                      className="flex-1 bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-accent/50 uppercase placeholder:text-neutral-600"
-                      aria-label="Cupom de desconto"
-                    />
-                  </div>
-                  {isTestApplied && (
-                    <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-300">
-                      <Check className="size-3.5" />
-                      ✓ Cupom Ativado: Modo de Teste de Produção (R$ 20,00)
-                    </div>
-                  )}
-                </div>
-                {/* ============ /TEMP QA Sandbox Coupon ============ */}
 
 
                 <Button
@@ -279,7 +256,7 @@ export function CheckoutSection({
           slug: product.id,
           name: product.name,
           image: product.image,
-          price: isTestApplied ? TEST_COUPON_PRICE : product.price,
+          price: product.price,
         }}
       />
     </section>
