@@ -32,19 +32,15 @@ export function CheckoutSection({
   additionalTotal = 0,
 }: CheckoutSectionProps) {
   const [open, setOpen] = useState(false);
-  const [couponCode, setCouponCode] = useState("");
-  const isTestApplied = couponCode.trim().toUpperCase() === TEST_COUPON_TOKEN;
 
   const basePix = product.pixPrice ?? product.price * (1 - product.pixDiscount / 100);
   const baseCard = product.price;
   const baseInstallment =
     product.installmentValue ?? product.price / product.installments;
 
-  const dynamicPix = isTestApplied ? TEST_COUPON_PRICE : basePix + additionalTotal;
-  const dynamicCard = isTestApplied ? TEST_COUPON_PRICE : baseCard + additionalTotal;
-  const dynamicInstallment = isTestApplied
-    ? TEST_COUPON_PRICE
-    : baseInstallment + additionalTotal / product.installments;
+  const dynamicPix = basePix + additionalTotal;
+  const dynamicCard = baseCard + additionalTotal;
+  const dynamicInstallment = baseInstallment + additionalTotal / product.installments;
 
   const totalBRL = fmtBRL(dynamicCard);
   const pixPrice = fmtBRL(dynamicPix);
