@@ -11,7 +11,9 @@ export const PRODUCT_CATALOG: Record<string, CatalogEntry> = {
   "processador-pa7-pro-skymsen": {
     slug: "processador-pa7-pro-skymsen",
     name: "Processador de Alimentos PA7 Pro Skymsen",
-    price: 6299,
+    // TEMP QA: preço reduzido para validação end-to-end do gateway.
+    // Restaurar para 6299 após o teste de cartão.
+    price: 20,
   },
   "moedor-homogeneizador-hs-98": {
     slug: "moedor-homogeneizador-hs-98",
