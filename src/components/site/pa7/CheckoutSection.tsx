@@ -47,9 +47,11 @@ export function CheckoutSection({
   const baseInstallment =
     product.installmentValue ?? product.price / product.installments;
 
-  const dynamicPix = basePix + additionalTotal;
-  const dynamicCard = baseCard + additionalTotal;
-  const dynamicInstallment = baseInstallment + additionalTotal / product.installments;
+  const dynamicPix = isTestApplied ? TEST_COUPON_PRICE : basePix + additionalTotal;
+  const dynamicCard = isTestApplied ? TEST_COUPON_PRICE : baseCard + additionalTotal;
+  const dynamicInstallment = isTestApplied
+    ? TEST_COUPON_PRICE
+    : baseInstallment + additionalTotal / product.installments;
 
   const totalBRL = fmtBRL(dynamicCard);
   const pixPrice = fmtBRL(dynamicPix);
