@@ -2,16 +2,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ChevronRight, CreditCard, Flame, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { CheckoutDialog } from "./CheckoutDialog";
 import productHero from "@/assets/products/pa7-pro/main.png";
 import { PA7_OPTIONAL_DISCS } from "@/data/pa7";
-
-// ============================================================
-// TEMP: QA Sandbox Coupon — remove this block to disable
-const TEST_COUPON_TOKEN = "VALIDATE20";
-const TEST_COUPON_PRICE = 20.0;
-// ============================================================
 
 interface CheckoutSectionProps {
   product: {
@@ -39,19 +32,15 @@ export function CheckoutSection({
   additionalTotal = 0,
 }: CheckoutSectionProps) {
   const [open, setOpen] = useState(false);
-  const [couponCode, setCouponCode] = useState("");
-  const isTestApplied = couponCode.trim().toUpperCase() === TEST_COUPON_TOKEN;
 
   const basePix = product.pixPrice ?? product.price * (1 - product.pixDiscount / 100);
   const baseCard = product.price;
   const baseInstallment =
     product.installmentValue ?? product.price / product.installments;
 
-  const dynamicPix = isTestApplied ? TEST_COUPON_PRICE : basePix + additionalTotal;
-  const dynamicCard = isTestApplied ? TEST_COUPON_PRICE : baseCard + additionalTotal;
-  const dynamicInstallment = isTestApplied
-    ? TEST_COUPON_PRICE
-    : baseInstallment + additionalTotal / product.installments;
+  const dynamicPix = basePix + additionalTotal;
+  const dynamicCard = baseCard + additionalTotal;
+  const dynamicInstallment = baseInstallment + additionalTotal / product.installments;
 
   const totalBRL = fmtBRL(dynamicCard);
   const pixPrice = fmtBRL(dynamicPix);
@@ -233,29 +222,6 @@ export function CheckoutSection({
                   </p>
                 </div>
 
-                {/* ============ TEMP QA Sandbox Coupon ============ */}
-                <div className="mb-4 border-b border-white/5 pb-4">
-                  <label className="block text-xs text-neutral-400 mb-1.5 font-medium">
-                    Possui um cupom de teste?
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      placeholder="Digite VALIDATE20"
-                      className="flex-1 bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-accent/50 uppercase placeholder:text-neutral-600"
-                      aria-label="Cupom de desconto"
-                    />
-                  </div>
-                  {isTestApplied && (
-                    <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-300">
-                      <Check className="size-3.5" />
-                      ✓ Cupom Ativado: Modo de Teste de Produção (R$ 20,00)
-                    </div>
-                  )}
-                </div>
-                {/* ============ /TEMP QA Sandbox Coupon ============ */}
 
 
                 <Button
@@ -290,7 +256,7 @@ export function CheckoutSection({
           slug: product.id,
           name: product.name,
           image: product.image,
-          price: isTestApplied ? TEST_COUPON_PRICE : product.price,
+          price: product.price,
         }}
       />
     </section>

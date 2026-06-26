@@ -88,7 +88,10 @@ export const processPayment = createServerFn({ method: "POST" })
     if (!catalog) throw new Error("Produto inválido.");
     const productName = catalog.name;
     const productPrice = catalog.price;
-    const shippingPrice = FIXED_SHIPPING_PRICE;
+    // CENTERFRIOS — frete grátis para Alagoas (CEP iniciando com 57).
+    const cepDigits = onlyDigits(data.shipping_address.cep);
+    const isAlagoas = cepDigits.startsWith("57");
+    const shippingPrice = isAlagoas ? 0 : FIXED_SHIPPING_PRICE;
 
     const subtotal = productPrice;
     const discountPix = data.payment_method === "pix" ? subtotal * 0.05 : 0;
