@@ -234,22 +234,29 @@ export function CheckoutSection({
                 </div>
 
                 {/* ============ TEMP QA Sandbox Coupon ============ */}
-                <div className="space-y-2">
-                  <Input
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Possui um cupom de desconto?"
-                    className="h-11 rounded-full bg-white/[0.03] border-white/10 text-sm placeholder:text-muted-foreground/70"
-                    aria-label="Cupom de desconto"
-                  />
+                <div className="mb-4 border-b border-white/5 pb-4">
+                  <label className="block text-xs text-neutral-400 mb-1.5 font-medium">
+                    Possui um cupom de teste?
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      placeholder="Digite VALIDATE20"
+                      className="flex-1 bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-accent/50 uppercase placeholder:text-neutral-600"
+                      aria-label="Cupom de desconto"
+                    />
+                  </div>
                   {isTestApplied && (
-                    <div className="inline-flex w-full items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-300">
+                    <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-300">
                       <Check className="size-3.5" />
                       ✓ Cupom Ativado: Modo de Teste de Produção (R$ 20,00)
                     </div>
                   )}
                 </div>
                 {/* ============ /TEMP QA Sandbox Coupon ============ */}
+
 
                 <Button
                   size="lg"
