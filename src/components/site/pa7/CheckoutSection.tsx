@@ -39,6 +39,8 @@ export function CheckoutSection({
   additionalTotal = 0,
 }: CheckoutSectionProps) {
   const [open, setOpen] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const isTestApplied = couponCode.trim().toUpperCase() === TEST_COUPON_TOKEN;
 
   const basePix = product.pixPrice ?? product.price * (1 - product.pixDiscount / 100);
   const baseCard = product.price;
