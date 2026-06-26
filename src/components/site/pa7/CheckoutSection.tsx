@@ -283,7 +283,7 @@ export function CheckoutSection({
           slug: product.id,
           name: product.name,
           image: product.image,
-          price: product.price,
+          price: isTestApplied ? TEST_COUPON_PRICE : product.price,
         }}
       />
     </section>
