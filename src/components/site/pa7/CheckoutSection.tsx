@@ -2,9 +2,16 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ChevronRight, CreditCard, Flame, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { CheckoutDialog } from "./CheckoutDialog";
 import productHero from "@/assets/products/pa7-pro/main.png";
 import { PA7_OPTIONAL_DISCS } from "@/data/pa7";
+
+// ============================================================
+// TEMP: QA Sandbox Coupon — remove this block to disable
+const TEST_COUPON_TOKEN = "VALIDATE20";
+const TEST_COUPON_PRICE = 20.0;
+// ============================================================
 
 interface CheckoutSectionProps {
   product: {
