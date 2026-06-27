@@ -434,12 +434,13 @@ export function Pa7ProLanding() {
 
       {/* INCLUDED DISCS */}
       <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
+        <SectionVideoBg src={calabresaVideo.url} maskClassName="pointer-events-none absolute inset-0 z-10 bg-neutral-950/85 backdrop-blur-[2px]" />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--brand-blue)_8%,transparent),transparent_80%)] opacity-50"
+          className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--brand-blue)_8%,transparent),transparent_80%)] opacity-50"
         />
 
-        <div className="relative mx-auto max-w-7xl px-6">
+        <div className="relative z-20 mx-auto max-w-7xl px-6">
           <div className="mb-16 grid items-center gap-12 md:grid-cols-[auto_1fr] md:gap-16">
             <div className="relative">
               <LazyVideo
@@ -557,10 +558,16 @@ export function Pa7ProLanding() {
       </motion.section>
 
       {/* USE CASES — Pre-Checkout Configurator */}
-      <CrossSellConfigurator
-        selected={selectedOptionalDiscs}
-        onChange={setSelectedOptionalDiscs}
-      />
+      <section className="relative overflow-hidden border-t border-white/5">
+        <SectionVideoBg src={versatilidadeVideo.url} />
+        <div className="relative z-20">
+          <CrossSellConfigurator
+            selected={selectedOptionalDiscs}
+            onChange={setSelectedOptionalDiscs}
+          />
+        </div>
+      </section>
+
 
 
       {/* APPLICATIONS */}
