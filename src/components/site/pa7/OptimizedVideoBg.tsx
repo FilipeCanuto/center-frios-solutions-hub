@@ -22,7 +22,7 @@ type OptimizedVideoBgProps = {
 export function OptimizedVideoBg({
   src,
   posterSrc,
-  darknessClass = "bg-neutral-950/80 backdrop-blur-[2px]",
+  darknessClass = "bg-neutral-950/85 mix-blend-multiply",
   rootMargin = "300px",
 }: OptimizedVideoBgProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
