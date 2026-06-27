@@ -146,7 +146,43 @@ export const Route = createFileRoute("/api/public/webhook/rede/$token")({
             console.error("[rede-webhook] order update failed", updErr);
             return json({ error: "Update failed" }, 500);
           }
+
+          // Send confirmation email when transitioning into "paid".
+          if (mapped.order === "paid") {
+            const { data: full } = await supabaseAdmin
+              .from("orders")
+              .select(
+                "id, customer_name, customer_email, customer_cnpj, product_name, total_price, payment_method, shipping_address",
+              )
+              .eq("id", orderId)
+              .maybeSingle();
+            if (full?.customer_email) {
+              try {
+                const { sendOrderConfirmation } = await import("@/lib/email.server");
+                const ship = (full.shipping_address ?? {}) as {
+                  city?: string;
+                  state?: string;
+                };
+                await sendOrderConfirmation(full.customer_email, {
+                  orderId: full.id,
+                  customerName: full.customer_name ?? "Cliente",
+                  productName: full.product_name ?? "Pedido CENTERFRIOS",
+                  totalPaid: Number(full.total_price ?? 0),
+                  paymentMethod:
+                    full.payment_method === "pix"
+                      ? "PIX"
+                      : "Cartão de crédito",
+                  billingDocument: full.customer_cnpj ?? undefined,
+                  shippingCity: ship.city,
+                  shippingState: ship.state,
+                });
+              } catch (e) {
+                console.error("[rede-webhook] confirmation email failed", e);
+              }
+            }
+          }
         }
+
 
         return json({ ok: true });
       },
