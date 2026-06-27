@@ -19,11 +19,7 @@ const FLANK = [
 
 export function UgcWall() {
   return (
-    <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--brand-blue)_10%,transparent),transparent_75%)] opacity-60"
-      />
+    <section className="relative overflow-hidden border-t border-white/5 bg-neutral-950 py-20 md:py-28">
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">

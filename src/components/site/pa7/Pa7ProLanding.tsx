@@ -25,6 +25,7 @@ import { LazyVideo } from "./LazyVideo";
 import { HardwareGrid } from "./HardwareGrid";
 import { UgcWall } from "./UgcWall";
 import { CrossSellConfigurator } from "./CrossSellConfigurator";
+import { SectionVideoBg } from "./SectionVideoBg";
 import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
 import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
 import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
@@ -157,21 +158,22 @@ export function Pa7ProLanding() {
         transition={{ duration: 0.8 }}
         className="relative overflow-hidden border-b border-white/5"
       >
+        <SectionVideoBg src={heroVideo.url} />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 tech-grid opacity-30 animate-pulse"
+          className="pointer-events-none absolute inset-0 z-10 tech-grid opacity-20 animate-pulse"
           style={{ animationDuration: "10s" }}
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[500px]"
+          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[500px]"
           style={{
             background:
               "radial-gradient(80% 50% at 50% 0%, color-mix(in oklab, var(--brand-blue) 26%, transparent), transparent 70%)",
           }}
         />
 
-        <div className="relative mx-auto max-w-7xl px-6 pb-16 pt-8 md:pb-24 md:pt-12">
+        <div className="relative z-20 mx-auto max-w-7xl px-6 pb-16 pt-8 md:pb-24 md:pt-12">
           <Link
             to="/produtos"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -314,10 +316,11 @@ export function Pa7ProLanding() {
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                     <Button
                       size="lg"
-                      className="w-full rounded-full sm:flex-1 font-semibold shadow-lg shadow-accent/20 group/btn"
+                      variant="conversion"
+                      className="w-full sm:flex-1 group/btn"
                       onClick={() => setOpen(true)}
                     >
-                      Comprar agora
+                      Ir para o checkout
                       <ChevronRight className="ml-1 size-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
                     </Button>
                     <Button
@@ -431,12 +434,13 @@ export function Pa7ProLanding() {
 
       {/* INCLUDED DISCS */}
       <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
+        <SectionVideoBg src={calabresaVideo.url} maskClassName="pointer-events-none absolute inset-0 z-10 bg-neutral-950/85 backdrop-blur-[2px]" />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--brand-blue)_8%,transparent),transparent_80%)] opacity-50"
+          className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--brand-blue)_8%,transparent),transparent_80%)] opacity-50"
         />
 
-        <div className="relative mx-auto max-w-7xl px-6">
+        <div className="relative z-20 mx-auto max-w-7xl px-6">
           <div className="mb-16 grid items-center gap-12 md:grid-cols-[auto_1fr] md:gap-16">
             <div className="relative">
               <LazyVideo
@@ -554,10 +558,16 @@ export function Pa7ProLanding() {
       </motion.section>
 
       {/* USE CASES — Pre-Checkout Configurator */}
-      <CrossSellConfigurator
-        selected={selectedOptionalDiscs}
-        onChange={setSelectedOptionalDiscs}
-      />
+      <section className="relative overflow-hidden border-t border-white/5">
+        <SectionVideoBg src={versatilidadeVideo.url} />
+        <div className="relative z-20">
+          <CrossSellConfigurator
+            selected={selectedOptionalDiscs}
+            onChange={setSelectedOptionalDiscs}
+          />
+        </div>
+      </section>
+
 
 
       {/* APPLICATIONS */}
