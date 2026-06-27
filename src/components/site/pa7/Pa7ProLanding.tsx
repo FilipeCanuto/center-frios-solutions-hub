@@ -26,6 +26,8 @@ import { HardwareGrid } from "./HardwareGrid";
 import { UgcWall } from "./UgcWall";
 import { CrossSellConfigurator } from "./CrossSellConfigurator";
 import { SectionVideoBg } from "./SectionVideoBg";
+import { OptimizedVideoBg } from "./OptimizedVideoBg";
+import heroPoster from "@/assets/products/pa7-pro/main.png";
 import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
 import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
 import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
