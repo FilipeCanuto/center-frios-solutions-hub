@@ -544,3 +544,21 @@ body.sticky-buybar-active [data-floating-whatsapp] {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }
+
+@keyframes cta-gravity-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 35px rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    transform: scale(1.018);
+    box-shadow: 0 0 55px rgba(245, 158, 11, 0.65);
+  }
+}
+
+@utility cta-high-gravity {
+  animation: cta-gravity-pulse 2.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta-high-gravity { animation: none; }
+}
