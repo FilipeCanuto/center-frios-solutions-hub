@@ -14,6 +14,8 @@ import {
   PRODUCT_CATALOG,
   getCatalogProduct,
 } from "@/lib/catalog.server";
+import { sendOrderConfirmation } from "@/lib/email.server";
+
 import { rateLimit, rateLimitDb } from "@/lib/rate-limit.server";
 
 const ThreeDSSchema = z.object({
