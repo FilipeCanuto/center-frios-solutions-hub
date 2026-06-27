@@ -437,7 +437,7 @@ export function Pa7ProLanding() {
 
       {/* INCLUDED DISCS */}
       <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
-        <SectionVideoBg src={calabresaVideo.url} maskClassName="pointer-events-none absolute inset-0 z-10 bg-neutral-950/85 backdrop-blur-[2px]" />
+        <SectionVideoBg src={calabresaVideo.url} maskClassName="pointer-events-none absolute inset-0 z-10 bg-neutral-950/85 mix-blend-multiply" />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--brand-blue)_8%,transparent),transparent_80%)] opacity-50"
