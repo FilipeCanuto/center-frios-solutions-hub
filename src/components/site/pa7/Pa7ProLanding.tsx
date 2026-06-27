@@ -26,6 +26,8 @@ import { HardwareGrid } from "./HardwareGrid";
 import { UgcWall } from "./UgcWall";
 import { CrossSellConfigurator } from "./CrossSellConfigurator";
 import { SectionVideoBg } from "./SectionVideoBg";
+import { OptimizedVideoBg } from "./OptimizedVideoBg";
+import heroPoster from "@/assets/products/pa7-pro/main.png";
 import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
 import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
 import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
@@ -158,7 +160,7 @@ export function Pa7ProLanding() {
         transition={{ duration: 0.8 }}
         className="relative overflow-hidden border-b border-white/5"
       >
-        <SectionVideoBg src={heroVideo.url} />
+        <OptimizedVideoBg src={heroVideo.url} posterSrc={heroPoster} darknessClass="bg-neutral-950/80 backdrop-blur-[2px]" />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 z-10 tech-grid opacity-20 animate-pulse"
@@ -559,7 +561,7 @@ export function Pa7ProLanding() {
 
       {/* USE CASES — Pre-Checkout Configurator */}
       <section className="relative overflow-hidden border-t border-white/5">
-        <SectionVideoBg src={versatilidadeVideo.url} />
+        <OptimizedVideoBg src={versatilidadeVideo.url} darknessClass="bg-neutral-950/85 backdrop-blur-[2px]" />
         <div className="relative z-20">
           <CrossSellConfigurator
             selected={selectedOptionalDiscs}
