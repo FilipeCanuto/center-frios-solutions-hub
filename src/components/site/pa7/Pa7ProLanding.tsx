@@ -540,9 +540,10 @@ export function Pa7ProLanding() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="border-t border-white/5 py-20 md:py-28"
+        className="relative overflow-hidden border-t border-white/5 py-20 md:py-28"
       >
-        <div className="mx-auto max-w-6xl px-6">
+        <OptimizedVideoBg src={batataVideo.url} darknessClass="bg-neutral-950/88 mix-blend-multiply" />
+        <div className="relative z-20 mx-auto max-w-6xl px-6">
           <div className="flex items-end justify-between gap-6">
             <div>
               <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
