@@ -161,7 +161,7 @@ export function Pa7ProLanding() {
         transition={{ duration: 0.8 }}
         className="relative overflow-hidden border-b border-white/5"
       >
-        <OptimizedVideoBg src={heroVideo.url} posterSrc={heroPoster} darknessClass="bg-neutral-950/80 backdrop-blur-[2px]" />
+        <OptimizedVideoBg src={heroVideo.url} posterSrc={heroPoster} darknessClass="bg-neutral-950/85 mix-blend-multiply" />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 z-10 tech-grid opacity-20 animate-pulse"
