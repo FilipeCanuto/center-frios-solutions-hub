@@ -21,7 +21,7 @@ const buttonVariants = cva(
           "text-foreground hover:bg-[color:var(--graphite)]/60 hover:text-foreground",
         link: "text-[color:var(--electric)] underline-offset-4 hover:underline",
         conversion:
-          "cta-high-gravity bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white font-black uppercase tracking-widest rounded-xl shadow-[0_0_35px_rgba(245,158,11,0.4)] hover:scale-[1.025] hover:shadow-[0_0_55px_rgba(245,158,11,0.75)] transition-all duration-500 ease-out focus-visible:ring-2 focus-visible:ring-amber-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          "cta-high-gravity bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white font-black uppercase tracking-widest rounded-xl border border-amber-400/20 shadow-[0_0_35px_rgba(245,158,11,0.55)] hover:scale-[1.03] hover:shadow-[0_0_55px_rgba(245,158,11,0.85)] transition-all duration-300 ease-out focus-visible:ring-2 focus-visible:ring-amber-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       },
       size: {
         default: "h-10 px-5 py-2",
