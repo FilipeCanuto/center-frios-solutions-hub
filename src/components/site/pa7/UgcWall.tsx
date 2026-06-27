@@ -26,7 +26,7 @@ export function UgcWall() {
             Provado e Aprovado
           </span>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-            Cozinhas reais de clientes Center Frios
+            Cozinhas reais de clientes CENTERFRIOS
           </h2>
           <p className="mt-3 text-base text-muted-foreground">
             Hamburguerias, pizzarias e buffets operando o PA7 Pro no ritmo da produção real.
@@ -68,7 +68,7 @@ export function UgcWall() {
           >
             <div className="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-accent/25 via-transparent to-transparent blur-3xl" />
             <div className="absolute -left-3 -top-3 z-30 inline-flex items-center gap-1.5 rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-red-200 backdrop-blur-md shadow-lg">
-              🔥 Cliente Real Center Frios
+              🔥 Cliente Real CENTERFRIOS
             </div>
             <div className="relative">
               <LazyVideo

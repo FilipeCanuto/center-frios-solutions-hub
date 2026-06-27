@@ -32,6 +32,7 @@ import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
 import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
 import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
 import calabresaVideo from "@/assets/pa7/videos/calabresa.mp4.asset.json";
+import batataVideo from "@/assets/pa7/videos/batata-fatiada.mp4.asset.json";
 
 import {
   PA7_GALLERY,
@@ -160,7 +161,7 @@ export function Pa7ProLanding() {
         transition={{ duration: 0.8 }}
         className="relative overflow-hidden border-b border-white/5"
       >
-        <OptimizedVideoBg src={heroVideo.url} posterSrc={heroPoster} darknessClass="bg-neutral-950/80 backdrop-blur-[2px]" />
+        <OptimizedVideoBg src={heroVideo.url} posterSrc={heroPoster} darknessClass="bg-neutral-950/85 mix-blend-multiply" />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 z-10 tech-grid opacity-20 animate-pulse"
@@ -436,7 +437,7 @@ export function Pa7ProLanding() {
 
       {/* INCLUDED DISCS */}
       <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
-        <SectionVideoBg src={calabresaVideo.url} maskClassName="pointer-events-none absolute inset-0 z-10 bg-neutral-950/85 backdrop-blur-[2px]" />
+        <SectionVideoBg src={calabresaVideo.url} maskClassName="pointer-events-none absolute inset-0 z-10 bg-neutral-950/85 mix-blend-multiply" />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--brand-blue)_8%,transparent),transparent_80%)] opacity-50"
@@ -539,9 +540,10 @@ export function Pa7ProLanding() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="border-t border-white/5 py-20 md:py-28"
+        className="relative overflow-hidden border-t border-white/5 py-20 md:py-28"
       >
-        <div className="mx-auto max-w-6xl px-6">
+        <OptimizedVideoBg src={batataVideo.url} darknessClass="bg-neutral-950/88 mix-blend-multiply" />
+        <div className="relative z-20 mx-auto max-w-6xl px-6">
           <div className="flex items-end justify-between gap-6">
             <div>
               <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
@@ -561,7 +563,7 @@ export function Pa7ProLanding() {
 
       {/* USE CASES — Pre-Checkout Configurator */}
       <section className="relative overflow-hidden border-t border-white/5">
-        <OptimizedVideoBg src={versatilidadeVideo.url} darknessClass="bg-neutral-950/85 backdrop-blur-[2px]" />
+        <OptimizedVideoBg src={versatilidadeVideo.url} darknessClass="bg-neutral-950/85 mix-blend-multiply" />
         <div className="relative z-20">
           <CrossSellConfigurator
             selected={selectedOptionalDiscs}

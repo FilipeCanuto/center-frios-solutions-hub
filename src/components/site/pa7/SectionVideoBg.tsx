@@ -79,7 +79,7 @@ export function SectionVideoBg({
       <div
         className={
           maskClassName ??
-          "absolute inset-0 z-10 bg-neutral-950/80 backdrop-blur-[1px] mix-blend-multiply"
+          "absolute inset-0 z-10 bg-neutral-950/85 mix-blend-multiply"
         }
       />
     </div>

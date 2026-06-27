@@ -548,11 +548,11 @@ body.sticky-buybar-active [data-floating-whatsapp] {
 @keyframes cta-gravity-pulse {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 0 35px rgba(245, 158, 11, 0.4);
+    box-shadow: 0 0 35px rgba(245, 158, 11, 0.55);
   }
   50% {
-    transform: scale(1.018);
-    box-shadow: 0 0 55px rgba(245, 158, 11, 0.65);
+    transform: scale(1.02);
+    box-shadow: 0 0 60px rgba(245, 158, 11, 0.85);
   }
 }
 
