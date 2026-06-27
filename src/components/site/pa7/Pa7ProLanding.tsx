@@ -562,7 +562,7 @@ export function Pa7ProLanding() {
 
       {/* USE CASES — Pre-Checkout Configurator */}
       <section className="relative overflow-hidden border-t border-white/5">
-        <OptimizedVideoBg src={versatilidadeVideo.url} darknessClass="bg-neutral-950/85 backdrop-blur-[2px]" />
+        <OptimizedVideoBg src={versatilidadeVideo.url} darknessClass="bg-neutral-950/85 mix-blend-multiply" />
         <div className="relative z-20">
           <CrossSellConfigurator
             selected={selectedOptionalDiscs}
