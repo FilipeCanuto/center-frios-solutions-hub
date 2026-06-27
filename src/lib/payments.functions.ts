@@ -14,6 +14,8 @@ import {
   PRODUCT_CATALOG,
   getCatalogProduct,
 } from "@/lib/catalog.server";
+import { sendOrderConfirmation } from "@/lib/email.server";
+
 import { rateLimit, rateLimitDb } from "@/lib/rate-limit.server";
 
 const ThreeDSSchema = z.object({
@@ -184,8 +186,23 @@ export const processPayment = createServerFn({ method: "POST" })
 
       if (result.approved) {
         await supabaseAdmin.from("orders").update({ status: "paid" }).eq("id", order.id);
+        try {
+          await sendOrderConfirmation(data.customer_email, {
+            orderId: order.id,
+            customerName: data.customer_name,
+            productName,
+            totalPaid: total,
+            paymentMethod: "Cartão de crédito",
+            billingDocument: cleanCnpj ?? cleanCpf ?? undefined,
+            shippingCity: data.shipping_address.city,
+            shippingState: data.shipping_address.state,
+          });
+        } catch (e) {
+          console.error("[processPayment] confirmation email failed:", e);
+        }
         return { success: true, orderId: order.id, status: "paid" as const };
       }
+
 
       await supabaseAdmin.from("orders").update({ status: "failed" }).eq("id", order.id);
       throw new Error(
