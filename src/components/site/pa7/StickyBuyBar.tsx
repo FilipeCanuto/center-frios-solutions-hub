@@ -84,9 +84,12 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
               <span className="hidden sm:inline">WhatsApp</span>
             </a>
 
-            <Button onClick={onBuy} size="lg" className="h-11 rounded-full px-4 sm:px-6">
+            <button
+              onClick={onBuy}
+              className="inline-flex h-11 items-center justify-center bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white font-black uppercase tracking-widest border border-blue-400/20 shadow-[0_0_25px_rgba(37,99,235,0.4)] hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(37,99,235,0.65)] transition-all duration-500 ease-out rounded-xl px-6 py-3 text-sm md:text-base animate-pulse"
+            >
               Comprar agora
-            </Button>
+            </button>
           </div>
         </div>
       </div>
