@@ -65,7 +65,7 @@ export function SectionVideoBg({
       />
       {shouldMount && (
         <video
-          className="absolute inset-0 h-full w-full object-cover [transform:translateZ(0)] will-change-transform"
+          className="absolute inset-0 h-full w-full object-cover transform-gpu will-change-transform motion-reduce:hidden"
           src={src}
           poster={poster}
           autoPlay
