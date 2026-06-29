@@ -76,7 +76,7 @@ export function OptimizedVideoBg({
           playsInline
           preload="none"
           aria-hidden
-          className="absolute inset-0 h-full w-full object-cover [transform:translateZ(0)] will-change-transform"
+          className="absolute inset-0 h-full w-full object-cover transform-gpu will-change-transform motion-reduce:hidden"
         />
       )}
       <div className={`absolute inset-0 z-10 ${darknessClass}`} />
