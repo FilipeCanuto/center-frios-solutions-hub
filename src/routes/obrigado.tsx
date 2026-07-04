@@ -1,17 +1,15 @@
 import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
 import { CheckCircle2, Package, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const searchSchema = z.object({
-  product: fallback(z.string(), "").default(""),
-  value: fallback(z.string(), "").default(""),
-});
+type ObrigadoSearch = { product?: string; value?: string };
 
 export const Route = createFileRoute("/obrigado")({
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: (search: Record<string, unknown>): ObrigadoSearch => ({
+    product: typeof search.product === "string" ? search.product : undefined,
+    value: typeof search.value === "string" ? search.value : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Obrigado pela compra — CENTERFRIOS" },
