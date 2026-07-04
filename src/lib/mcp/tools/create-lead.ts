@@ -2,32 +2,31 @@ import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 
 export default defineTool({
-  name: "create_lead",
-  title: "Create sales lead",
-  description: "Create a new sales lead for CENTERFRIOS. Use when a prospect wants a quote or to be contacted about a product.",
+  name: "submit_quote",
+  title: "Submit quote request",
+  description: "Submit a sales quote / lead request to CENTERFRIOS. Use when a prospect wants a quote or to be contacted about a product.",
   inputSchema: {
-    name: z.string().min(1).describe("Full name of the prospect."),
+    name: z.string().min(2).describe("Full name of the prospect."),
     email: z.string().email().describe("Contact email."),
-    phone: z.string().min(6).describe("Contact phone (with area code)."),
+    phone: z.string().min(8).describe("Contact phone (with area code)."),
     company: z.string().optional().describe("Company name, if applicable."),
-    product: z.string().optional().describe("Product of interest slug or name (e.g. 'pa7-pro')."),
+    segment: z.string().optional().describe("Business segment (e.g. 'restaurantes')."),
+    product_interest: z.string().optional().describe("Product of interest slug or name."),
     message: z.string().optional().describe("Additional notes from the prospect."),
   },
   annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false },
-  handler: async ({ name, email, phone, company, product, message }) => {
-    const { createLead } = await import("@/lib/leads.functions");
+  handler: async (input) => {
+    const { submitQuote } = await import("@/lib/leads.functions");
     try {
-      const result = await createLead({
-        data: { name, email, phone, company, product, message },
-      });
+      const result = await submitQuote({ data: { ...input, source: "mcp" } });
       return {
-        content: [{ type: "text", text: `Lead created for ${name}.` }],
+        content: [{ type: "text", text: `Quote request submitted for ${input.name}.` }],
         structuredContent: { ok: true, result },
       };
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       return {
-        content: [{ type: "text", text: `Failed to create lead: ${msg}` }],
+        content: [{ type: "text", text: `Failed to submit quote: ${msg}` }],
         isError: true,
       };
     }

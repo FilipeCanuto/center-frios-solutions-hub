@@ -1,18 +1,17 @@
 import { defineTool } from "@lovable.dev/mcp-js";
-import { z } from "zod";
 
 export default defineTool({
   name: "list_products",
   title: "List products",
-  description: "List the industrial food equipment products offered by CENTERFRIOS (PA7 PRO, HS-22, HS-98).",
+  description: "List CENTERFRIOS industrial food equipment products with name, tagline and product URL.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async () => {
-    const { site } = await import("@/data/site");
-    const products = (site.products ?? []).map((p: { slug: string; name: string; tagline?: string }) => ({
+    const { PRODUCTS } = await import("@/data/site");
+    const products = PRODUCTS.map((p) => ({
       slug: p.slug,
       name: p.name,
-      tagline: p.tagline,
+      tagline: (p as { tagline?: string }).tagline ?? null,
       url: `https://centerfrioshub.lovable.app/produtos/${p.slug}`,
     }));
     return {

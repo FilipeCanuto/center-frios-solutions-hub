@@ -13,6 +13,7 @@ import { Route as SolucoesRouteImport } from './routes/solucoes'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SegmentosRouteImport } from './routes/segmentos'
 import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as BlogRouteImport } from './routes/blog'
@@ -22,8 +23,11 @@ import { Route as SegmentosIndexRouteImport } from './routes/segmentos.index'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
 import { Route as SegmentosSlugRouteImport } from './routes/segmentos.$slug'
 import { Route as ProdutosSlugRouteImport } from './routes/produtos.$slug'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as AuthenticatedAdminTestePagamentoRouteImport } from './routes/_authenticated.admin.teste-pagamento'
 import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated.admin.pedidos'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAdminPedidosIdRouteImport } from './routes/_authenticated.admin.pedidos.$id'
 import { Route as ApiPublicWebhookRedeTokenRouteImport } from './routes/api.public.webhook.rede.$token'
 
@@ -45,6 +49,11 @@ const SegmentosRoute = SegmentosRouteImport.update({
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
   path: '/produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -91,6 +100,18 @@ const ProdutosSlugRoute = ProdutosSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ProdutosRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminTestePagamentoRoute =
   AuthenticatedAdminTestePagamentoRouteImport.update({
     id: '/admin/teste-pagamento',
@@ -102,6 +123,12 @@ const AuthenticatedAdminPedidosRoute =
     id: '/admin/pedidos',
     path: '/admin/pedidos',
     getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedAdminPedidosIdRoute =
   AuthenticatedAdminPedidosIdRouteImport.update({
@@ -121,14 +148,18 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRoute
   '/contato': typeof ContatoRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/produtos': typeof ProdutosRouteWithChildren
   '/segmentos': typeof SegmentosRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solucoes': typeof SolucoesRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos/': typeof ProdutosIndexRoute
   '/segmentos/': typeof SegmentosIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
   '/admin/teste-pagamento': typeof AuthenticatedAdminTestePagamentoRoute
   '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
@@ -139,12 +170,16 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRoute
   '/contato': typeof ContatoRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solucoes': typeof SolucoesRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos': typeof ProdutosIndexRoute
   '/segmentos': typeof SegmentosIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
   '/admin/teste-pagamento': typeof AuthenticatedAdminTestePagamentoRoute
   '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
@@ -157,14 +192,18 @@ export interface FileRoutesById {
   '/blog': typeof BlogRoute
   '/contato': typeof ContatoRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/produtos': typeof ProdutosRouteWithChildren
   '/segmentos': typeof SegmentosRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solucoes': typeof SolucoesRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/segmentos/$slug': typeof SegmentosSlugRoute
   '/produtos/': typeof ProdutosIndexRoute
   '/segmentos/': typeof SegmentosIndexRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRouteWithChildren
   '/_authenticated/admin/teste-pagamento': typeof AuthenticatedAdminTestePagamentoRoute
   '/_authenticated/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
@@ -177,14 +216,18 @@ export interface FileRouteTypes {
     | '/blog'
     | '/contato'
     | '/login'
+    | '/mcp'
     | '/produtos'
     | '/segmentos'
     | '/sitemap.xml'
     | '/solucoes'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/produtos/$slug'
     | '/segmentos/$slug'
     | '/produtos/'
     | '/segmentos/'
+    | '/.mcp/invoke-tool/$tool'
     | '/admin/pedidos'
     | '/admin/teste-pagamento'
     | '/admin/pedidos/$id'
@@ -195,12 +238,16 @@ export interface FileRouteTypes {
     | '/blog'
     | '/contato'
     | '/login'
+    | '/mcp'
     | '/sitemap.xml'
     | '/solucoes'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/produtos/$slug'
     | '/segmentos/$slug'
     | '/produtos'
     | '/segmentos'
+    | '/.mcp/invoke-tool/$tool'
     | '/admin/pedidos'
     | '/admin/teste-pagamento'
     | '/admin/pedidos/$id'
@@ -212,14 +259,18 @@ export interface FileRouteTypes {
     | '/blog'
     | '/contato'
     | '/login'
+    | '/mcp'
     | '/produtos'
     | '/segmentos'
     | '/sitemap.xml'
     | '/solucoes'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/produtos/$slug'
     | '/segmentos/$slug'
     | '/produtos/'
     | '/segmentos/'
+    | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/pedidos'
     | '/_authenticated/admin/teste-pagamento'
     | '/_authenticated/admin/pedidos/$id'
@@ -232,10 +283,14 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRoute
   ContatoRoute: typeof ContatoRoute
   LoginRoute: typeof LoginRoute
+  McpRoute: typeof McpRoute
   ProdutosRoute: typeof ProdutosRouteWithChildren
   SegmentosRoute: typeof SegmentosRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SolucoesRoute: typeof SolucoesRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicWebhookRedeTokenRoute: typeof ApiPublicWebhookRedeTokenRoute
 }
 
@@ -267,6 +322,13 @@ declare module '@tanstack/react-router' {
       path: '/produtos'
       fullPath: '/produtos'
       preLoaderRoute: typeof ProdutosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -332,6 +394,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosSlugRouteImport
       parentRoute: typeof ProdutosRoute
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/teste-pagamento': {
       id: '/_authenticated/admin/teste-pagamento'
       path: '/admin/teste-pagamento'
@@ -345,6 +421,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/pedidos'
       preLoaderRoute: typeof AuthenticatedAdminPedidosRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/pedidos/$id': {
       id: '/_authenticated/admin/pedidos/$id'
@@ -425,10 +508,15 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRoute,
   ContatoRoute: ContatoRoute,
   LoginRoute: LoginRoute,
+  McpRoute: McpRoute,
   ProdutosRoute: ProdutosRouteWithChildren,
   SegmentosRoute: SegmentosRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SolucoesRoute: SolucoesRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicWebhookRedeTokenRoute: ApiPublicWebhookRedeTokenRoute,
 }
 export const routeTree = rootRouteImport
