@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "centerfrios-mcp",
+      "version": "0.1.0",
+      "title": "CENTERFRIOS MCP"
+    },
+    "tools": [
+      {
+        "name": "list_products",
+        "title": "List products",
+        "description": "List CENTERFRIOS industrial food equipment products with name, tagline and product URL.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_contact_info",
+        "title": "Get contact info",
+        "description": "Return CENTERFRIOS contact channels (phone, WhatsApp, email, Instagram) for sales inquiries and quotes.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "submit_quote",
+        "title": "Submit quote request",
+        "description": "Submit a sales quote / lead request to CENTERFRIOS. Use when a prospect wants a quote or to be contacted about a product.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Full name of the prospect."
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$",
+              "description": "Contact email."
+            },
+            "phone": {
+              "type": "string",
+              "minLength": 8,
+              "description": "Contact phone (with area code)."
+            },
+            "company": {
+              "description": "Company name, if applicable.",
+              "type": "string"
+            },
+            "segment": {
+              "description": "Business segment (e.g. 'restaurantes').",
+              "type": "string"
+            },
+            "product_interest": {
+              "description": "Product of interest slug or name.",
+              "type": "string"
+            },
+            "message": {
+              "description": "Additional notes from the prospect.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "email",
+            "phone"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
