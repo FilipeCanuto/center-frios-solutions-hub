@@ -13,6 +13,7 @@ import { Route as SolucoesRouteImport } from './routes/solucoes'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SegmentosRouteImport } from './routes/segmentos'
 import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as ObrigadoRouteImport } from './routes/obrigado'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContatoRouteImport } from './routes/contato'
@@ -49,6 +50,11 @@ const SegmentosRoute = SegmentosRouteImport.update({
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
   path: '/produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ObrigadoRoute = ObrigadoRouteImport.update({
+  id: '/obrigado',
+  path: '/obrigado',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/contato': typeof ContatoRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/obrigado': typeof ObrigadoRoute
   '/produtos': typeof ProdutosRouteWithChildren
   '/segmentos': typeof SegmentosRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/contato': typeof ContatoRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/obrigado': typeof ObrigadoRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solucoes': typeof SolucoesRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
@@ -193,6 +201,7 @@ export interface FileRoutesById {
   '/contato': typeof ContatoRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/obrigado': typeof ObrigadoRoute
   '/produtos': typeof ProdutosRouteWithChildren
   '/segmentos': typeof SegmentosRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/login'
     | '/mcp'
+    | '/obrigado'
     | '/produtos'
     | '/segmentos'
     | '/sitemap.xml'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/login'
     | '/mcp'
+    | '/obrigado'
     | '/sitemap.xml'
     | '/solucoes'
     | '/.mcp/list-tools'
@@ -260,6 +271,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/login'
     | '/mcp'
+    | '/obrigado'
     | '/produtos'
     | '/segmentos'
     | '/sitemap.xml'
@@ -284,6 +296,7 @@ export interface RootRouteChildren {
   ContatoRoute: typeof ContatoRoute
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
+  ObrigadoRoute: typeof ObrigadoRoute
   ProdutosRoute: typeof ProdutosRouteWithChildren
   SegmentosRoute: typeof SegmentosRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -322,6 +335,13 @@ declare module '@tanstack/react-router' {
       path: '/produtos'
       fullPath: '/produtos'
       preLoaderRoute: typeof ProdutosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/obrigado': {
+      id: '/obrigado'
+      path: '/obrigado'
+      fullPath: '/obrigado'
+      preLoaderRoute: typeof ObrigadoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -509,6 +529,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContatoRoute: ContatoRoute,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
+  ObrigadoRoute: ObrigadoRoute,
   ProdutosRoute: ProdutosRouteWithChildren,
   SegmentosRoute: SegmentosRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
