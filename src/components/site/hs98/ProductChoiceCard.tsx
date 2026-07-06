@@ -143,6 +143,9 @@ export function ProductChoiceCard({
               </div>
 
               <Button
+                id={`cta-buy-hs98-${modelTag.toLowerCase()}`}
+                data-gtm-event="begin_checkout"
+                data-product={productSlug}
                 size="lg"
                 onClick={() => setOpen(true)}
                 className="w-full rounded-full py-6 text-base font-semibold shadow-lg shadow-accent/20"

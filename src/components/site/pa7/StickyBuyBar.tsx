@@ -18,7 +18,7 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > 720);
+    const onScroll = () => setShow(window.scrollY > 350);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -85,6 +85,9 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
             </a>
 
             <button
+              id="cta-buy-pa7-sticky"
+              data-gtm-event="begin_checkout"
+              data-product="pa7-pro"
               onClick={onBuy}
               className="inline-flex h-11 items-center justify-center bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white font-black uppercase tracking-widest border border-blue-400/20 shadow-[0_0_25px_rgba(37,99,235,0.4)] hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(37,99,235,0.65)] transition-all duration-500 ease-out rounded-xl px-6 py-3 text-sm md:text-base animate-pulse"
             >
