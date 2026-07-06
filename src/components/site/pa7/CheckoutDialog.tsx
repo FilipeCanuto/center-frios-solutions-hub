@@ -117,7 +117,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
           clearInterval(interval);
           setStep(4);
           toast.success("Pagamento PIX confirmado com sucesso!");
-          onSuccess?.();
+          redirectToThankYou(product.slug, subtotal);
         } else if (order && order.status === "failed") {
           clearInterval(interval);
           toast.error("O pagamento falhou ou foi recusado pela operadora.");
@@ -128,7 +128,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [pixResult, onSuccess]);
+  }, [pixResult, product.slug, subtotal]);
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
@@ -349,7 +349,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
         if (result && result.success) {
           toast.success("Pagamento autorizado com sucesso!");
           setStep(4);
-          onSuccess?.();
+          redirectToThankYou(product.slug, subtotal);
         } else {
           throw new Error("O pagamento foi recusado ou falhou.");
         }
