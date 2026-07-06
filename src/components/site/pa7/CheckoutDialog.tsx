@@ -111,7 +111,7 @@ export function CheckoutDialog({ open, onOpenChange, product, onSuccess }: Props
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [pixResult]);
+  }, [pixResult, onSuccess]);
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
