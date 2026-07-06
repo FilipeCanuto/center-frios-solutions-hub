@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 
@@ -25,7 +25,7 @@ import { LazyVideo } from "./LazyVideo";
 import { HardwareGrid } from "./HardwareGrid";
 import { UgcWall } from "./UgcWall";
 import { CrossSellConfigurator } from "./CrossSellConfigurator";
-import { Pa7SuccessInline } from "./Pa7SuccessInline";
+
 import { SectionVideoBg } from "./SectionVideoBg";
 import { OptimizedVideoBg } from "./OptimizedVideoBg";
 import heroPoster from "@/assets/products/pa7-pro/main.png";
@@ -106,24 +106,31 @@ function TurbineDisc({ disc, index, scrollYProgress, itemVariants }: TurbineDisc
 export function Pa7ProLanding() {
   const product = getProduct("processador-pa7-pro-skymsen")!;
   const [open, setOpen] = useState(false);
-  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [selectedOptionalDiscs, setSelectedOptionalDiscs] = useState<string[]>([]);
 
-  const handlePurchaseSuccess = () => {
-    setPurchaseSuccess(true);
-    if (typeof window !== "undefined") {
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: "compra_sucesso_pa7" });
-    }
-    setTimeout(() => {
-      setOpen(false);
-      if (typeof document !== "undefined") {
-        document
-          .getElementById("checkout-pa7")
-          ?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }, 400);
-  };
+  // Mid-funnel: fire GA4 `view_item` on landing mount for impression tracking.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: "view_item",
+      ecommerce: {
+        currency: "BRL",
+        value: PA7_PRICE.pixAmount,
+        items: [
+          {
+            item_id: "pa7-pro",
+            item_name: "Processador PA7 Pro Skymsen",
+            item_brand: "CENTERFRIOS",
+            item_category: "Processador de Alimentos",
+            price: PA7_PRICE.pixAmount,
+            quantity: 1,
+          },
+        ],
+      },
+    });
+  }, []);
+
   const additionalTotal = selectedOptionalDiscs.reduce((acc, code) => {
     const d = PA7_OPTIONAL_DISCS.find((x) => x.code === code);
     return acc + (d?.price ?? 0);
@@ -669,38 +676,32 @@ export function Pa7ProLanding() {
       {/* UGC VIDEO TESTIMONIAL WALL */}
       <UgcWall />
 
-      {/* CHECKOUT SECTION — inline success replaces form on completion */}
-      {purchaseSuccess ? (
-        <Pa7SuccessInline />
-      ) : (
-        <>
-          <CheckoutSection
-            product={{
-              id: product.slug,
-              name: product.name,
-              image: PA7_IMAGES.main,
-              price: PA7_PRICE.amount,
-              installments: PA7_PRICE.installments,
-              installmentValue: PA7_PRICE.installmentValue,
-              pixDiscount: PA7_PRICE.pixDiscountPct,
-              pixPrice: PA7_PRICE.pixAmount,
-              savings: PA7_PRICE.savings,
-              subtitle: "Linha Industrial · Bivolt",
-            }}
-            selectedOptionalDiscs={selectedOptionalDiscs}
-            additionalTotal={additionalTotal}
-          />
+      {/* CHECKOUT SECTION — success handled globally at /obrigado via redirect */}
+      <CheckoutSection
+        product={{
+          id: product.slug,
+          name: product.name,
+          image: PA7_IMAGES.main,
+          price: PA7_PRICE.amount,
+          installments: PA7_PRICE.installments,
+          installmentValue: PA7_PRICE.installmentValue,
+          pixDiscount: PA7_PRICE.pixDiscountPct,
+          pixPrice: PA7_PRICE.pixAmount,
+          savings: PA7_PRICE.savings,
+          subtitle: "Linha Industrial · Bivolt",
+        }}
+        selectedOptionalDiscs={selectedOptionalDiscs}
+        additionalTotal={additionalTotal}
+      />
 
-          <StickyBuyBar
-            name="PA7 Pro Skymsen"
-            image={PA7_IMAGES.main}
-            price={PA7_PRICE.amount}
-            pixPrice={PA7_PRICE.pixAmount}
-            additionalTotal={additionalTotal}
-            onBuy={() => setOpen(true)}
-          />
-        </>
-      )}
+      <StickyBuyBar
+        name="PA7 Pro Skymsen"
+        image={PA7_IMAGES.main}
+        price={PA7_PRICE.amount}
+        pixPrice={PA7_PRICE.pixAmount}
+        additionalTotal={additionalTotal}
+        onBuy={() => setOpen(true)}
+      />
 
       <CheckoutDialog
         open={open}
@@ -711,8 +712,8 @@ export function Pa7ProLanding() {
           image: PA7_IMAGES.main,
           price: PA7_PRICE.amount,
         }}
-        onSuccess={handlePurchaseSuccess}
       />
+
     </>
   );
 }

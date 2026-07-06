@@ -225,6 +225,9 @@ export function CheckoutSection({
 
 
                 <Button
+                  id="cta-finalize-purchase-pa7"
+                  data-gtm-event="purchase_initiated"
+                  data-product="pa7-pro"
                   size="lg"
                   variant="conversion"
                   className="w-full rounded-full h-14 text-base shadow-lg"

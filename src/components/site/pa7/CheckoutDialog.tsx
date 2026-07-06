@@ -30,8 +30,25 @@ type Props = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   product: { slug: string; name: string; image: string; price: number };
-  onSuccess?: () => void;
 };
+
+// Maps internal product slugs to short GTM/URL product identifiers used
+// by the global /obrigado conversion page.
+function toGtmProduct(slug: string): string {
+  if (slug.includes("pa7")) return "pa7-pro";
+  if (slug.includes("hs-98") || slug.includes("hs98")) return "hs-98";
+  if (slug.includes("hs-22") || slug.includes("hs22")) return "hs-22";
+  return slug;
+}
+
+function redirectToThankYou(slug: string, value: number) {
+  if (typeof window === "undefined") return;
+  const params = new URLSearchParams({
+    product: toGtmProduct(slug),
+    value: value.toFixed(2),
+  });
+  window.location.assign(`/obrigado?${params.toString()}`);
+}
 
 const StepOne = z.object({
   name: z.string().trim().min(2, "Informe seu nome"),
@@ -56,7 +73,7 @@ function formatBRL(n: number) {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-export function CheckoutDialog({ open, onOpenChange, product, onSuccess }: Props) {
+export function CheckoutDialog({ open, onOpenChange, product }: Props) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [identity, setIdentity] = useState<z.infer<typeof StepOne> | null>(null);
   const [address, setAddress] = useState<z.infer<typeof StepTwo> | null>(null);
@@ -100,7 +117,7 @@ export function CheckoutDialog({ open, onOpenChange, product, onSuccess }: Props
           clearInterval(interval);
           setStep(4);
           toast.success("Pagamento PIX confirmado com sucesso!");
-          onSuccess?.();
+          redirectToThankYou(product.slug, product.price);
         } else if (order && order.status === "failed") {
           clearInterval(interval);
           toast.error("O pagamento falhou ou foi recusado pela operadora.");
@@ -111,7 +128,7 @@ export function CheckoutDialog({ open, onOpenChange, product, onSuccess }: Props
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [pixResult, onSuccess]);
+  }, [pixResult, product.slug, product.price]);
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
@@ -332,7 +349,7 @@ export function CheckoutDialog({ open, onOpenChange, product, onSuccess }: Props
         if (result && result.success) {
           toast.success("Pagamento autorizado com sucesso!");
           setStep(4);
-          onSuccess?.();
+          redirectToThankYou(product.slug, product.price);
         } else {
           throw new Error("O pagamento foi recusado ou falhou.");
         }
