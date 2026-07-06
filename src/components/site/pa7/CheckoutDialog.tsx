@@ -56,7 +56,7 @@ function formatBRL(n: number) {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-export function CheckoutDialog({ open, onOpenChange, product }: Props) {
+export function CheckoutDialog({ open, onOpenChange, product, onSuccess }: Props) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [identity, setIdentity] = useState<z.infer<typeof StepOne> | null>(null);
   const [address, setAddress] = useState<z.infer<typeof StepTwo> | null>(null);
@@ -100,6 +100,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
           clearInterval(interval);
           setStep(4);
           toast.success("Pagamento PIX confirmado com sucesso!");
+          onSuccess?.();
         } else if (order && order.status === "failed") {
           clearInterval(interval);
           toast.error("O pagamento falhou ou foi recusado pela operadora.");
@@ -331,6 +332,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
         if (result && result.success) {
           toast.success("Pagamento autorizado com sucesso!");
           setStep(4);
+          onSuccess?.();
         } else {
           throw new Error("O pagamento foi recusado ou falhou.");
         }
