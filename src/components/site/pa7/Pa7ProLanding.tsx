@@ -669,33 +669,38 @@ export function Pa7ProLanding() {
       {/* UGC VIDEO TESTIMONIAL WALL */}
       <UgcWall />
 
-      {/* CHECKOUT SECTION */}
-      <CheckoutSection
-        product={{
-          id: product.slug,
-          name: product.name,
-          image: PA7_IMAGES.main,
-          price: PA7_PRICE.amount,
-          installments: PA7_PRICE.installments,
-          installmentValue: PA7_PRICE.installmentValue,
-          pixDiscount: PA7_PRICE.pixDiscountPct,
-          pixPrice: PA7_PRICE.pixAmount,
-          savings: PA7_PRICE.savings,
-          subtitle: "Linha Industrial · Bivolt",
-        }}
-        selectedOptionalDiscs={selectedOptionalDiscs}
-        additionalTotal={additionalTotal}
-      />
+      {/* CHECKOUT SECTION — inline success replaces form on completion */}
+      {purchaseSuccess ? (
+        <Pa7SuccessInline />
+      ) : (
+        <>
+          <CheckoutSection
+            product={{
+              id: product.slug,
+              name: product.name,
+              image: PA7_IMAGES.main,
+              price: PA7_PRICE.amount,
+              installments: PA7_PRICE.installments,
+              installmentValue: PA7_PRICE.installmentValue,
+              pixDiscount: PA7_PRICE.pixDiscountPct,
+              pixPrice: PA7_PRICE.pixAmount,
+              savings: PA7_PRICE.savings,
+              subtitle: "Linha Industrial · Bivolt",
+            }}
+            selectedOptionalDiscs={selectedOptionalDiscs}
+            additionalTotal={additionalTotal}
+          />
 
-
-      <StickyBuyBar
-        name="PA7 Pro Skymsen"
-        image={PA7_IMAGES.main}
-        price={PA7_PRICE.amount}
-        pixPrice={PA7_PRICE.pixAmount}
-        additionalTotal={additionalTotal}
-        onBuy={() => setOpen(true)}
-      />
+          <StickyBuyBar
+            name="PA7 Pro Skymsen"
+            image={PA7_IMAGES.main}
+            price={PA7_PRICE.amount}
+            pixPrice={PA7_PRICE.pixAmount}
+            additionalTotal={additionalTotal}
+            onBuy={() => setOpen(true)}
+          />
+        </>
+      )}
 
       <CheckoutDialog
         open={open}
@@ -706,6 +711,7 @@ export function Pa7ProLanding() {
           image: PA7_IMAGES.main,
           price: PA7_PRICE.amount,
         }}
+        onSuccess={handlePurchaseSuccess}
       />
     </>
   );
