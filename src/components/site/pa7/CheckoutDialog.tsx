@@ -30,6 +30,7 @@ type Props = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   product: { slug: string; name: string; image: string; price: number };
+  onSuccess?: () => void;
 };
 
 const StepOne = z.object({
