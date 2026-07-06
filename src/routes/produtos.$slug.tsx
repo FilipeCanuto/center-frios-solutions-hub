@@ -9,8 +9,14 @@ import { Pa7ProLanding } from "@/components/site/pa7/Pa7ProLanding";
 import { Hs98Landing } from "@/components/site/hs98/Hs98Landing";
 import { getProduct } from "@/data/site";
 
+const ALLOWED_PRODUCT_SLUGS = new Set([
+  "processador-pa7-pro-skymsen",
+  "moedor-homogeneizador-hs-98",
+]);
+
 export const Route = createFileRoute("/produtos/$slug")({
   loader: ({ params }) => {
+    if (!ALLOWED_PRODUCT_SLUGS.has(params.slug)) throw notFound();
     const product = getProduct(params.slug);
     if (!product) throw notFound();
     return { product };
