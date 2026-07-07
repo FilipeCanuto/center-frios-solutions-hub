@@ -663,11 +663,21 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                           </div>
                           <div className="mt-5 grid gap-3">
                             <TrustStrip />
-                            <PayCta
-                              onClick={() => handlePayment()}
-                              loading={submitting}
-                              label="Gerar QR Code PIX"
-                            />
+                            {pixError ? (
+                              <PixWhatsAppFallback
+                                errorMessage={pixError}
+                                product={product}
+                                identity={identity}
+                                address={address}
+                                totalPix={totalPix}
+                              />
+                            ) : (
+                              <PayCta
+                                onClick={() => handlePayment()}
+                                loading={submitting}
+                                label="Gerar QR Code PIX"
+                              />
+                            )}
                           </div>
                         </div>
                       ) : (
