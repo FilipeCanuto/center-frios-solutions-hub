@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 
@@ -18,7 +18,9 @@ import { SpecGrid } from "@/components/site/SpecGrid";
 import { Gallery } from "./Gallery";
 import { Showcase } from "./Showcase";
 import { StickyBuyBar } from "./StickyBuyBar";
-import { CheckoutDialog } from "./CheckoutDialog";
+const CheckoutDialog = lazy(() =>
+  import("./CheckoutDialog").then((m) => ({ default: m.CheckoutDialog })),
+);
 import { CheckoutSection } from "./CheckoutSection";
 import { FaqPa7 } from "./FaqPa7";
 import { LazyVideo } from "./LazyVideo";
@@ -177,8 +179,54 @@ export function Pa7ProLanding() {
     },
   };
 
+  const jsonLd = useMemo(
+    () => [
+      {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: "Skymsen PA7 Pro",
+        brand: { "@type": "Brand", name: "Skymsen" },
+        category: "Processador de Alimentos Industrial",
+        image: [PA7_IMAGES.main],
+        description:
+          "Processador de alimentos profissional Skymsen PA7 Pro — 250 kg/h, 07 discos inclusos, bivolt, aço inox, NR-12.",
+        sku: "pa7-pro",
+        offers: {
+          "@type": "Offer",
+          priceCurrency: "BRL",
+          price: PA7_PRICE.pixAmount.toFixed(2),
+          availability: "https://schema.org/InStock",
+          seller: { "@type": "Organization", name: "CENTERFRIOS" },
+          url: "https://ofertas.centerfrios.com/produtos/processador-pa7-pro-skymsen",
+        },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        name: "CENTERFRIOS",
+        image: "https://ofertas.centerfrios.com/favicon.png",
+        url: "https://ofertas.centerfrios.com",
+        telephone: "+55-82-3223-2497",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "Maceió",
+          addressLocality: "Maceió",
+          addressRegion: "AL",
+          addressCountry: "BR",
+        },
+        geo: { "@type": "GeoCoordinates", latitude: -9.6658, longitude: -35.7353 },
+      },
+    ],
+    [],
+  );
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* HERO */}
       <motion.section
         initial={{ opacity: 0 }}
@@ -703,16 +751,20 @@ export function Pa7ProLanding() {
         onBuy={() => setOpen(true)}
       />
 
-      <CheckoutDialog
-        open={open}
-        onOpenChange={setOpen}
-        product={{
-          slug: product.slug,
-          name: "Processador de Alimentos PA7 Pro Skymsen",
-          image: PA7_IMAGES.main,
-          price: PA7_PRICE.amount,
-        }}
-      />
+      {open && (
+        <Suspense fallback={null}>
+          <CheckoutDialog
+            open={open}
+            onOpenChange={setOpen}
+            product={{
+              slug: product.slug,
+              name: "Processador de Alimentos PA7 Pro Skymsen",
+              image: PA7_IMAGES.main,
+              price: PA7_PRICE.amount,
+            }}
+          />
+        </Suspense>
+      )}
 
     </>
   );
