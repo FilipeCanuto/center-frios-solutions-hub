@@ -27,6 +27,7 @@ import {
   HS98_ROI,
   HS98_FAQ,
   HS98_TESTIMONIAL,
+  HS98_PRICE,
 } from "@/data/hs98";
 import { Hs98Gallery } from "@/components/site/hs98/Hs98Gallery";
 import { TechHero } from "@/components/site/hs98/TechHero";
