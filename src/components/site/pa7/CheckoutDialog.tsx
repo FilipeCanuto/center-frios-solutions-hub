@@ -230,6 +230,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
 
     try {
       if (paymentMethod === "pix") {
+        setPixError(null);
         const result = await processPayment({
           data: {
             customer_name: identity.name,
