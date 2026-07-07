@@ -368,6 +368,11 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
         setSecurityCode("");
       }
 
+      if (paymentMethod === "pix") {
+        setPixError(humanized.message || "Falha ao gerar QR Code PIX.");
+      }
+
+
       if (humanized.category === "use_pix" && paymentMethod === "credit_card") {
         toast.error(humanized.message, {
           description: humanized.title,
