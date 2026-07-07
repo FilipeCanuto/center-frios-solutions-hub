@@ -160,6 +160,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     setIdentity(null);
     setAddress(null);
     setPixResult(null);
+    setPixError(null);
     setCardNumber("");
     setCardholderName("");
     setExpiryDate("");
