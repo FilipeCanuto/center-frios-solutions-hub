@@ -18,7 +18,9 @@ import { SpecGrid } from "@/components/site/SpecGrid";
 import { Gallery } from "./Gallery";
 import { Showcase } from "./Showcase";
 import { StickyBuyBar } from "./StickyBuyBar";
-import { CheckoutDialog } from "./CheckoutDialog";
+const CheckoutDialog = lazy(() =>
+  import("./CheckoutDialog").then((m) => ({ default: m.CheckoutDialog })),
+);
 import { CheckoutSection } from "./CheckoutSection";
 import { FaqPa7 } from "./FaqPa7";
 import { LazyVideo } from "./LazyVideo";
