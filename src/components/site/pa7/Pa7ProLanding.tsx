@@ -751,16 +751,20 @@ export function Pa7ProLanding() {
         onBuy={() => setOpen(true)}
       />
 
-      <CheckoutDialog
-        open={open}
-        onOpenChange={setOpen}
-        product={{
-          slug: product.slug,
-          name: "Processador de Alimentos PA7 Pro Skymsen",
-          image: PA7_IMAGES.main,
-          price: PA7_PRICE.amount,
-        }}
-      />
+      {open && (
+        <Suspense fallback={null}>
+          <CheckoutDialog
+            open={open}
+            onOpenChange={setOpen}
+            product={{
+              slug: product.slug,
+              name: "Processador de Alimentos PA7 Pro Skymsen",
+              image: PA7_IMAGES.main,
+              price: PA7_PRICE.amount,
+            }}
+          />
+        </Suspense>
+      )}
 
     </>
   );
