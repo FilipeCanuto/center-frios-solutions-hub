@@ -448,8 +448,51 @@ function FinalCta() {
 
 /* ──────────────────────────────────────────────────────── PAGE */
 export function Hs98Landing() {
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: "Skymsen HS-98",
+      brand: { "@type": "Brand", name: "Skymsen" },
+      category: "Homogeneizador de Carne Industrial",
+      image: [HS98_IMAGES.hero],
+      description:
+        "Homogeneizador industrial Skymsen HS-98 — 900 kg/h, caçamba 41 L, motor 3 CV, sistema patenteado, NR-12.",
+      sku: "hs-98",
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "BRL",
+        price: HS98_PRICE.amount.toFixed(2),
+        availability: "https://schema.org/InStock",
+        seller: { "@type": "Organization", name: "CENTERFRIOS" },
+        url: "https://ofertas.centerfrios.com/produtos/homogeneizador-hs-98-skymsen",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      name: "CENTERFRIOS",
+      image: "https://ofertas.centerfrios.com/favicon.png",
+      url: "https://ofertas.centerfrios.com",
+      telephone: "+55-82-3223-2497",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Maceió",
+        addressLocality: "Maceió",
+        addressRegion: "AL",
+        addressCountry: "BR",
+      },
+      geo: { "@type": "GeoCoordinates", latitude: -9.6658, longitude: -35.7353 },
+    },
+  ];
+
   return (
     <div className="bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <TechHero />
       <Manifesto />
       <UniversalBenefits />
