@@ -93,6 +93,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     copiaCola: string;
     orderId: string;
   } | null>(null);
+  const [pixError, setPixError] = useState<string | null>(null);
 
   // Credit Card States
   const [cardNumber, setCardNumber] = useState("");
