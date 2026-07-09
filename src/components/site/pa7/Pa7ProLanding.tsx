@@ -406,7 +406,7 @@ export function Pa7ProLanding() {
                       className="w-full rounded-full sm:w-auto font-semibold"
                     >
                       <a
-                        href="https://wa.me/558232232497?text=Olá! Tenho interesse no Processador PA7 Pro Skymsen."
+                        href="https://api.whatsapp.com/send?phone=5582996820070&text=Olá! Gostaria de falar com a Maria sobre o Processador PA7 Pro."
                         target="_blank"
                         rel="noreferrer"
                       >

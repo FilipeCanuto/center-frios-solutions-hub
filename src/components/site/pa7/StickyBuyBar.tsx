@@ -72,7 +72,7 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
           {/* Actions — perfectly center-aligned, consistent gaps */}
           <div className="relative z-10 flex shrink-0 items-center gap-2">
             <a
-              href={CONTACT.whatsappHref}
+              href="https://api.whatsapp.com/send?phone=5582996820070&text=Olá! Gostaria de falar com a Maria sobre o Processador PA7 Pro."
               target="_blank"
               rel="noreferrer"
               aria-label="Falar no WhatsApp"
