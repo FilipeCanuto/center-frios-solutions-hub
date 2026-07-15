@@ -446,7 +446,7 @@ export async function chargePix(input: {
       orderId: input.orderId,
       httpStatus,
       returnCode: raw?.returnCode ?? null,
-      returnMessage: raw?.returnMessage ?? rawText || res.statusText,
+      returnMessage: raw?.returnMessage ?? (rawText || res.statusText),
       rawText: rawText.slice(0, 2000),
     });
     return {
@@ -455,7 +455,7 @@ export async function chargePix(input: {
       qrCodeString: null,
       tid: raw?.tid ?? null,
       returnCode: raw?.returnCode ?? null,
-      returnMessage: raw?.returnMessage ?? rawText || res.statusText,
+      returnMessage: raw?.returnMessage ?? (rawText || res.statusText),
       httpStatus,
       raw: raw ?? { rawText: rawText.slice(0, 2000) },
     };
