@@ -436,9 +436,11 @@ export async function chargePix(input: {
 
     httpStatus = res.status;
     rawText = await res.text().catch(() => "");
-    let raw: (RedeRawResponse & {
-      pix?: { qrCodeBase64?: string; qrCodeString?: string };
-    }) | null = null;
+    let raw:
+      | (RedeRawResponse & {
+          pix?: { qrCodeBase64?: string; qrCodeString?: string };
+        })
+      | null = null;
     try {
       raw = rawText
         ? (JSON.parse(rawText) as RedeRawResponse & {
