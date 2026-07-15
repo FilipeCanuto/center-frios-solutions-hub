@@ -11,7 +11,10 @@ test("buildPixTransactionPayload emits strict PascalCase e-Rede PIX body", () =>
     Reference: "order-123-1770000000000",
     QrCode: true,
   });
-  assert.equal(JSON.stringify(payload), '{"Capture":true,"Amount":598405,"Reference":"order-123-1770000000000","QrCode":true}');
+  assert.equal(
+    JSON.stringify(payload),
+    '{"Capture":true,"Amount":598405,"Reference":"order-123-1770000000000","QrCode":true}',
+  );
   assert.deepEqual(
     Object.keys(payload).filter((key) => /^[a-z]/.test(key)),
     [],
