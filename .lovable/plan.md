@@ -1,40 +1,101 @@
-## Objetivo
-Ao concluir o pagamento com sucesso no PA7 Pro (PIX confirmado ou cartão autorizado), permanecer na mesma página (sem redirect para `/obrigado`), esconder os campos de checkout e renderizar um bloco inline de sucesso — disparando `dataLayer.push({ event: 'compra_sucesso_pa7' })`. Além disso, restringir as rotas de produto apenas ao PA7 Pro e ao HS-98.
 
-## Mudanças
+## Diagnóstico ancorado na doc oficial
 
-### 1. `src/components/site/pa7/CheckoutDialog.tsx`
-- Adicionar prop opcional `onSuccess?: () => void`.
-- Nos dois pontos em que `setStep(4)` é chamado (confirmação do PIX no `useEffect` de polling e retorno positivo do cartão em `handlePayment`), invocar `onSuccess?.()` logo em seguida.
-- Remover qualquer navegação/`window.location`/redirect para `/obrigado` (não existe hoje — apenas confirmar).
-- Manter intactos: `selectedOptionalDiscs`, cálculo de frete grátis Alagoas (CEP 57), Resend, e-Rede, PCI hygiene.
+Manual e-Rede v1.32 (03/2026) que você enviou, pág. 136, **"QR Code Pix request"**, mostra o payload correto textualmente:
 
-### 2. `src/components/site/pa7/Pa7ProLanding.tsx`
-- Novo estado `const [purchaseSuccess, setPurchaseSuccess] = useState(false)`.
-- Handler `handlePurchaseSuccess`:
-  - `setPurchaseSuccess(true)`
-  - `window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'compra_sucesso_pa7' })`
-  - Fechar o `CheckoutDialog` (`setOpen(false)`) após pequeno delay para transição suave.
-  - Scroll suave até a âncora `#checkout-pa7`.
-- Passar `onSuccess={handlePurchaseSuccess}` ao `CheckoutDialog`.
-- Quando `purchaseSuccess === true`:
-  - Não renderizar `<CheckoutSection …>` nem `<StickyBuyBar …>`.
-  - Renderizar em seu lugar um novo componente `<Pa7SuccessInline />` (mesma âncora `id="checkout-pa7"`), com visual coerente ao restante da landing (dark, borda/glow âmbar, `CheckCircle2`, título "Obrigado! Seu pedido foi confirmado.", subtítulo com próximos passos, CTA WhatsApp + link "Ver mais produtos").
+```json
+{
+    "kind": "pix",
+    "reference": "pix{{reference}}",
+    "amount": "3900",
+    "qrCode": {
+        "dateTimeExpiration": "2023-09-30T13:15:59"
+    }
+}
+```
 
-### 3. `src/components/site/pa7/Pa7SuccessInline.tsx` (novo arquivo)
-- Componente puramente apresentacional (sem lógica de pagamento), reutilizando tokens/tipografia já usados em `CheckoutSection`.
+*(No PDF aparece `"Date timeExpiration"` — é artefato de OCR. O nome real do campo é `dateTimeExpiration`, formato `YYYY-MM-DDThh:mm:ss`, expiração até 15 dias.)*
 
-### 4. Restrição de rotas de produto — `src/routes/produtos.$slug.tsx`
-- No `loader`, além de checar `getProduct(slug)`, permitir apenas os slugs:
-  - `processador-pa7-pro-skymsen`
-  - `moedor-homogeneizador-hs-98`
-- Qualquer outro slug → `throw notFound()` (mantém o `notFoundComponent` já existente).
+Isso **invalida as duas tentativas anteriores**:
 
-## Guardrails respeitados
-- Sem alterações em: lógica de `selectedOptionalDiscs`, frete grátis Alagoas, `payments.functions.ts`, hooks Resend, e-Rede, MCP, rota `/obrigado` (permanece intacta como fallback global).
-- Nenhum redirect é adicionado no fluxo do PA7 Pro.
-- Marca preservada como "CENTERFRIOS".
+| Tentativa | Status |
+|---|---|
+| `{ Capture: true, Amount, Reference, QrCode: true }` (PascalCase) | ❌ Chaves inexistentes no schema. Causa direta do **Error 167 – Invalid request JSON**. |
+| `{ capture, kind:"pix", reference, amount }` (meu chute anterior) | ❌ PIX **não tem `capture`**. |
 
-## Verificação
-- `bun run build` para conferir type-safety.
-- Fluxo manual: abrir dialog → mock success (PIX/cartão) → confirmar que a página não navega, o checkout some, o bloco inline aparece e o evento `compra_sucesso_pa7` chega ao `dataLayer`.
+**Endpoint (confirmado pág. 12 do manual):** `POST https://api.userede.com.br/erede/v2/transactions` — o atual `REDE_API_BASE` já está certo, não muda.
+
+**Resposta oficial (pág. 137)** — precisamos ler os campos corretos:
+```json
+{
+  "reference": "...", "tid": "...", "amount": 3900,
+  "qrCodeResponse": {
+    "dateTimeExpiration": "...",
+    "qrCodeImage": "<base64>",    // imagem PNG do QR
+    "qrCodeData": "<EMV string>"  // copia-e-cola
+  },
+  "returnCode": "00",
+  "returnMessage": "Success."
+}
+```
+
+O `chargePix` atual lê `raw.pix.qrCodeBase64` / `raw.pix.qrCodeString` — **caminho inexistente**. Mesmo se o payload estivesse certo, nunca acharia o QR.
+
+## Escopo da mudança
+
+Só `src/lib/payments/rede.ts` e `src/lib/payments/rede.test.ts`. Nada de UI, GTM, `/obrigado`, CEP `57`, cartão, OAuth ou middlewares.
+
+## Mudanças em `src/lib/payments/rede.ts`
+
+1. **Trocar `RedePixTransactionPayload`** para o contrato oficial:
+   ```ts
+   export type RedePixTransactionPayload = {
+     kind: "pix";
+     reference: string;
+     amount: number;         // inteiros em centavos (doc: Numeric, até 10 dígitos)
+     qrCode: { dateTimeExpiration: string };
+   };
+   ```
+   Remover `Capture`, `Amount`, `Reference`, `QrCode: true`.
+
+2. **Reescrever `buildPixTransactionPayload(orderId, amountCents, expiresInMinutes?)`**:
+   - `kind: "pix"`
+   - `reference`: manter timestamp para unicidade → `${orderId}-${Date.now()}` (respeita "Until 16" caracteres — se `orderId` for longo, truncar como já fazemos hoje)
+   - `amount`: `amountCents` como número inteiro
+   - `qrCode.dateTimeExpiration`: default = agora + 30 min, no formato `YYYY-MM-DDTHH:mm:ss` (sem timezone, sem milissegundos, como no exemplo da doc)
+
+3. **`chargePix`**:
+   - Continua fazendo `POST ${REDE_API_BASE}/transactions` com `Authorization: Bearer <token>`, `Content-Type: application/json`, `JSON.stringify(payload)` uma única vez (já está assim).
+   - Ler resposta pelo caminho oficial: `raw.qrCodeResponse.qrCodeImage` (base64) e `raw.qrCodeResponse.qrCodeData` (EMV copy-paste).
+   - Manter formato de retorno público (`{ status, qrCodeBase64, qrCodeString, rawText, code, message }`) para não quebrar chamadores em `payments.functions.ts`.
+   - Sucesso = `res.ok && returnCode === "00"` e ambos os campos QR presentes.
+
+4. **Remover** comentários antigos que falam de "PascalCase estrito" — trocar por referência à pág. 136 do manual.
+
+## Mudanças em `src/lib/payments/rede.test.ts`
+
+- Trocar as asserções PascalCase por camelCase:
+  - `expect(payload.kind).toBe("pix")`
+  - `expect(payload).not.toHaveProperty("capture")`
+  - `expect(payload).not.toHaveProperty("Capture")`
+  - `expect(payload.qrCode.dateTimeExpiration).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/)`
+  - `expect(payload.amount).toBe(<centavos>)` (número, não string — a doc mostra `"3900"` como string mas o tipo declarado é Numeric; mantemos number como já mandamos hoje no cartão que funciona)
+- Adicionar teste garantindo que `JSON.stringify(payload)` **não contém** `"Capture"`, `"Amount"`, `"Reference"`, `"QrCode":true`.
+
+## Validação
+
+1. `bun test src/lib/payments/rede.test.ts` — deve passar.
+2. Tentar gerar QR no checkout real. Esperado: `returnCode: "00"` + `qrCodeResponse.qrCodeImage` populado. Se ainda voltar 400/167, a próxima causa provável é PIX não habilitado no PV — aí é chamado técnico Rede, não código.
+
+## Guardrails (não mexer)
+
+- `chargeCreditCard` (já funciona, doc confirma que credit usa outro contrato).
+- OAuth (`fetchRedeAccessToken`), endpoints, headers.
+- GTM, `/obrigado`, CEP `57`, UI de checkout, `payments.functions.ts` (só consome o mesmo retorno público de `chargePix`).
+- `JSON.stringify` continua sendo chamado **exatamente uma vez**, no `fetch`.
+
+## Referência
+
+Manual e.Rede v1.32 (`documentação_e-rede-24032026.pdf`) que você anexou:
+- pág. 12 — endpoint canônico `POST /erede/v2/transactions`
+- pág. 135-138 — seção "Pix / QR Code Pix request" com payload e resposta
