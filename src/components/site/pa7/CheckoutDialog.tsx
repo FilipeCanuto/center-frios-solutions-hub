@@ -364,9 +364,12 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
           throw new Error("O pagamento foi recusado ou falhou.");
         }
       }
-    } catch (err: unknown) {
-      console.error("Erro no pagamento:", err);
-      const raw = err instanceof Error ? err.message : String(err ?? "");
+    } catch (error: unknown) {
+      type PaymentError = Error & { response?: { data?: unknown } };
+      const paymentError = error as PaymentError;
+      console.error('🔥 E-REDE PIX ERROR:', paymentError.response?.data || paymentError.message || error);
+      console.error("Erro no pagamento:", error);
+      const raw = error instanceof Error ? error.message : String(error ?? "");
       const humanized = humanizeRedeError({ raw });
 
       // PCI hygiene: limpar PAN/CVV após qualquer falha no fluxo de cartão.
