@@ -387,28 +387,52 @@ export type PixChargeResult = {
 };
 
 export type RedePixTransactionPayload = {
-  Capture: true;
-  Amount: number;
-  Reference: string;
-  QrCode: true;
+  kind: "pix";
+  reference: string;
+  amount: number;
+  qrCode: { dateTimeExpiration: string };
 };
 
+/**
+ * Formata epoch ms como "YYYY-MM-DDTHH:mm:ss" (sem timezone, sem ms),
+ * conforme exemplo da doc oficial e.Rede v1.32 pág. 136.
+ */
+function formatPixExpiration(atMs: number): string {
+  const d = new Date(atMs);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return (
+    `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}` +
+    `T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`
+  );
+}
+
+/**
+ * Contrato oficial e.Rede v1.32 (manual pág. 135-137, "QR Code Pix request").
+ * Payload PIX é camelCase, sem `capture`, e `qrCode` é um objeto com
+ * `dateTimeExpiration` (até 15 dias no futuro).
+ */
 export function buildPixTransactionPayload(
   orderId: string,
   amountCents: number,
   now = Date.now(),
+  expiresInMinutes = 30,
 ): RedePixTransactionPayload {
   if (!Number.isInteger(amountCents) || amountCents <= 0) {
     throw new Error(`[rede] Valor PIX inválido em centavos: ${amountCents}`);
   }
 
+  const reference = `${orderId}-${now}`.slice(0, 16);
+
   return {
-    Capture: true,
-    Amount: amountCents,
-    Reference: `${orderId}-${now}`,
-    QrCode: true,
+    kind: "pix",
+    reference,
+    amount: amountCents,
+    qrCode: {
+      dateTimeExpiration: formatPixExpiration(now + expiresInMinutes * 60_000),
+    },
   };
 }
+
 
 function assertNativeJsonObject(payload: unknown, label: string): asserts payload is object {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
@@ -425,9 +449,9 @@ export async function chargePix(input: {
   let rawText = "";
 
   try {
-    // Contrato PIX e-Rede: payload raiz em PascalCase estrito para evitar
-    // falha de desserialização .NET (Error 167). Nenhum alias camelCase,
-    // nenhum wrapper e nenhuma string JSON pré-serializada.
+    // Contrato PIX e.Rede v1.32, manual pág. 136 ("QR Code Pix request"):
+    // camelCase, sem `capture`, `qrCode.dateTimeExpiration` obrigatório.
+    // JSON.stringify chamado exatamente uma vez, na borda da rede.
     const payload = buildPixTransactionPayload(input.orderId, input.amountCents);
     assertNativeJsonObject(payload, "payload PIX e-Rede");
 
@@ -443,26 +467,28 @@ export async function chargePix(input: {
 
     httpStatus = res.status;
     rawText = await res.text().catch(() => "");
-    let raw:
-      | (RedeRawResponse & {
-          pix?: { qrCodeBase64?: string; qrCodeString?: string };
-        })
-      | null = null;
+    type PixRawResponse = RedeRawResponse & {
+      qrCodeResponse?: {
+        qrCodeImage?: string;
+        qrCodeData?: string;
+        dateTimeExpiration?: string;
+      };
+    };
+    let raw: PixRawResponse | null = null;
     try {
-      raw = rawText
-        ? (JSON.parse(rawText) as RedeRawResponse & {
-            pix?: { qrCodeBase64?: string; qrCodeString?: string };
-          })
-        : null;
+      raw = rawText ? (JSON.parse(rawText) as PixRawResponse) : null;
     } catch {
       raw = null;
     }
 
-    if (res.ok && raw?.pix?.qrCodeBase64 && raw?.pix?.qrCodeString) {
+    const qrImage = raw?.qrCodeResponse?.qrCodeImage;
+    const qrData = raw?.qrCodeResponse?.qrCodeData;
+
+    if (res.ok && raw?.returnCode === "00" && qrImage && qrData) {
       return {
         ok: true,
-        qrCodeBase64: raw.pix.qrCodeBase64,
-        qrCodeString: raw.pix.qrCodeString,
+        qrCodeBase64: qrImage,
+        qrCodeString: qrData,
         tid: raw.tid ?? null,
         returnCode: raw.returnCode ?? null,
         returnMessage: raw.returnMessage ?? "PIX gerado",
@@ -488,6 +514,7 @@ export async function chargePix(input: {
       httpStatus,
       raw: raw ?? { rawText: rawText.slice(0, 2000) },
     };
+
   } catch (err) {
     const e = err as Error;
     console.error("[rede] pix network error", {
