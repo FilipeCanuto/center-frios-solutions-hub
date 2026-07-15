@@ -392,6 +392,30 @@ export type PixChargeResult = {
   raw: unknown;
 };
 
+export type RedePixTransactionPayload = {
+  Capture: true;
+  Amount: number;
+  Reference: string;
+  QrCode: true;
+};
+
+export function buildPixTransactionPayload(
+  orderId: string,
+  amountCents: number,
+  now = Date.now(),
+): RedePixTransactionPayload {
+  if (!Number.isInteger(amountCents) || amountCents <= 0) {
+    throw new Error(`[rede] Valor PIX inválido em centavos: ${amountCents}`);
+  }
+
+  return {
+    Capture: true,
+    Amount: amountCents,
+    Reference: `${orderId}-${now}`,
+    QrCode: true,
+  };
+}
+
 export async function chargePix(input: {
   orderId: string;
   amountCents: number;
@@ -401,16 +425,9 @@ export async function chargePix(input: {
   let rawText = "";
 
   try {
-    // Payload nativo — objeto JS puro. JSON.stringify é chamado UMA única vez
-    // no dispatch do fetch (linha do body). Nenhuma pré-serialização.
-    const uniqueReference = `${input.orderId}-${Date.now()}`;
-    const transactionPayload = {
-      kind: "pix",
-      capture: true,
-      reference: uniqueReference,
-      amount: input.amountCents,
-      qrCode: true,
-    };
+    // Contrato PIX e-Rede: payload raiz em PascalCase estrito para evitar
+    // falha de desserialização .NET (Error 167). Nenhum alias camelCase.
+    const transactionPayload = buildPixTransactionPayload(input.orderId, input.amountCents);
     const requestBody = JSON.stringify(transactionPayload);
 
     const res = await fetch(`${REDE_API_BASE}/transactions`, {
