@@ -388,6 +388,7 @@ export type PixChargeResult = {
   tid: string | null;
   returnCode: string | null;
   returnMessage: string;
+  httpStatus: number;
   raw: unknown;
 };
 
@@ -396,6 +397,8 @@ export async function chargePix(input: {
   amountCents: number;
 }): Promise<PixChargeResult> {
   const accessToken = await getRedeAccessToken();
+  let httpStatus = 0;
+  let rawText = "";
 
   try {
     const res = await fetch(`${REDE_API_BASE}/transactions`, {
@@ -411,11 +414,20 @@ export async function chargePix(input: {
         amount: input.amountCents,
       }),
     });
-    const raw = (await res.json().catch(() => null)) as
-      | (RedeRawResponse & {
-          pix?: { qrCodeBase64?: string; qrCodeString?: string };
-        })
-      | null;
+    httpStatus = res.status;
+    rawText = await res.text().catch(() => "");
+    let raw: (RedeRawResponse & {
+      pix?: { qrCodeBase64?: string; qrCodeString?: string };
+    }) | null = null;
+    try {
+      raw = rawText
+        ? (JSON.parse(rawText) as RedeRawResponse & {
+            pix?: { qrCodeBase64?: string; qrCodeString?: string };
+          })
+        : null;
+    } catch {
+      raw = null;
+    }
 
     if (res.ok && raw?.pix?.qrCodeBase64 && raw?.pix?.qrCodeString) {
       return {
@@ -425,15 +437,17 @@ export async function chargePix(input: {
         tid: raw.tid ?? null,
         returnCode: raw.returnCode ?? null,
         returnMessage: raw.returnMessage ?? "PIX gerado",
+        httpStatus,
         raw,
       };
     }
 
     console.error("[rede] pix rejected", {
       orderId: input.orderId,
-      httpStatus: res.status,
+      httpStatus,
       returnCode: raw?.returnCode ?? null,
-      returnMessage: raw?.returnMessage ?? res.statusText,
+      returnMessage: raw?.returnMessage ?? (rawText || res.statusText),
+      rawText: rawText.slice(0, 2000),
     });
     return {
       ok: false,
@@ -441,8 +455,9 @@ export async function chargePix(input: {
       qrCodeString: null,
       tid: raw?.tid ?? null,
       returnCode: raw?.returnCode ?? null,
-      returnMessage: raw?.returnMessage ?? res.statusText,
-      raw,
+      returnMessage: raw?.returnMessage ?? (rawText || res.statusText),
+      httpStatus,
+      raw: raw ?? { rawText: rawText.slice(0, 2000) },
     };
   } catch (err) {
     const e = err as Error;
@@ -450,6 +465,8 @@ export async function chargePix(input: {
       orderId: input.orderId,
       name: e.name,
       message: e.message,
+      httpStatus,
+      rawText: rawText.slice(0, 2000),
     });
     return {
       ok: false,
@@ -458,7 +475,8 @@ export async function chargePix(input: {
       tid: null,
       returnCode: null,
       returnMessage: `Erro de rede: ${e.message}`,
-      raw: null,
+      httpStatus,
+      raw: rawText ? { rawText: rawText.slice(0, 2000) } : null,
     };
   }
 }

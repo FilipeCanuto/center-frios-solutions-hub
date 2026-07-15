@@ -236,6 +236,8 @@ export const processPayment = createServerFn({ method: "POST" })
           kind: "pix_failed",
           code: pix.returnCode ?? null,
           message: pix.returnMessage ?? null,
+          http: pix.httpStatus ?? null,
+          details: sanitizeRawForStorage(pix.raw ?? null),
         }),
       );
     }
