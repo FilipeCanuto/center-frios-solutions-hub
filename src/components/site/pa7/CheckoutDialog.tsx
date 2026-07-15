@@ -306,7 +306,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
 
         const fullYear = `20${year}`;
 
-        if (!identity.cpf || identity.cpf.replace(/\D/g, "").length !== 11) {
+        if (!cleanCpf || cleanCpf.length !== 11) {
           toast.error("Informe um CPF válido (obrigatório para autenticação 3DS).");
           setSubmitting(false);
           return;
@@ -316,12 +316,12 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
           data: {
             customer_name: identity.name,
             customer_email: identity.email,
-            customer_phone: identity.phone,
+            customer_phone: cleanPhone,
             customer_company: identity.company,
-            customer_cnpj: identity.cnpj,
-            customer_cpf: identity.cpf,
+            customer_cnpj: cleanCnpj,
+            customer_cpf: cleanCpf,
             shipping_address: {
-              cep: address.cep,
+              cep: cleanCep,
               street: address.street,
               number: address.number,
               complement: address.complement,
