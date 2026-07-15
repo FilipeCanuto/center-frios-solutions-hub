@@ -412,6 +412,7 @@ export async function chargePix(input: {
         kind: "pix",
         reference: input.orderId,
         amount: input.amountCents,
+        QrCode: true,
       }),
     });
     httpStatus = res.status;
