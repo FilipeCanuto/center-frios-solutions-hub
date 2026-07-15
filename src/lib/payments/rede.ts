@@ -408,12 +408,23 @@ export async function chargePix(input: {
         Authorization: bearerHeader(accessToken),
         Accept: "application/json",
       },
-      body: JSON.stringify({
-        kind: "pix",
-        reference: input.orderId,
-        amount: input.amountCents,
-        QrCode: true,
-      }),
+      body: (() => {
+        const uniqueReference = `${input.orderId}-${Date.now()}`;
+        const transactionPayload = {
+          // camelCase (contrato canônico e-Rede v2)
+          kind: "pix",
+          capture: true,
+          reference: uniqueReference,
+          amount: input.amountCents,
+          qrCode: true,
+          QrCode: true, // PascalCase — defensivo contra Error 3088
+          // Aliases PascalCase preemptivos (Error 167 / translation dropouts)
+          Capture: true,
+          Reference: uniqueReference,
+          Amount: input.amountCents,
+        };
+        return JSON.stringify(transactionPayload);
+      })(),
     });
     httpStatus = res.status;
     rawText = await res.text().catch(() => "");
