@@ -401,6 +401,18 @@ export async function chargePix(input: {
   let rawText = "";
 
   try {
+    // Payload nativo — objeto JS puro. JSON.stringify é chamado UMA única vez
+    // no dispatch do fetch (linha do body). Nenhuma pré-serialização.
+    const uniqueReference = `${input.orderId}-${Date.now()}`;
+    const transactionPayload = {
+      kind: "pix",
+      capture: true,
+      reference: uniqueReference,
+      amount: input.amountCents,
+      qrCode: true,
+    };
+    const requestBody = JSON.stringify(transactionPayload);
+
     const res = await fetch(`${REDE_API_BASE}/transactions`, {
       method: "POST",
       headers: {
@@ -408,24 +420,9 @@ export async function chargePix(input: {
         Authorization: bearerHeader(accessToken),
         Accept: "application/json",
       },
-      body: (() => {
-        const uniqueReference = `${input.orderId}-${Date.now()}`;
-        const transactionPayload = {
-          // camelCase (contrato canônico e-Rede v2)
-          kind: "pix",
-          capture: true,
-          reference: uniqueReference,
-          amount: input.amountCents,
-          qrCode: true,
-          QrCode: true, // PascalCase — defensivo contra Error 3088
-          // Aliases PascalCase preemptivos (Error 167 / translation dropouts)
-          Capture: true,
-          Reference: uniqueReference,
-          Amount: input.amountCents,
-        };
-        return JSON.stringify(transactionPayload);
-      })(),
+      body: requestBody,
     });
+
     httpStatus = res.status;
     rawText = await res.text().catch(() => "");
     let raw: (RedeRawResponse & {
