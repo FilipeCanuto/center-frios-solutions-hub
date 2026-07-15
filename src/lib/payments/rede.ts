@@ -39,7 +39,7 @@ export function getRedeCredentials(): { pv: string; token: string } {
   if (!pvRaw || !token) {
     throw new Error(
       "Erro de Configuração de Variável de Ambiente: " +
-        `REDE_PV=${!!pvRaw ? "ok" : "undefined"}, REDE_TOKEN=${!!token ? "ok" : "undefined"}. ` +
+        `REDE_PV=${pvRaw ? "ok" : "undefined"}, REDE_TOKEN=${token ? "ok" : "undefined"}. ` +
         "Configure os Secrets no Lovable Cloud antes de cobrar.",
     );
   }
@@ -73,14 +73,12 @@ export async function getRedeAccessToken(): Promise<string> {
     body: new URLSearchParams({ grant_type: "client_credentials" }).toString(),
   });
 
-  const json = (await res.json().catch(() => null)) as
-    | {
-        access_token?: string;
-        expires_in?: number;
-        error?: string;
-        error_description?: string;
-      }
-    | null;
+  const json = (await res.json().catch(() => null)) as {
+    access_token?: string;
+    expires_in?: number;
+    error?: string;
+    error_description?: string;
+  } | null;
 
   if (!res.ok || !json?.access_token) {
     const msg = json?.error_description || json?.error || res.statusText;
@@ -246,7 +244,6 @@ function buildThreeDSUrls(_orderId: string, _base: string) {
   return { successUrl: THREE_DS_SUCCESS_URL, failureUrl: THREE_DS_FAILURE_URL };
 }
 
-
 export type RedeRawResponse = {
   tid?: string;
   returnCode?: string;
@@ -267,7 +264,6 @@ export type RedeChargeResult = {
 
 export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeChargeResult> {
   const accessToken = await getRedeAccessToken();
-
 
   // 3DS desativado temporariamente — serviço de autenticação não contratado
   // no PV (Code 203: "Authentication service not registered for the merchant").
@@ -375,9 +371,7 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
       rawText: rawText.slice(0, 2000),
     });
     // Propaga a exceção — sem mocks, sem falso positivo.
-    throw new Error(
-      `Falha real na e-Rede (HTTP ${httpStatus || "network"}): ${e.message}`,
-    );
+    throw new Error(`Falha real na e-Rede (HTTP ${httpStatus || "network"}): ${e.message}`);
   }
 }
 
@@ -392,6 +386,30 @@ export type PixChargeResult = {
   raw: unknown;
 };
 
+export type RedePixTransactionPayload = {
+  Capture: true;
+  Amount: number;
+  Reference: string;
+  QrCode: true;
+};
+
+export function buildPixTransactionPayload(
+  orderId: string,
+  amountCents: number,
+  now = Date.now(),
+): RedePixTransactionPayload {
+  if (!Number.isInteger(amountCents) || amountCents <= 0) {
+    throw new Error(`[rede] Valor PIX inválido em centavos: ${amountCents}`);
+  }
+
+  return {
+    Capture: true,
+    Amount: amountCents,
+    Reference: `${orderId}-${now}`,
+    QrCode: true,
+  };
+}
+
 export async function chargePix(input: {
   orderId: string;
   amountCents: number;
@@ -401,16 +419,9 @@ export async function chargePix(input: {
   let rawText = "";
 
   try {
-    // Payload nativo — objeto JS puro. JSON.stringify é chamado UMA única vez
-    // no dispatch do fetch (linha do body). Nenhuma pré-serialização.
-    const uniqueReference = `${input.orderId}-${Date.now()}`;
-    const transactionPayload = {
-      kind: "pix",
-      capture: true,
-      reference: uniqueReference,
-      amount: input.amountCents,
-      qrCode: true,
-    };
+    // Contrato PIX e-Rede: payload raiz em PascalCase estrito para evitar
+    // falha de desserialização .NET (Error 167). Nenhum alias camelCase.
+    const transactionPayload = buildPixTransactionPayload(input.orderId, input.amountCents);
     const requestBody = JSON.stringify(transactionPayload);
 
     const res = await fetch(`${REDE_API_BASE}/transactions`, {
@@ -425,9 +436,11 @@ export async function chargePix(input: {
 
     httpStatus = res.status;
     rawText = await res.text().catch(() => "");
-    let raw: (RedeRawResponse & {
-      pix?: { qrCodeBase64?: string; qrCodeString?: string };
-    }) | null = null;
+    let raw:
+      | (RedeRawResponse & {
+          pix?: { qrCodeBase64?: string; qrCodeString?: string };
+        })
+      | null = null;
     try {
       raw = rawText
         ? (JSON.parse(rawText) as RedeRawResponse & {
