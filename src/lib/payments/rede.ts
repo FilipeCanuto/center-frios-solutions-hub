@@ -410,6 +410,12 @@ export function buildPixTransactionPayload(
   };
 }
 
+function assertNativeJsonObject(payload: unknown, label: string): asserts payload is object {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    throw new Error(`[rede] ${label} precisa ser um objeto JSON nativo antes do envio.`);
+  }
+}
+
 export async function chargePix(input: {
   orderId: string;
   amountCents: number;
@@ -420,9 +426,10 @@ export async function chargePix(input: {
 
   try {
     // Contrato PIX e-Rede: payload raiz em PascalCase estrito para evitar
-    // falha de desserialização .NET (Error 167). Nenhum alias camelCase.
-    const transactionPayload = buildPixTransactionPayload(input.orderId, input.amountCents);
-    const requestBody = JSON.stringify(transactionPayload);
+    // falha de desserialização .NET (Error 167). Nenhum alias camelCase,
+    // nenhum wrapper e nenhuma string JSON pré-serializada.
+    const payload = buildPixTransactionPayload(input.orderId, input.amountCents);
+    assertNativeJsonObject(payload, "payload PIX e-Rede");
 
     const res = await fetch(`${REDE_API_BASE}/transactions`, {
       method: "POST",
@@ -431,7 +438,7 @@ export async function chargePix(input: {
         Authorization: bearerHeader(accessToken),
         Accept: "application/json",
       },
-      body: requestBody,
+      body: JSON.stringify(payload),
     });
 
     httpStatus = res.status;
