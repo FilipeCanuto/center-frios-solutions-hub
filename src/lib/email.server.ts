@@ -1,8 +1,19 @@
 import { Resend } from "resend";
 
-const resendInstance = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
+// Lazy singleton — read env inside the getter so the Worker injects it at call time,
+// not at module top-level (where process.env may be empty during SSR bundling).
+let cachedResend: Resend | null = null;
+function getResend(): Resend | null {
+  if (cachedResend) return cachedResend;
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return null;
+  cachedResend = new Resend(key);
+  return cachedResend;
+}
+
+const FROM_ADDRESS =
+  process.env.RESEND_FROM_ADDRESS ?? "CENTERFRIOS <vendas@centerfrios.com>";
+
 
 export interface OrderConfirmationDetails {
   orderId: string;
@@ -123,26 +134,43 @@ export async function sendOrderConfirmation(
   customerEmail: string,
   orderDetails: OrderConfirmationDetails,
 ): Promise<{ ok: boolean; id?: string; error?: string }> {
-  if (!resendInstance) {
-    console.warn("[email.server] RESEND_API_KEY not configured; skipping send.");
+  const resend = getResend();
+  if (!resend) {
+    console.warn(
+      "[email.server] RESEND_API_KEY not configured; skipping send for order",
+      orderDetails.orderId,
+    );
     return { ok: false, error: "resend_not_configured" };
   }
 
+  const payload = {
+    from: FROM_ADDRESS,
+    to: [customerEmail],
+    subject: `CENTERFRIOS — Confirmação do pedido ${orderDetails.orderId.slice(0, 8).toUpperCase()}`,
+    html: buildHtml(orderDetails),
+  };
+
   try {
-    const { data, error } = await resendInstance.emails.send({
-      from: "CENTERFRIOS <onboarding@resend.dev>",
-      to: [customerEmail],
-      subject: `CENTERFRIOS — Confirmação do pedido ${orderDetails.orderId.slice(0, 8).toUpperCase()}`,
-      html: buildHtml(orderDetails),
-    });
+    const { data, error } = await resend.emails.send(payload);
 
     if (error) {
-      console.error("[email.server] resend error:", error);
+      console.error(
+        "[email.server] resend api error:",
+        JSON.stringify(error, null, 2),
+        "| from:",
+        FROM_ADDRESS,
+        "| to:",
+        customerEmail,
+      );
       return { ok: false, error: String(error.message ?? error) };
     }
     return { ok: true, id: data?.id };
   } catch (err) {
-    console.error("[email.server] send threw:", err);
+    console.error(
+      "[email.server] send threw:",
+      err instanceof Error ? { name: err.name, message: err.message, stack: err.stack } : err,
+    );
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
 }
+
