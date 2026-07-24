@@ -1,8 +1,19 @@
 import { Resend } from "resend";
 
-const resendInstance = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
+// Lazy singleton — read env inside the getter so the Worker injects it at call time,
+// not at module top-level (where process.env may be empty during SSR bundling).
+let cachedResend: Resend | null = null;
+function getResend(): Resend | null {
+  if (cachedResend) return cachedResend;
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return null;
+  cachedResend = new Resend(key);
+  return cachedResend;
+}
+
+const FROM_ADDRESS =
+  process.env.RESEND_FROM_ADDRESS ?? "CENTERFRIOS <vendas@centerfrios.com>";
+
 
 export interface OrderConfirmationDetails {
   orderId: string;
