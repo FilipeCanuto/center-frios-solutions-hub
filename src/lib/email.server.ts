@@ -12,7 +12,8 @@ function getResend(): Resend | null {
 }
 
 const FROM_ADDRESS =
-  process.env.RESEND_FROM_ADDRESS ?? "CENTERFRIOS <vendas@centerfrios.com>";
+  process.env.RESEND_FROM_ADDRESS ??
+  "CENTERFRIOS <vendas@eventos.centerfrios.com>";
 
 
 export interface OrderConfirmationDetails {
