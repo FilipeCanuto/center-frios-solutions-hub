@@ -9,10 +9,28 @@ import segRedes from "@/assets/seg-redes.jpg";
 import segCozinhas from "@/assets/seg-cozinhas.jpg";
 import segHoteis from "@/assets/seg-hoteis.jpg";
 
+// WhatsApp de vendas (Maria) — canal principal de conversão.
+export const SALES_WHATSAPP = {
+  name: "Maria",
+  number: "5582996820070",
+  display: "(82) 99682-0070",
+};
+
+// Telefone/WhatsApp oficial da loja — dúvidas gerais.
+export const STORE_WHATSAPP = {
+  number: "558232232497",
+  display: "(82) 3223-2497",
+};
+
+export function whatsappLink(message: string, number = SALES_WHATSAPP.number): string {
+  return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+}
+
 export const CONTACT = {
   phone: "82 3223-2497",
   phoneHref: "tel:+558232232497",
   whatsappHref: "https://wa.me/558232232497",
+  salesWhatsappHref: `https://wa.me/${SALES_WHATSAPP.number}`,
   email: "vendasweb01@centerfrios.com",
   emailHref: "mailto:vendasweb01@centerfrios.com",
   instagram: "@centerfriosoficial",

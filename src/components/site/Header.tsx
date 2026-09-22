@@ -4,13 +4,13 @@ import { useState } from "react";
 import { QuoteDialog } from "./QuoteDialog";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
+import { HS98_LINK, PA7_LINK } from "@/lib/visibility";
 
+// Enquanto o site institucional está fechado, a navegação aponta só para as
+// páginas publicadas — nenhum link leva à tela "Em construção".
 const NAV = [
-  { to: "/produtos", label: "Produtos" },
-  { to: "/segmentos", label: "Segmentos" },
-  { to: "/solucoes", label: "Soluções" },
-  { to: "/blog", label: "Blog" },
-  { to: "/contato", label: "Contato" },
+  { link: PA7_LINK, label: "Processador PA7 Pro" },
+  { link: HS98_LINK, label: "Homogeneizadores" },
 ] as const;
 
 export function Header() {
@@ -19,15 +19,15 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-[color:var(--steel)] bg-brushed-metal backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       <div className="relative z-10 mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-        <Link to="/" className="flex items-center">
+        <Link {...PA7_LINK} className="flex items-center" aria-label="Center Frios">
           <Logo size="md" />
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">
           {NAV.map((item) => (
             <Link
-              key={item.to}
-              to={item.to}
+              key={item.label}
+              {...item.link}
               className="rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-all hover:bg-white/[0.04] hover:text-foreground"
               activeProps={{ className: "bg-accent/10 text-foreground shadow-[var(--shadow-inner-edge)]" }}
             >
@@ -62,8 +62,8 @@ export function Header() {
           <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-6 py-4">
             {NAV.map((item) => (
               <Link
-                key={item.to}
-                to={item.to}
+                key={item.label}
+                {...item.link}
                 onClick={() => setOpen(false)}
                 className="rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-white/[0.04] hover:text-foreground"
                 activeProps={{ className: "text-foreground" }}

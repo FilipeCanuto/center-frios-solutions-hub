@@ -3,6 +3,7 @@ import { getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { rateLimit, rateLimitDb } from "@/lib/rate-limit.server";
+import { sendSalesAlert } from "@/lib/email.server";
 
 const QuoteSchema = z.object({
   name: z.string().trim().min(2, "Informe seu nome").max(120),
@@ -60,6 +61,18 @@ export const submitQuote = createServerFn({ method: "POST" })
       console.error("[submitQuote] insert error:", error);
       throw new Error("Não foi possível enviar seu pedido. Tente novamente.");
     }
+
+    const whatsapp = data.phone.replace(/\D/g, "");
+    await sendSalesAlert(`Novo lead: ${data.name} — ${data.product_interest || "site"}`, [
+      ["Origem", data.source || "site"],
+      ["Nome", data.name],
+      ["WhatsApp", data.phone],
+      ["Abrir conversa", whatsapp ? `https://wa.me/55${whatsapp.replace(/^55/, "")}` : null],
+      ["E-mail", data.email],
+      ["Empresa", data.company],
+      ["Produto", data.product_interest],
+      ["Mensagem", data.message],
+    ]);
 
     return { ok: true };
   });

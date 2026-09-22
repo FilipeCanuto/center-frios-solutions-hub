@@ -8,6 +8,10 @@ import { PremiumCard } from "@/components/site/PremiumCard";
 import { Pa7ProLanding } from "@/components/site/pa7/Pa7ProLanding";
 import { Hs98Landing } from "@/components/site/hs98/Hs98Landing";
 import { getProduct } from "@/data/site";
+import { PA7_PRICE } from "@/data/pa7";
+import { formatBRL } from "@/lib/pricing";
+
+const SITE_URL = "https://ofertas.centerfrios.com";
 
 const ALLOWED_PRODUCT_SLUGS = new Set([
   "processador-pa7-pro-skymsen",
@@ -25,13 +29,19 @@ export const Route = createFileRoute("/produtos/$slug")({
     const p = loaderData?.product;
     if (!p) return { meta: [{ title: "Produto — Center Frios" }] };
     const isHs = params.slug === "moedor-homogeneizador-hs-98";
+    const isPa7 = params.slug === "processador-pa7-pro-skymsen";
     const title = isHs
       ? "Homogeneizadores Skymsen HS-22 e HS-98 — Center Frios"
-      : `${p.name} — Center Frios`;
+      : isPa7
+        ? `Processador PA7 Pro Skymsen · ${formatBRL(PA7_PRICE.pixAmount)} no PIX · Center Frios`
+        : `${p.name} — Center Frios`;
     const description = isHs
       ? "Acabe com o encalhe de carne pálida na vitrine. Tecnologia de homogeneização Skymsen — escolha entre HS-22 (600 kg/h) e HS-98 (900 kg/h)."
-      : p.tagline;
-    const url = `https://ofertas.centerfrios.com/produtos/${params.slug}`;
+      : isPa7
+        ? `Processador de alimentos industrial PA7 Pro Skymsen: 250 kg/h, 7 discos inclusos, bivolt. ${formatBRL(PA7_PRICE.pixAmount)} no PIX ou 12x de ${formatBRL(PA7_PRICE.installmentValue)} sem juros. Frete grátis para Alagoas.`
+        : p.tagline;
+    const url = `${SITE_URL}/produtos/${params.slug}`;
+    const image = p.image ? `${SITE_URL}${p.image}` : undefined;
     return {
       meta: [
         { title },
@@ -40,10 +50,18 @@ export const Route = createFileRoute("/produtos/$slug")({
         { property: "og:description", content: description },
         { property: "og:type", content: "product" },
         { property: "og:url", content: url },
-        ...(p.image ? [{ property: "og:image", content: p.image }] : []),
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+              { name: "twitter:title", content: title },
+              { name: "twitter:description", content: description },
+            ]
+          : []),
       ],
       links: [{ rel: "canonical", href: url }],
-      scripts: [
+      // PA7 e HS-98 publicam o próprio JSON-LD de Product (com oferta) na landing.
+      scripts: isPa7 || isHs ? [] : [
         {
           type: "application/ld+json",
           children: JSON.stringify({

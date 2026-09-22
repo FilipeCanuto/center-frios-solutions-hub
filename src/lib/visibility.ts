@@ -16,7 +16,17 @@ export const PREVIEW_KEY = "cf-2026-bastidores";
 export const PREVIEW_STORAGE_KEY = "cf_preview";
 
 /** Prefixos sempre liberados (auth, painel admin, retorno de pagamento). */
-const PUBLIC_PREFIXES: ReadonlyArray<string> = ["/login", "/admin", "/pagamento"];
+const PUBLIC_PREFIXES: ReadonlyArray<string> = ["/login", "/admin", "/pagamento", "/obrigado"];
+
+/** Destinos públicos usados pela navegação enquanto o site está fechado. */
+export const PA7_LINK = {
+  to: "/produtos/$slug",
+  params: { slug: "processador-pa7-pro-skymsen" },
+} as const;
+export const HS98_LINK = {
+  to: "/produtos/$slug",
+  params: { slug: "moedor-homogeneizador-hs-98" },
+} as const;
 
 export function isPublicPath(pathname: string): boolean {
   const normalized = pathname.replace(/\/+$/, "") || "/";

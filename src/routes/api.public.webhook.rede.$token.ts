@@ -29,6 +29,8 @@ function mapRedeStatus(raw: unknown): { order: string; transaction: string } | n
   return null;
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
@@ -64,7 +66,7 @@ export const Route = createFileRoute("/api/public/webhook/rede/$token")({
           return json({ error: "Invalid JSON" }, 400);
         }
 
-        const orderId = typeof body.reference === "string" ? body.reference : null;
+        const reference = typeof body.reference === "string" ? body.reference : null;
         const tid =
           typeof body.tid === "string"
             ? body.tid
@@ -73,7 +75,23 @@ export const Route = createFileRoute("/api/public/webhook/rede/$token")({
               : null;
         const mapped = mapRedeStatus(body.status);
 
+        // Cartão usa o UUID do pedido como `reference`. O PIX só aceita 16
+        // caracteres, então a referência chega truncada — nesse caso o pedido
+        // é resolvido pelo TID gravado em `transactions` na criação do QR.
+        let orderId = reference && UUID_RE.test(reference) ? reference : null;
+        if (!orderId && tid) {
+          const { data: tx } = await supabaseAdmin
+            .from("transactions")
+            .select("order_id")
+            .eq("gateway_transaction_id", tid)
+            .order("created_at", { ascending: true })
+            .limit(1)
+            .maybeSingle();
+          orderId = tx?.order_id ?? null;
+        }
+
         if (!orderId) {
+          console.warn("[rede-webhook] order not resolved", { reference, tid });
           return json({ error: "Missing reference" }, 400);
         }
 
@@ -179,6 +197,13 @@ export const Route = createFileRoute("/api/public/webhook/rede/$token")({
               } catch (e) {
                 console.error("[rede-webhook] confirmation email failed", e);
               }
+              const { sendSalesAlert } = await import("@/lib/email.server");
+              await sendSalesAlert(`Pedido PAGO (${full.payment_method}): ${full.product_name}`, [
+                ["Pedido", full.id],
+                ["Cliente", full.customer_name],
+                ["E-mail", full.customer_email],
+                ["Total", Number(full.total_price ?? 0).toFixed(2)],
+              ]);
             }
           }
         }

@@ -175,3 +175,35 @@ export async function sendOrderConfirmation(
   }
 }
 
+
+// Aviso interno para o time comercial (novo lead / pedido pago).
+// Destino configurável por SALES_ALERT_EMAIL; padrão: e-mail de vendas do site.
+const SALES_ALERT_TO = process.env.SALES_ALERT_EMAIL ?? "vendasweb01@centerfrios.com";
+
+export async function sendSalesAlert(
+  subject: string,
+  rows: Array<[string, string | number | null | undefined]>,
+): Promise<void> {
+  const resend = getResend();
+  if (!resend) return;
+  const esc = (s: string) =>
+    s.replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" })[c] ?? c);
+  const body = rows
+    .filter(([, v]) => v !== null && v !== undefined && v !== "")
+    .map(
+      ([k, v]) =>
+        `<tr><td style="padding:6px 12px;color:#555">${esc(k)}</td><td style="padding:6px 12px"><strong>${esc(String(v))}</strong></td></tr>`,
+    )
+    .join("");
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: [SALES_ALERT_TO],
+      subject,
+      html: `<table style="font-family:Arial,sans-serif;font-size:14px">${body}</table>`,
+    });
+    if (error) console.error("[email.server] sales alert error:", error);
+  } catch (err) {
+    console.error("[email.server] sales alert threw:", err);
+  }
+}

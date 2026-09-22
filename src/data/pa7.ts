@@ -12,6 +12,16 @@ import img24 from "@/assets/products/pa7-pro/24.png";
 import img27 from "@/assets/products/pa7-pro/27.png";
 import bivolt from "@/assets/products/pa7-pro/bivolt.png";
 import trava from "@/assets/products/pa7-pro/trava.png";
+import {
+  MAX_INSTALLMENTS,
+  PIX_DISCOUNT_RATE,
+  installmentValue,
+  pixPrice,
+  pixSavings,
+} from "@/lib/pricing";
+
+// Deve bater com PRODUCT_CATALOG em src/lib/catalog.server.ts.
+export const PA7_BASE_PRICE = 6299;
 
 export const PA7_IMAGES = {
   main,
@@ -46,13 +56,13 @@ export const PA7_GALLERY = [
 ];
 
 export const PA7_PRICE = {
-  // Preço de cartão (à prazo). PIX recebe desconto explícito de R$ 600,00.
-  amount: 6299,
-  pixAmount: 5699,
-  savings: 600,
-  installments: 12,
-  installmentValue: 524.91,
-  pixDiscountPct: 9.525,
+  // Preço de tabela (cartão, até 12x sem juros). PIX: 5% de desconto.
+  amount: PA7_BASE_PRICE,
+  pixAmount: pixPrice(PA7_BASE_PRICE),
+  savings: pixSavings(PA7_BASE_PRICE),
+  installments: MAX_INSTALLMENTS,
+  installmentValue: installmentValue(PA7_BASE_PRICE),
+  pixDiscountPct: PIX_DISCOUNT_RATE * 100,
 };
 
 export const PA7_HIGHLIGHTS = [
@@ -255,33 +265,6 @@ export const PA7_INCLUDED_DISCS = [
 ];
 
 
-export const PA7_USE_CASES = [
-  {
-    icon: "Pizza",
-    name: "Pizzaria",
-    discs: ["E1", "E3", "V", "Z8"],
-    desc: "Fatias finas de tomate, calabresa e cebola, e queijos ralados na medida certa.",
-  },
-  {
-    icon: "Beef",
-    name: "Hamburgueria",
-    discs: ["E2", "E3", "E8", "H10", "W3"],
-    desc: "Cebola caramelizada, picles, alface e batata em palitos para acompanhamentos premium.",
-  },
-  {
-    icon: "Salad",
-    name: "Buffet livre",
-    discs: ["E2", "E3", "E5", "GC8 PRO", "H10", "Z8"],
-    desc: "Saladas variadas, cubos uniformes para vinagrete e raspas decorativas em alta produção.",
-  },
-  {
-    icon: "Carrot",
-    name: "Seleta de legumes",
-    discs: ["E1", "E3", "KC10", "KC14", "W3", "Z5"],
-    desc: "Mix de legumes em cubos médios e grandes, com cortes ondulados e raladuras finas.",
-  },
-];
-
 export const PA7_FAQ = [
   {
     q: "O equipamento é bivolt?",
@@ -308,20 +291,15 @@ export const PA7_FAQ = [
     a: "Sim. Atendemos tanto pessoas físicas (CPF) quanto jurídicas (CNPJ). Toda venda acompanha Nota Fiscal Eletrônica (NF-e) integral emitida de acordo com os seus dados, garantindo total regularidade e tranquilidade para o seu negócio.",
   },
   {
-    q: "Como funciona a entrega?",
-    a: "Contamos com pronta entrega do maquinário base e despachamos para todo o Brasil através de transportadoras parceiras. O prazo final e o envio são programados e validados de acordo com a rota de entrega do seu município para garantir a máxima segurança da carga. Para clientes do estado de Alagoas (CEP iniciado em 57), o frete é cortesia CENTERFRIOS.",
+    q: "Qual é o valor do frete e como funciona a entrega?",
+    a: "Para todo o estado de Alagoas (CEP iniciado em 57) o frete é grátis. Para os demais estados, o frete é fixo de R$ 89,90 via transportadora parceira. Temos pronta entrega do equipamento, e o prazo final é confirmado pelo nosso time via WhatsApp logo após a compra, de acordo com a rota do seu município.",
   },
   {
-    q: "Posso parcelar?",
-    a: "Sim. O checkout aceita cartão de crédito em até 12x sem juros, além de PIX (com desconto).",
+    q: "Posso parcelar? Qual o desconto no PIX?",
+    a: "Sim. No cartão de crédito você parcela em até 12x sem juros de R$ 524,92 (total R$ 6.299,00). No PIX você paga à vista com 5% de desconto: R$ 5.984,05.",
+  },
+  {
+    q: "E se eu me arrepender da compra?",
+    a: "Compras feitas pelo site têm direito de arrependimento em até 7 dias após o recebimento, conforme o Código de Defesa do Consumidor (art. 49). Fale com a gente pelo WhatsApp que orientamos a devolução.",
   },
 ];
-
-export const PA7_BANK = {
-  bank: "Banco do Brasil",
-  agency: "0001-2",
-  account: "12345-6",
-  cnpj: "00.000.000/0001-00",
-  holder: "CENTERFRIOS Comércio Ltda.",
-  pixKey: "vendasweb01@centerfrios.com",
-};

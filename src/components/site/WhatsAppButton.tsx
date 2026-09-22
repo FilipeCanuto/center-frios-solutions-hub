@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { CONTACT } from "@/data/site";
+import { SALES_WHATSAPP, whatsappLink } from "@/data/site";
+import { trackWhatsappClick } from "@/lib/tracking";
 
 /**
  * Deferred floating WhatsApp CTA.
@@ -31,10 +32,11 @@ export function WhatsAppButton() {
 
   return (
     <a
-      href={CONTACT.whatsappHref}
+      href={whatsappLink(`Olá, ${SALES_WHATSAPP.name}! Vim pelo site da Center Frios.`)}
       target="_blank"
       rel="noreferrer"
-      aria-label="Falar no WhatsApp"
+      onClick={() => trackWhatsappClick("flutuante")}
+      aria-label={`Falar com a ${SALES_WHATSAPP.name} no WhatsApp`}
       data-floating-whatsapp
       className="floating-whatsapp fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-[var(--color-brand-whatsapp)] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-black/30 transition-all duration-300 hover:scale-105"
     >

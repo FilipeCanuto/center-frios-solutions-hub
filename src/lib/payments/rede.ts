@@ -19,6 +19,12 @@ export function normalizeExpYear(year: string): string {
   return d.length === 2 ? `20${d}` : d;
 }
 
+/** Parcelas válidas para a e-Rede: inteiro entre 1 e 12 (fora disso, à vista). */
+export function normalizeInstallments(n: number | null | undefined): number {
+  if (!Number.isInteger(n) || !n || n < 1 || n > 12) return 1;
+  return n;
+}
+
 export function toCents(amountBRL: number): number {
   if (!Number.isFinite(amountBRL) || amountBRL <= 0) {
     throw new Error(`Valor inválido para cobrança: ${amountBRL}`);
@@ -289,13 +295,15 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
 
   // Payload mínimo de venda direta — sem storageCard (Code 130) nem nós extras.
   // Apenas campos puros do Ordinary Transactional Cycle conforme manual e-Rede.
-  void input.installments;
+  // `installments` (2–12) é o parcelado lojista "sem juros"; à vista omite o campo.
   void input.softDescriptor;
+  const installments = normalizeInstallments(input.installments);
   const payload = {
     capture: true,
     kind: "credit",
     reference: input.orderId,
     amount: input.amountCents,
+    ...(installments > 1 ? { installments } : {}),
     cardholderName: sanitizedHolderName,
     cardNumber: onlyDigits(input.cardNumber),
     expirationMonth: onlyDigits(input.expirationMonth).padStart(2, "0"),
@@ -357,7 +365,12 @@ export async function chargeCreditCard(input: CreditChargeInput): Promise<RedeCh
         threeDSRequired: !!threeDS,
       });
     } else {
-      console.log("[rede] charge approved", { orderId: input.orderId, tid, httpStatus });
+      console.log("[rede] charge approved", {
+        orderId: input.orderId,
+        tid,
+        httpStatus,
+        installments,
+      });
     }
 
     return { approved, tid, returnCode, returnMessage, httpStatus, threeDS, raw };

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Mail, MapPin, Phone } from "lucide-react";
-import { CONTACT } from "@/data/site";
+import { CONTACT, SALES_WHATSAPP, STORE_WHATSAPP } from "@/data/site";
+import { HS98_LINK, PA7_LINK } from "@/lib/visibility";
 import { Logo } from "./Logo";
 
 export function Footer() {
@@ -8,7 +9,7 @@ export function Footer() {
     <footer className="mt-24 border-t border-[color:var(--steel)] bg-brushed-metal relative">
       <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-4">
         <div className="md:col-span-2">
-          <Link to="/" className="flex items-center">
+          <Link {...PA7_LINK} className="flex items-center" aria-label="Center Frios">
             <Logo size="md" />
           </Link>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
@@ -23,23 +24,13 @@ export function Footer() {
           </h4>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             <li>
-              <Link to="/produtos" className="transition-colors hover:text-accent">
-                Produtos
+              <Link {...PA7_LINK} className="transition-colors hover:text-accent">
+                Processador PA7 Pro
               </Link>
             </li>
             <li>
-              <Link to="/segmentos" className="transition-colors hover:text-accent">
-                Segmentos
-              </Link>
-            </li>
-            <li>
-              <Link to="/solucoes" className="transition-colors hover:text-accent">
-                Soluções
-              </Link>
-            </li>
-            <li>
-              <Link to="/contato" className="transition-colors hover:text-accent">
-                Contato
+              <Link {...HS98_LINK} className="transition-colors hover:text-accent">
+                Homogeneizadores HS-22 e HS-98
               </Link>
             </li>
           </ul>
@@ -52,8 +43,19 @@ export function Footer() {
           <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
             <li className="flex items-center gap-2">
               <Phone className="size-4 text-accent" />
+              <a
+                href={`https://wa.me/${SALES_WHATSAPP.number}`}
+                target="_blank"
+                rel="noreferrer"
+                className="transition-colors hover:text-foreground"
+              >
+                Vendas ({SALES_WHATSAPP.name}): {SALES_WHATSAPP.display}
+              </a>
+            </li>
+            <li className="flex items-center gap-2">
+              <Phone className="size-4 text-accent" />
               <a href={CONTACT.phoneHref} className="transition-colors hover:text-foreground">
-                {CONTACT.phone}
+                Loja / dúvidas: {STORE_WHATSAPP.display}
               </a>
             </li>
             <li className="flex items-center gap-2">
