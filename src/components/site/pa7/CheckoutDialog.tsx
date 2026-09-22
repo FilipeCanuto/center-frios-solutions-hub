@@ -14,22 +14,33 @@ import {
   QrCode,
   ShieldCheck,
   Truck,
-  Wallet,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PA7_BANK } from "@/data/pa7";
-import { processPayment } from "@/lib/payments.functions";
+import { getOrderStatus, processPayment } from "@/lib/payments.functions";
+import { submitQuote } from "@/lib/leads.functions";
 import { humanizeRedeError } from "@/lib/payments/error-messages";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  MAX_INSTALLMENTS,
+  computeTotals,
+  formatBRL,
+  isAlagoasCep,
+  shippingFor,
+} from "@/lib/pricing";
+import { SALES_WHATSAPP, whatsappLink } from "@/data/site";
+import { ecommerce, pushEvent, trackWhatsappClick, type TrackedItem } from "@/lib/tracking";
+
+export type CheckoutAddon = { code: string; label: string; price: number };
 
 type Props = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   product: { slug: string; name: string; image: string; price: number };
+  /** Acessórios opcionais selecionados na landing (cobrados junto). */
+  addons?: CheckoutAddon[];
 };
 
 // Maps internal product slugs to short GTM/URL product identifiers used
@@ -41,26 +52,88 @@ function toGtmProduct(slug: string): string {
   return slug;
 }
 
-function redirectToThankYou(slug: string, value: number) {
+function redirectToThankYou(slug: string, orderId: string, value: number, method: string) {
   if (typeof window === "undefined") return;
   const params = new URLSearchParams({
     product: toGtmProduct(slug),
+    order: orderId,
     value: value.toFixed(2),
+    method,
   });
   window.location.assign(`/obrigado?${params.toString()}`);
 }
 
+const digits = (v: string) => v.replace(/\D/g, "");
+
+/** Validação de CPF pelos dígitos verificadores. */
+function isValidCpf(raw: string): boolean {
+  const c = digits(raw);
+  if (c.length !== 11 || /^(\d)\1{10}$/.test(c)) return false;
+  const calc = (len: number) => {
+    let sum = 0;
+    for (let i = 0; i < len; i++) sum += Number(c[i]) * (len + 1 - i);
+    const r = (sum * 10) % 11;
+    return r === 10 ? 0 : r;
+  };
+  return calc(9) === Number(c[9]) && calc(10) === Number(c[10]);
+}
+
+// Máscaras leves aplicadas no onChange dos campos.
+const MASKS = {
+  phone: (v: string) => {
+    const d = digits(v).slice(0, 11);
+    if (d.length <= 2) return d;
+    if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+    return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  },
+  cpf: (v: string) =>
+    digits(v)
+      .slice(0, 11)
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2"),
+  cnpj: (v: string) =>
+    digits(v)
+      .slice(0, 14)
+      .replace(/(\d{2})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1/$2")
+      .replace(/(\d{4})(\d{1,2})$/, "$1-$2"),
+  cep: (v: string) => digits(v).slice(0, 8).replace(/(\d{5})(\d)/, "$1-$2"),
+};
+
+function masked(kind: keyof typeof MASKS) {
+  return (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.value = MASKS[kind](e.target.value);
+  };
+}
+
 const StepOne = z.object({
-  name: z.string().trim().min(2, "Informe seu nome"),
+  name: z.string().trim().min(2, "Informe seu nome completo"),
   email: z.string().trim().email("E-mail inválido"),
-  phone: z.string().trim().min(8, "Telefone inválido"),
+  phone: z
+    .string()
+    .trim()
+    .refine((v) => digits(v).length >= 10, "Informe o WhatsApp com DDD"),
   company: z.string().trim().optional(),
-  cnpj: z.string().trim().optional(),
-  cpf: z.string().trim().optional(),
+  cnpj: z
+    .string()
+    .trim()
+    .optional()
+    .refine((v) => !v || digits(v).length === 14, "CNPJ incompleto"),
+  cpf: z
+    .string()
+    .trim()
+    .optional()
+    .refine((v) => !v || isValidCpf(v), "CPF inválido"),
 });
 
 const StepTwo = z.object({
-  cep: z.string().trim().min(8, "CEP inválido"),
+  cep: z
+    .string()
+    .trim()
+    .refine((v) => digits(v).length === 8, "CEP inválido"),
   street: z.string().trim().min(2, "Endereço obrigatório"),
   number: z.string().trim().min(1, "Número obrigatório"),
   complement: z.string().trim().optional(),
@@ -69,11 +142,7 @@ const StepTwo = z.object({
   state: z.string().trim().min(2, "UF obrigatória").max(2),
 });
 
-function formatBRL(n: number) {
-  return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-export function CheckoutDialog({ open, onOpenChange, product }: Props) {
+export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Props) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [identity, setIdentity] = useState<z.infer<typeof StepOne> | null>(null);
   const [address, setAddress] = useState<z.infer<typeof StepTwo> | null>(null);
@@ -81,9 +150,14 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [cepDraft, setCepDraft] = useState("");
   const effectiveCep = (address?.cep ?? cepDraft).replace(/\D/g, "");
-  const isFreeShippingAL = effectiveCep.startsWith("57");
-  const shipping = isFreeShippingAL ? 0 : 89.9;
-  const shippingLabel = isFreeShippingAL ? "Grátis (Benefício Alagoas)" : formatBRL(shipping);
+  const cepKnown = effectiveCep.length === 8;
+  const isFreeShippingAL = isAlagoasCep(effectiveCep);
+  const shipping = cepKnown ? shippingFor(effectiveCep) : 0;
+  const shippingLabel = !cepKnown
+    ? "Grátis para Alagoas"
+    : isFreeShippingAL
+      ? "Grátis (Alagoas)"
+      : formatBRL(shipping);
 
   const [paymentMethod, setPaymentMethod] = useState<"pix" | "credit_card">("pix");
 
@@ -92,6 +166,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     qrCode: string;
     copiaCola: string;
     orderId: string;
+    total: number;
   } | null>(null);
   const [pixError, setPixError] = useState<string | null>(null);
 
@@ -100,7 +175,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
   const [cardholderName, setCardholderName] = useState("");
   const [expiryDate, setExpiryDate] = useState(""); // MM/AA
   const [securityCode, setSecurityCode] = useState("");
-  const [installments, setInstallments] = useState(1);
+  const [installments, setInstallments] = useState(MAX_INSTALLMENTS);
 
   // Polling to verify PIX payment confirmation in real-time
   useEffect(() => {
@@ -108,28 +183,24 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
 
     const interval = setInterval(async () => {
       try {
-        const { data: order } = await supabase
-          .from("orders")
-          .select("status")
-          .eq("id", pixResult.orderId)
-          .single();
+        const order = await getOrderStatus({ data: { orderId: pixResult.orderId } });
 
-        if (order && order.status === "paid") {
+        if (order.status === "paid") {
           clearInterval(interval);
           setStep(4);
           toast.success("Pagamento PIX confirmado com sucesso!");
-          redirectToThankYou(product.slug, product.price);
-        } else if (order && order.status === "failed") {
+          redirectToThankYou(product.slug, pixResult.orderId, order.total ?? pixResult.total, "pix");
+        } else if (order.status === "failed") {
           clearInterval(interval);
           toast.error("O pagamento falhou ou foi recusado pela operadora.");
         }
       } catch (err) {
         console.error("Erro ao verificar status do PIX:", err);
       }
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
-  }, [pixResult, product.slug, product.price]);
+  }, [pixResult, product.slug]);
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
@@ -150,10 +221,37 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     setSecurityCode(value.substring(0, 4));
   };
 
-  const subtotal = product.price;
-  const discountPix = useMemo(() => subtotal * 0.05, [subtotal]);
-  const total = subtotal + shipping;
-  const totalPix = subtotal - discountPix + shipping;
+  const subtotal = product.price + addons.reduce((acc, a) => acc + a.price, 0);
+  const cardTotals = useMemo(
+    () => computeTotals(subtotal, "credit_card", effectiveCep),
+    [subtotal, effectiveCep],
+  );
+  const pixTotals = useMemo(
+    () => computeTotals(subtotal, "pix", effectiveCep),
+    [subtotal, effectiveCep],
+  );
+  const discountPix = pixTotals.discount;
+  const total = cepKnown ? cardTotals.total : subtotal;
+  const totalPix = cepKnown ? pixTotals.total : subtotal - discountPix;
+
+  const trackedItems: TrackedItem[] = useMemo(
+    () => [
+      {
+        item_id: toGtmProduct(product.slug),
+        item_name: product.name,
+        price: product.price,
+        item_brand: "Skymsen",
+      },
+      ...addons.map((a) => ({ item_id: a.code, item_name: a.label, price: a.price })),
+    ],
+    [product.slug, product.name, product.price, addons],
+  );
+
+  // Funil: abertura do checkout.
+  useEffect(() => {
+    if (open) pushEvent("begin_checkout", ecommerce(subtotal, trackedItems));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   function reset() {
     setStep(1);
@@ -165,7 +263,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     setCardholderName("");
     setExpiryDate("");
     setSecurityCode("");
-    setInstallments(1);
+    setInstallments(MAX_INSTALLMENTS);
     setPaymentMethod("pix");
   }
 
@@ -184,6 +282,21 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     }
     setIdentity(parsed.data);
     setStep(2);
+
+    // Guarda o contato já na etapa 1: se o cliente abandonar o checkout,
+    // o time comercial consegue retomar a conversa pelo WhatsApp.
+    void submitQuote({
+      data: {
+        name: parsed.data.name,
+        email: parsed.data.email,
+        phone: parsed.data.phone,
+        company: parsed.data.company ?? "",
+        product_interest: [product.name, ...addons.map((a) => a.code)].join(" + "),
+        message: `Checkout iniciado — subtotal ${formatBRL(subtotal)}`,
+        source: `checkout-${toGtmProduct(product.slug)}`,
+      },
+    }).catch(() => {});
+    pushEvent("generate_lead", { lead_source: "checkout_step1", value: subtotal, currency: "BRL" });
   }
 
   async function lookupCep(cep: string, form: HTMLFormElement) {
@@ -198,6 +311,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
       (form.elements.namedItem("district") as HTMLInputElement).value = data.bairro || "";
       (form.elements.namedItem("city") as HTMLInputElement).value = data.localidade || "";
       (form.elements.namedItem("state") as HTMLInputElement).value = data.uf || "";
+      (form.elements.namedItem("number") as HTMLInputElement | null)?.focus();
     } catch {
       // silencioso
     } finally {
@@ -215,6 +329,14 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     }
     setAddress(parsed.data);
     setStep(3);
+    const shippingValue = shippingFor(parsed.data.cep);
+    pushEvent(
+      "add_shipping_info",
+      ecommerce(subtotal, trackedItems, {
+        shipping: shippingValue,
+        shipping_tier: isAlagoasCep(parsed.data.cep) ? "gratis_alagoas" : "transportadora",
+      }),
+    );
   }
 
   async function handlePayment(e?: React.FormEvent) {
@@ -234,6 +356,14 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
     const cleanCnpj = identity.cnpj ? identity.cnpj.replace(/\D/g, "") : undefined;
     const cleanCpf = identity.cpf ? identity.cpf.replace(/\D/g, "") : undefined;
     const cleanCep = address.cep.replace(/\D/g, "");
+    const addonCodes = addons.map((a) => a.code);
+
+    pushEvent(
+      "add_payment_info",
+      ecommerce(paymentMethod === "pix" ? totalPix : total, trackedItems, {
+        payment_type: paymentMethod === "pix" ? "pix" : `cartao_${installments}x`,
+      }),
+    );
 
     try {
       if (paymentMethod === "pix") {
@@ -254,8 +384,10 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
               city: address.city,
               state: address.state,
             },
+            customer_cpf: cleanCpf,
             product_slug: product.slug,
             payment_method: "pix",
+            addons: addonCodes,
           },
         });
 
@@ -264,6 +396,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
             qrCode: result.pix.qrCode,
             copiaCola: result.pix.copiaCola,
             orderId: result.orderId,
+            total: result.total ?? totalPix,
           });
           toast.success("QR Code do PIX gerado com sucesso!");
         } else {
@@ -306,12 +439,6 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
 
         const fullYear = `20${year}`;
 
-        if (!cleanCpf || cleanCpf.length !== 11) {
-          toast.error("Informe um CPF válido (obrigatório para autenticação 3DS).");
-          setSubmitting(false);
-          return;
-        }
-
         const result = await processPayment({
           data: {
             customer_name: identity.name,
@@ -331,6 +458,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
             },
             product_slug: product.slug,
             payment_method: "credit_card",
+            addons: addonCodes,
             card_data: {
               cardNumber: cleanCard,
               cardholderName: cardholderName.toUpperCase(),
@@ -359,7 +487,12 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
         if (result && result.success) {
           toast.success("Pagamento autorizado com sucesso!");
           setStep(4);
-          redirectToThankYou(product.slug, product.price);
+          redirectToThankYou(
+            product.slug,
+            result.orderId,
+            result.total ?? total,
+            `cartao_${installments}x`,
+          );
         } else {
           throw new Error("O pagamento foi recusado ou falhou.");
         }
@@ -414,14 +547,14 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
           {/* MAIN */}
           <div className="flex flex-col overflow-y-auto">
             {/* Stepper */}
-            <div className="sticky top-0 z-10 border-b border-white/10 bg-background/90 px-6 py-4 backdrop-blur">
-              <div className="flex items-center gap-2 text-xs">
+            <div className="sticky top-0 z-10 border-b border-white/10 bg-background/95 px-4 py-3 backdrop-blur sm:px-6 sm:py-4">
+              <div className="flex items-center gap-1.5 text-xs sm:gap-2">
                 {[
-                  { n: 1, label: "Identificação" },
+                  { n: 1, label: "Dados" },
                   { n: 2, label: "Entrega" },
                   { n: 3, label: "Pagamento" },
                 ].map((s, i) => (
-                  <div key={s.n} className="flex items-center gap-2">
+                  <div key={s.n} className="flex items-center gap-1.5 sm:gap-2">
                     <span
                       className={`grid size-6 place-items-center rounded-full border text-[11px] font-semibold ${
                         step > s.n
@@ -440,76 +573,122 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                     >
                       {s.label}
                     </span>
-                    {i < 2 && <span className="mx-2 h-px w-6 bg-white/10 md:w-10" />}
+                    {i < 2 && <span className="mx-1 h-px w-4 bg-white/10 sm:mx-2 md:w-10" />}
                   </div>
                 ))}
               </div>
+              {/* Resumo compacto — no mobile a coluna lateral fica oculta */}
+              <div className="mt-3 flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-2.5 md:hidden">
+                <img
+                  src={product.image}
+                  alt=""
+                  className="size-11 shrink-0 rounded-lg bg-white/5 object-contain p-1"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-medium text-foreground">{product.name}</p>
+                  {addons.length > 0 && (
+                    <p className="truncate text-[11px] text-muted-foreground">
+                      + {addons.map((a) => a.code).join(", ")}
+                    </p>
+                  )}
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-foreground">{formatBRL(totalPix)}</p>
+                  <p className="text-[11px] text-muted-foreground">no PIX</p>
+                </div>
+              </div>
             </div>
 
-            <div className="px-6 py-6 md:px-8 md:py-8">
+            <div className="px-4 py-5 sm:px-6 md:px-8 md:py-8">
               {step === 1 && (
-                <form onSubmit={handleStepOne} className="grid gap-4">
+                <form onSubmit={handleStepOne} className="grid gap-4" noValidate>
                   <h2 className="text-xl font-semibold text-foreground">Seus dados</h2>
                   <p className="text-sm text-muted-foreground">
-                    Compra direta B2B com emissão de nota fiscal e pagamento seguro.
+                    Nota fiscal para CPF ou CNPJ. Usamos seu WhatsApp para combinar a entrega.
                   </p>
                   <div className="grid gap-2">
                     <Label htmlFor="name">Nome completo *</Label>
-                    <Input id="name" name="name" required defaultValue={identity?.name} />
+                    <Input
+                      id="name"
+                      name="name"
+                      required
+                      autoComplete="name"
+                      defaultValue={identity?.name}
+                    />
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-2">
+                      <Label htmlFor="phone">WhatsApp com DDD *</Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        inputMode="tel"
+                        autoComplete="tel-national"
+                        placeholder="(82) 99999-9999"
+                        required
+                        onChange={masked("phone")}
+                        defaultValue={identity?.phone}
+                      />
+                    </div>
                     <div className="grid gap-2">
                       <Label htmlFor="email">E-mail *</Label>
                       <Input
                         id="email"
                         name="email"
                         type="email"
+                        inputMode="email"
+                        autoComplete="email"
                         required
                         defaultValue={identity?.email}
                       />
                     </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="phone">Telefone / WhatsApp *</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        required
-                        defaultValue={identity?.phone}
-                      />
-                    </div>
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="grid gap-2">
-                      <Label htmlFor="company">Empresa</Label>
-                      <Input id="company" name="company" defaultValue={identity?.company} />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="cnpj">CNPJ</Label>
-                      <Input
-                        id="cnpj"
-                        name="cnpj"
-                        placeholder="00.000.000/0000-00"
-                        defaultValue={identity?.cnpj}
-                      />
-                    </div>
                   </div>
                   <div className="grid gap-2">
-                      <Label htmlFor="cpf">CPF do pagador</Label>
+                    <Label htmlFor="cpf">CPF</Label>
                     <Input
                       id="cpf"
                       name="cpf"
+                      inputMode="numeric"
                       placeholder="000.000.000-00"
+                      onChange={masked("cpf")}
                       defaultValue={identity?.cpf}
                     />
-                    <p className="text-xs text-muted-foreground">
-                      Usado na autenticação do cartão e na conciliação do pedido.
-                    </p>
                   </div>
-                  <Button type="submit" className="mt-2 rounded-full" size="lg">
+                  <details className="group rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 open:pb-4">
+                    <summary className="cursor-pointer text-sm font-medium text-foreground">
+                      Comprar com CNPJ (opcional)
+                    </summary>
+                    <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                      <div className="grid gap-2">
+                        <Label htmlFor="company">Razão social / Empresa</Label>
+                        <Input
+                          id="company"
+                          name="company"
+                          autoComplete="organization"
+                          defaultValue={identity?.company}
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="cnpj">CNPJ</Label>
+                        <Input
+                          id="cnpj"
+                          name="cnpj"
+                          inputMode="numeric"
+                          placeholder="00.000.000/0000-00"
+                          onChange={masked("cnpj")}
+                          defaultValue={identity?.cnpj}
+                        />
+                      </div>
+                    </div>
+                  </details>
+                  <Button type="submit" className="mt-2 h-12 rounded-full" size="lg">
                     Continuar para entrega
                     <ArrowRight className="ml-2 size-4" />
                   </Button>
+                  <p className="flex items-center justify-center gap-1.5 text-center text-[12px] text-muted-foreground">
+                    <Lock className="size-3.5" /> Seus dados são usados apenas para este pedido.
+                  </p>
                 </form>
               )}
 
@@ -537,6 +716,10 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                           name="cep"
                           required
                           maxLength={9}
+                          inputMode="numeric"
+                          autoComplete="postal-code"
+                          placeholder="57000-000"
+                          onChange={masked("cep")}
                           defaultValue={address?.cep}
                         />
                         {cepLoading && (
@@ -590,10 +773,12 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                       <Truck className="size-5 text-accent" />
                       <div className="flex-1">
                         <p className="text-sm font-medium text-foreground">
-                          Transportadora parceira
+                          {isFreeShippingAL ? "Entrega grátis em Alagoas" : "Transportadora parceira"}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Despacho para todo o Brasil · prazo validado pela rota do município
+                          {isFreeShippingAL
+                            ? "Pronta entrega · prazo confirmado pelo nosso time no WhatsApp"
+                            : "Frete fixo para outros estados · prazo confirmado no WhatsApp"}
                         </p>
                       </div>
                       <span
@@ -635,11 +820,11 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                     <TabsList className="grid w-full grid-cols-2">
                       <TabsTrigger value="pix">
                         <QrCode className="mr-1.5 size-4" />
-                        PIX (5% Desconto)
+                        PIX · 5% off
                       </TabsTrigger>
                       <TabsTrigger value="credit_card">
                         <CreditCard className="mr-1.5 size-4" />
-                        Cartão de Crédito
+                        Cartão até 12x
                       </TabsTrigger>
                     </TabsList>
 
@@ -655,11 +840,11 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                                 Pagamento Instantâneo PIX
                               </h3>
                               <p className="text-xs text-accent font-semibold uppercase tracking-wider mt-1">
-                                5% de Desconto Exclusivo
+                                5% de desconto · economia de {formatBRL(discountPix)}
                               </p>
                               <p className="text-sm text-muted-foreground mt-2 max-w-sm">
-                                O faturamento e liberação do pedido ocorrem imediatamente após a
-                                confirmação do PIX pela e-Rede.
+                                Gere o QR Code, pague no app do seu banco e a confirmação aparece
+                                aqui automaticamente.
                               </p>
                             </div>
                             <div className="border-t border-white/10 pt-4 mt-2 w-full flex flex-col items-center">
@@ -824,8 +1009,8 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                               onChange={(e) => setInstallments(Number(e.target.value))}
                               className="select-field"
                             >
-                              {Array.from({ length: 12 }, (_, i) => {
-                                const count = i + 1;
+                              {Array.from({ length: MAX_INSTALLMENTS }, (_, i) => {
+                                const count = MAX_INSTALLMENTS - i;
                                 const val = total / count;
                                 return (
                                   <option
@@ -833,7 +1018,9 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                                     value={count}
                                     className="bg-background text-foreground"
                                   >
-                                    {count}x de {formatBRL(val)} sem juros
+                                    {count === 1
+                                      ? `À vista no cartão — ${formatBRL(total)}`
+                                      : `${count}x de ${formatBRL(val)} sem juros`}
                                   </option>
                                 );
                               })}
@@ -843,7 +1030,11 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                           <PayCta
                             type="submit"
                             loading={submitting}
-                            label={`Pagar ${formatBRL(total)}`}
+                            label={
+                              installments > 1
+                                ? `Pagar ${installments}x de ${formatBRL(total / installments)}`
+                                : `Pagar ${formatBRL(total)}`
+                            }
                           />
                         </fieldset>
                       </form>
@@ -860,7 +1051,7 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                       <ArrowLeft className="mr-2 size-4" /> Voltar
                     </Button>
                     <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                      <ShieldCheck className="size-3.5 text-accent" /> Ambiente certificado
+                      <ShieldCheck className="size-3.5 text-accent" /> Pagamento seguro e-Rede
                     </p>
                   </div>
                 </div>
@@ -879,8 +1070,15 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                   </p>
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                     <Button asChild className="rounded-full" size="lg">
-                      <a href="https://wa.me/558232232497" target="_blank" rel="noreferrer">
-                        Falar pelo WhatsApp
+                      <a
+                        href={whatsappLink(
+                          `Olá, ${SALES_WHATSAPP.name}! Acabei de concluir a compra do ${product.name} pelo site.`,
+                        )}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => trackWhatsappClick("checkout_sucesso")}
+                      >
+                        Falar com a {SALES_WHATSAPP.name} no WhatsApp
                       </a>
                     </Button>
                     <Button
@@ -913,6 +1111,17 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                 </div>
               </div>
 
+              {addons.length > 0 && (
+                <ul className="grid gap-1.5 text-xs">
+                  {addons.map((a) => (
+                    <li key={a.code} className="flex justify-between gap-3 text-muted-foreground">
+                      <span>+ {a.label}</span>
+                      <span className="text-foreground">{formatBRL(a.price)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
               <dl className="grid gap-2 border-t border-white/10 pt-4 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Subtotal</dt>
@@ -936,7 +1145,8 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                 </p>
                 <p className="mt-1.5 text-3xl font-bold text-foreground tracking-tight">{formatBRL(totalPix)}</p>
                 <p className="mt-1 text-[11px] text-muted-foreground">
-                  no PIX · ou {formatBRL(total)} em até 12x sem juros no cartão.
+                  no PIX · ou {formatBRL(total)} em até {MAX_INSTALLMENTS}x de{" "}
+                  {formatBRL(total / MAX_INSTALLMENTS)} sem juros no cartão.
                 </p>
               </div>
 
@@ -946,13 +1156,16 @@ export function CheckoutDialog({ open, onOpenChange, product }: Props) {
                 </p>
                 <div className="mt-3 grid gap-2 text-xs text-muted-foreground">
                   <p className="flex items-center gap-2">
-                    <ShieldCheck className="size-4 text-accent" /> Compra protegida · PCI-DSS
+                    <ShieldCheck className="size-4 text-accent" /> Pagamento processado pela e-Rede
                   </p>
                   <p className="flex items-center gap-2">
-                    <Lock className="size-4 text-accent" /> Conexão SSL 256 bits
+                    <Lock className="size-4 text-accent" /> Conexão criptografada (HTTPS)
                   </p>
                   <p className="flex items-center gap-2">
-                    <Truck className="size-4 text-accent" /> Entrega em todo Brasil
+                    <Truck className="size-4 text-accent" /> Frete grátis para Alagoas
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <CheckCircle2 className="size-4 text-accent" /> Nota fiscal e garantia de 12 meses
                   </p>
                 </div>
               </div>
@@ -968,11 +1181,11 @@ function TrustStrip() {
   return (
     <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[11px] text-muted-foreground">
       <span className="inline-flex items-center gap-1.5">
-        <Lock className="size-3.5 text-accent" /> SSL 256-bit
+        <Lock className="size-3.5 text-accent" /> Conexão segura
       </span>
       <span className="size-1 rounded-full bg-white/15" aria-hidden />
       <span className="inline-flex items-center gap-1.5">
-        <ShieldCheck className="size-3.5 text-accent" /> PCI-DSS
+        <ShieldCheck className="size-3.5 text-accent" /> Nota fiscal
       </span>
       <span className="size-1 rounded-full bg-white/15" aria-hidden />
       <span className="inline-flex items-center gap-1.5">
@@ -1012,36 +1225,6 @@ function PayCta({
         label
       )}
     </Button>
-  );
-}
-
-function QrPlaceholder() {
-  // SVG decorativo — não é um QR real
-  return (
-    <svg viewBox="0 0 21 21" className="h-40 w-40">
-      {Array.from({ length: 21 * 21 }).map((_, i) => {
-        const x = i % 21;
-        const y = Math.floor(i / 21);
-        const corner = (x < 7 && y < 7) || (x > 13 && y < 7) || (x < 7 && y > 13);
-        const seed = (x * 31 + y * 17) % 7;
-        const fill = corner
-          ? x === 0 ||
-            x === 6 ||
-            x === 14 ||
-            x === 20 ||
-            y === 0 ||
-            y === 6 ||
-            y === 14 ||
-            y === 20 ||
-            (x >= 2 && x <= 4 && y >= 2 && y <= 4) ||
-            (x >= 16 && x <= 18 && y >= 2 && y <= 4) ||
-            (x >= 2 && x <= 4 && y >= 16 && y <= 18)
-          : seed < 3;
-        return fill ? (
-          <rect key={i} x={x} y={y} width={1} height={1} fill="var(--color-foreground)" />
-        ) : null;
-      })}
-    </svg>
   );
 }
 
@@ -1097,7 +1280,12 @@ function PixWhatsAppFallback({
       });
     }
 
-    window.open(`https://wa.me/558232232497?text=${message}`, "_blank", "noopener,noreferrer");
+    trackWhatsappClick("checkout_pix_fallback");
+    window.open(
+      `https://wa.me/${SALES_WHATSAPP.number}?text=${message}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
   }
 
   return (

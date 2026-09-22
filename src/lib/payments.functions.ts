@@ -9,11 +9,8 @@ import {
   sanitizeRawForStorage,
   toCents,
 } from "@/lib/payments/rede";
-import {
-  FIXED_SHIPPING_PRICE,
-  PRODUCT_CATALOG,
-  getCatalogProduct,
-} from "@/lib/catalog.server";
+import { PRODUCT_CATALOG, getCatalogProduct, resolveAddons } from "@/lib/catalog.server";
+import { computeTotals } from "@/lib/pricing";
 import { sendOrderConfirmation } from "@/lib/email.server";
 
 import { rateLimit, rateLimitDb } from "@/lib/rate-limit.server";
@@ -53,6 +50,8 @@ const PaymentSchema = z.object({
     Object.keys(PRODUCT_CATALOG) as [string, ...string[]],
   ),
   payment_method: z.enum(["pix", "credit_card"]),
+  // Códigos de acessórios opcionais (discos/grades); preços vêm do catálogo.
+  addons: z.array(z.string().trim().max(12)).max(12).optional(),
   card_data: z
     .object({
       cardNumber: z.string().min(13).max(25),
@@ -88,16 +87,16 @@ export const processPayment = createServerFn({ method: "POST" })
     // Authoritative product lookup — never trust client-supplied prices.
     const catalog = getCatalogProduct(data.product_slug);
     if (!catalog) throw new Error("Produto inválido.");
-    const productName = catalog.name;
-    const productPrice = catalog.price;
-    // CENTERFRIOS — frete grátis para Alagoas (CEP iniciando com 57).
-    const cepDigits = onlyDigits(data.shipping_address.cep);
-    const isAlagoas = cepDigits.startsWith("57");
-    const shippingPrice = isAlagoas ? 0 : FIXED_SHIPPING_PRICE;
-
-    const subtotal = productPrice;
-    const discountPix = data.payment_method === "pix" ? subtotal * 0.05 : 0;
-    const total = subtotal - discountPix + shippingPrice;
+    const addons = resolveAddons(catalog, data.addons);
+    const productName = addons.length
+      ? `${catalog.name} + ${addons.map((a) => a.name).join(" + ")}`
+      : catalog.name;
+    const productPrice = catalog.price + addons.reduce((acc, a) => acc + a.price, 0);
+    // Frete grátis para Alagoas (CEP 57); desconto PIX de 5% sobre os itens.
+    const {
+      shipping: shippingPrice,
+      total,
+    } = computeTotals(productPrice, data.payment_method, data.shipping_address.cep);
 
     const cleanPhone = onlyDigits(data.customer_phone);
     const cleanCnpj = data.customer_cnpj ? onlyDigits(data.customer_cnpj) : null;
@@ -131,10 +130,9 @@ export const processPayment = createServerFn({ method: "POST" })
     if (data.payment_method === "credit_card") {
       if (!data.card_data) throw new Error("Dados do cartão ausentes.");
       if (!data.three_ds) throw new Error("Dados de autenticação 3DS ausentes.");
-      if (!data.customer_cpf) {
-        throw new Error("CPF do portador é obrigatório para autenticação 3DS.");
-      }
 
+      // 3DS está desativado no PV (ver rede.ts); CPF segue opcional e só
+      // alimenta o bloco 3DS e o documento de faturamento.
       const cleanCpf = onlyDigits(data.customer_cpf);
       const cleanZip = onlyDigits(data.shipping_address.cep);
       const cd = data.card_data;
@@ -193,14 +191,14 @@ export const processPayment = createServerFn({ method: "POST" })
             productName,
             totalPaid: total,
             paymentMethod: "Cartão de crédito",
-            billingDocument: cleanCnpj ?? cleanCpf ?? undefined,
+            billingDocument: cleanCnpj ?? (cleanCpf || undefined),
             shippingCity: data.shipping_address.city,
             shippingState: data.shipping_address.state,
           });
         } catch (e) {
           console.error("[processPayment] confirmation email failed:", e);
         }
-        return { success: true, orderId: order.id, status: "paid" as const };
+        return { success: true, orderId: order.id, status: "paid" as const, total };
       }
 
 
@@ -246,9 +244,31 @@ export const processPayment = createServerFn({ method: "POST" })
       success: true,
       orderId: order.id,
       status: "pending" as const,
+      total,
       pix: {
         qrCode: pix.qrCodeBase64,
         copiaCola: pix.qrCodeString,
       },
+    };
+  });
+
+// Polling de status do pedido (PIX). A RLS de `orders` só libera leitura para
+// admins, então o navegador consulta por aqui: devolve apenas o status de um
+// pedido cujo UUID (não adivinhável) o próprio cliente recebeu.
+export const getOrderStatus = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => z.object({ orderId: z.string().uuid() }).parse(input))
+  .handler(async ({ data }) => {
+    const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
+    if (!rateLimit(`status:ip:${ip}`, { limit: 60, windowMs: 60_000 }).ok) {
+      return { status: "pending" as const };
+    }
+    const { data: order } = await supabaseAdmin
+      .from("orders")
+      .select("status, total_price")
+      .eq("id", data.orderId)
+      .maybeSingle();
+    return {
+      status: (order?.status ?? "pending") as string,
+      total: order ? Number(order.total_price) : null,
     };
   });
