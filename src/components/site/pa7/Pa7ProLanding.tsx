@@ -286,7 +286,7 @@ export function Pa7ProLanding() {
                 <Truck className="mt-0.5 size-5 shrink-0 text-emerald-400" />
                 <p className="text-sm text-emerald-100">
                   <strong className="text-emerald-300">Frete grátis para todo o estado de Alagoas.</strong>{" "}
-                  Pronta entrega. Demais estados: R$ 89,90.
+                  Pronta entrega. Demais estados: frete calculado pelo CEP no checkout.
                 </p>
               </div>
 

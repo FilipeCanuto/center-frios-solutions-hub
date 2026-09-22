@@ -153,6 +153,13 @@ export function humanizeRedeError(input: {
 
   if (payload.kind === "rate_limit") return RATE_LIMIT;
   if (payload.kind === "pix_failed") return PIX_FAILED;
+  if (payload.kind === "shipping_unavailable") {
+    return {
+      title: "Frete",
+      message: payload.message ?? "Não foi possível calcular o frete. Volte à etapa de entrega.",
+      category: "invalid_input",
+    };
+  }
 
   // Erros internos da Rede que não devem chegar ao usuário com detalhe.
   if (payload.code === "203" || payload.code === "253") {

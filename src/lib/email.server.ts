@@ -26,6 +26,8 @@ export interface OrderConfirmationDetails {
   billingDocument?: string;
   shippingCity?: string;
   shippingState?: string;
+  /** Ex.: "Frete grátis (Alagoas)" ou "Jadlog .Package — R$ 312,40 · até 6 dias úteis". */
+  shippingNote?: string;
 }
 
 const BRL = (v: number) =>
@@ -99,6 +101,14 @@ function buildHtml(d: OrderConfirmationDetails): string {
                       ? `<tr>
                     <td style="padding:14px 16px;border-bottom:1px solid #1f242c;font-size:13px;color:#a4adba;">Destino</td>
                     <td style="padding:14px 16px;border-bottom:1px solid #1f242c;font-size:13px;color:#e6e9ef;text-align:right;">${safe(d.shippingCity ?? "")}${d.shippingCity && d.shippingState ? " — " : ""}${safe(d.shippingState ?? "")}</td>
+                  </tr>`
+                      : ""
+                  }
+                  ${
+                    d.shippingNote
+                      ? `<tr>
+                    <td style="padding:14px 16px;border-bottom:1px solid #1f242c;font-size:13px;color:#a4adba;">Frete</td>
+                    <td style="padding:14px 16px;border-bottom:1px solid #1f242c;font-size:13px;color:#e6e9ef;text-align:right;">${safe(d.shippingNote)}</td>
                   </tr>`
                       : ""
                   }

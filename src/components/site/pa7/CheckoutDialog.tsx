@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getOrderStatus, processPayment } from "@/lib/payments.functions";
+import { getOrderStatus, getShippingQuotes, processPayment } from "@/lib/payments.functions";
 import { submitQuote } from "@/lib/leads.functions";
 import { humanizeRedeError } from "@/lib/payments/error-messages";
 import {
@@ -28,8 +28,9 @@ import {
   computeTotals,
   formatBRL,
   isAlagoasCep,
-  shippingFor,
 } from "@/lib/pricing";
+
+type ShippingQuote = { id: string; carrier: string; service: string; price: number; days: number | null };
 import { SALES_WHATSAPP, whatsappLink } from "@/data/site";
 import { ecommerce, pushEvent, trackWhatsappClick, type TrackedItem } from "@/lib/tracking";
 
@@ -152,12 +153,22 @@ export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Pro
   const effectiveCep = (address?.cep ?? cepDraft).replace(/\D/g, "");
   const cepKnown = effectiveCep.length === 8;
   const isFreeShippingAL = isAlagoasCep(effectiveCep);
-  const shipping = cepKnown ? shippingFor(effectiveCep) : 0;
+  // Cotação de frete (Melhor Envio no servidor; Alagoas sempre grátis).
+  const [quotes, setQuotes] = useState<ShippingQuote[] | null>(null);
+  const [quoteLoading, setQuoteLoading] = useState(false);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [quoteId, setQuoteId] = useState<string | null>(null);
+  const selectedQuote = quotes?.find((q) => q.id === quoteId) ?? null;
+  const shipping = selectedQuote?.price ?? 0;
   const shippingLabel = !cepKnown
     ? "Grátis para Alagoas"
     : isFreeShippingAL
       ? "Grátis (Alagoas)"
-      : formatBRL(shipping);
+      : selectedQuote
+        ? formatBRL(selectedQuote.price)
+        : quoteLoading
+          ? "Calculando…"
+          : "Informe o CEP";
 
   const [paymentMethod, setPaymentMethod] = useState<"pix" | "credit_card">("pix");
 
@@ -223,12 +234,12 @@ export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Pro
 
   const subtotal = product.price + addons.reduce((acc, a) => acc + a.price, 0);
   const cardTotals = useMemo(
-    () => computeTotals(subtotal, "credit_card", effectiveCep),
-    [subtotal, effectiveCep],
+    () => computeTotals(subtotal, "credit_card", shipping),
+    [subtotal, shipping],
   );
   const pixTotals = useMemo(
-    () => computeTotals(subtotal, "pix", effectiveCep),
-    [subtotal, effectiveCep],
+    () => computeTotals(subtotal, "pix", shipping),
+    [subtotal, shipping],
   );
   const discountPix = pixTotals.discount;
   const total = cepKnown ? cardTotals.total : subtotal;
@@ -265,6 +276,9 @@ export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Pro
     setSecurityCode("");
     setInstallments(MAX_INSTALLMENTS);
     setPaymentMethod("pix");
+    setQuotes(null);
+    setQuoteId(null);
+    setQuoteError(null);
   }
 
   function handleClose(v: boolean) {
@@ -299,9 +313,32 @@ export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Pro
     pushEvent("generate_lead", { lead_source: "checkout_step1", value: subtotal, currency: "BRL" });
   }
 
+  async function fetchQuotes(cep: string) {
+    setQuoteLoading(true);
+    setQuoteError(null);
+    setQuotes(null);
+    setQuoteId(null);
+    try {
+      const res = await getShippingQuotes({
+        data: { cep, product_slug: product.slug, addons: addons.map((a) => a.code) },
+      });
+      if (res.ok) {
+        setQuotes(res.quotes);
+        setQuoteId(res.quotes[0]?.id ?? null); // mais barato pré-selecionado
+      } else {
+        setQuoteError(res.message);
+      }
+    } catch {
+      setQuoteError("Não foi possível calcular o frete agora.");
+    } finally {
+      setQuoteLoading(false);
+    }
+  }
+
   async function lookupCep(cep: string, form: HTMLFormElement) {
     const clean = cep.replace(/\D/g, "");
     if (clean.length !== 8) return;
+    void fetchQuotes(clean);
     setCepLoading(true);
     try {
       const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
@@ -327,14 +364,23 @@ export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Pro
       toast.error(parsed.error.issues[0]?.message ?? "Verifique os campos.");
       return;
     }
+    if (!selectedQuote) {
+      toast.error(
+        quoteLoading
+          ? "Aguarde o cálculo do frete."
+          : (quoteError ?? "Escolha uma opção de frete para continuar."),
+      );
+      return;
+    }
     setAddress(parsed.data);
     setStep(3);
-    const shippingValue = shippingFor(parsed.data.cep);
     pushEvent(
       "add_shipping_info",
       ecommerce(subtotal, trackedItems, {
-        shipping: shippingValue,
-        shipping_tier: isAlagoasCep(parsed.data.cep) ? "gratis_alagoas" : "transportadora",
+        shipping: selectedQuote.price,
+        shipping_tier: isAlagoasCep(parsed.data.cep)
+          ? "gratis_alagoas"
+          : `${selectedQuote.carrier} ${selectedQuote.service}`,
       }),
     );
   }
@@ -388,6 +434,7 @@ export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Pro
             product_slug: product.slug,
             payment_method: "pix",
             addons: addonCodes,
+            shipping_service_id: selectedQuote?.id ?? "",
           },
         });
 
@@ -459,6 +506,7 @@ export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Pro
             product_slug: product.slug,
             payment_method: "credit_card",
             addons: addonCodes,
+            shipping_service_id: selectedQuote?.id ?? "",
             card_data: {
               cardNumber: cleanCard,
               cardholderName: cardholderName.toUpperCase(),
@@ -768,27 +816,86 @@ export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Pro
                     </div>
                   </div>
 
-                  <div className="mt-2 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-                    <div className="flex items-center gap-3">
-                      <Truck className="size-5 text-accent" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground">
-                          {isFreeShippingAL ? "Entrega grátis em Alagoas" : "Transportadora parceira"}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {isFreeShippingAL
-                            ? "Pronta entrega · prazo confirmado pelo nosso time no WhatsApp"
-                            : "Frete fixo para outros estados · prazo confirmado no WhatsApp"}
-                        </p>
+                  <fieldset className="mt-2 grid gap-2">
+                    <legend className="mb-2 flex items-center gap-2 text-sm font-medium text-foreground">
+                      <Truck className="size-4 text-accent" /> Frete
+                    </legend>
+                    {!cepKnown && (
+                      <p className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-muted-foreground">
+                        Digite o CEP para calcular. Em Alagoas a entrega é grátis.
+                      </p>
+                    )}
+                    {cepKnown && quoteLoading && (
+                      <p className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-muted-foreground">
+                        <Loader2 className="size-4 animate-spin" /> Calculando o frete para o seu CEP…
+                      </p>
+                    )}
+                    {cepKnown && !quoteLoading && quoteError && (
+                      <div className="grid gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-100">
+                        <p>{quoteError}</p>
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => fetchQuotes(effectiveCep)}
+                          >
+                            Tentar de novo
+                          </Button>
+                          <Button asChild size="sm" variant="outline">
+                            <a
+                              href={whatsappLink(
+                                `Olá, ${SALES_WHATSAPP.name}! Quero comprar o ${product.name} e preciso do frete para o CEP ${effectiveCep}.`,
+                              )}
+                              target="_blank"
+                              rel="noreferrer"
+                              onClick={() => trackWhatsappClick("checkout_frete_erro")}
+                            >
+                              Calcular com a {SALES_WHATSAPP.name}
+                            </a>
+                          </Button>
+                        </div>
                       </div>
-                      <span
-                        className={`text-sm font-semibold ${isFreeShippingAL ? "text-emerald-400" : "text-foreground"}`}
-                      >
-                        {shippingLabel}
-                      </span>
-                    </div>
-                  </div>
-
+                    )}
+                    {cepKnown &&
+                      !quoteLoading &&
+                      quotes?.map((q) => (
+                        <label
+                          key={q.id}
+                          className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-colors ${
+                            quoteId === q.id
+                              ? "border-accent/60 bg-accent/10"
+                              : "border-white/10 bg-white/[0.03] hover:border-white/25"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="shipping_option"
+                            value={q.id}
+                            checked={quoteId === q.id}
+                            onChange={() => setQuoteId(q.id)}
+                            className="size-4 accent-[color:var(--electric)]"
+                          />
+                          <span className="flex-1">
+                            <span className="block text-sm font-medium text-foreground">
+                              {q.price === 0 ? q.service : `${q.carrier} · ${q.service}`}
+                            </span>
+                            <span className="block text-xs text-muted-foreground">
+                              {q.price === 0
+                                ? "Pronta entrega · prazo confirmado no WhatsApp"
+                                : q.days
+                                  ? `Até ${q.days} dias úteis após o despacho`
+                                  : "Prazo informado após o despacho"}
+                            </span>
+                          </span>
+                          <span
+                            className={`text-sm font-semibold ${q.price === 0 ? "text-emerald-400" : "text-foreground"}`}
+                          >
+                            {q.price === 0 ? "Grátis" : formatBRL(q.price)}
+                          </span>
+                        </label>
+                      ))}
+                  </fieldset>
 
                   <div className="flex items-center justify-between gap-3 pt-2">
                     <Button
@@ -1147,6 +1254,7 @@ export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Pro
                 <p className="mt-1 text-[11px] text-muted-foreground">
                   no PIX · ou {formatBRL(total)} em até {MAX_INSTALLMENTS}x de{" "}
                   {formatBRL(total / MAX_INSTALLMENTS)} sem juros no cartão.
+                  {selectedQuote && selectedQuote.price > 0 && ` Inclui frete ${selectedQuote.carrier}.`}
                 </p>
               </div>
 

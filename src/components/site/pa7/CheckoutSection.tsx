@@ -82,7 +82,7 @@ export function CheckoutSection({
 
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                { icon: Truck, title: "Frete grátis para Alagoas", desc: "Demais estados: frete fixo de R$ 89,90" },
+                { icon: Truck, title: "Frete grátis para Alagoas", desc: "Demais estados: frete calculado pelo CEP" },
                 { icon: ShieldCheck, title: "Compra segura", desc: "Pagamento e-Rede e nota fiscal" },
                 { icon: CreditCard, title: "Até 12x Sem Juros", desc: "Parcelamento facilitado no cartão" },
                 { icon: Check, title: "Garantia 12 Meses", desc: "Suporte técnico próprio em campo" },

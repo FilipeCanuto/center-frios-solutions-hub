@@ -5,8 +5,8 @@
 export const PIX_DISCOUNT_RATE = 0.05;
 export const MAX_INSTALLMENTS = 12;
 
-// Frete fixo fora de Alagoas até existir cálculo por CEP.
-export const FIXED_SHIPPING_PRICE = 89.9;
+// Frete: grátis para Alagoas (CEP 57). Demais estados: cotação por CEP
+// (Melhor Envio, ver shipping.server.ts) somada ao total do pagamento.
 
 export type PaymentMethod = "pix" | "credit_card";
 
@@ -19,10 +19,6 @@ export function onlyDigits(v: string | null | undefined): string {
 /** CEP de Alagoas (57xxx-xxx) tem frete grátis. */
 export function isAlagoasCep(cep: string | null | undefined): boolean {
   return onlyDigits(cep).startsWith("57");
-}
-
-export function shippingFor(cep: string | null | undefined): number {
-  return isAlagoasCep(cep) ? 0 : FIXED_SHIPPING_PRICE;
 }
 
 export function pixPrice(amount: number): number {
@@ -48,14 +44,13 @@ export type OrderTotals = {
 export function computeTotals(
   subtotal: number,
   method: PaymentMethod,
-  cep: string | null | undefined,
+  shipping: number,
 ): OrderTotals {
   const discount = method === "pix" ? pixSavings(subtotal) : 0;
-  const shipping = shippingFor(cep);
   return {
     subtotal: round2(subtotal),
     discount,
-    shipping,
+    shipping: round2(shipping),
     total: round2(subtotal - discount + shipping),
   };
 }

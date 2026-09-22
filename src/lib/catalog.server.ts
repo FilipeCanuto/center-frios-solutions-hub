@@ -2,8 +2,6 @@
 // Never trust client-supplied prices.
 import { PA7_BASE_PRICE, PA7_OPTIONAL_DISCS } from "@/data/pa7";
 
-export { FIXED_SHIPPING_PRICE } from "@/lib/pricing";
-
 export type CatalogEntry = {
   slug: string;
   name: string;

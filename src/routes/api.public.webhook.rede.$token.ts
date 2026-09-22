@@ -180,6 +180,7 @@ export const Route = createFileRoute("/api/public/webhook/rede/$token")({
                 const ship = (full.shipping_address ?? {}) as {
                   city?: string;
                   state?: string;
+                  frete?: string;
                 };
                 await sendOrderConfirmation(full.customer_email, {
                   orderId: full.id,
@@ -193,6 +194,7 @@ export const Route = createFileRoute("/api/public/webhook/rede/$token")({
                   billingDocument: full.customer_cnpj ?? undefined,
                   shippingCity: ship.city,
                   shippingState: ship.state,
+                  shippingNote: ship.frete,
                 });
               } catch (e) {
                 console.error("[rede-webhook] confirmation email failed", e);
@@ -203,6 +205,7 @@ export const Route = createFileRoute("/api/public/webhook/rede/$token")({
                 ["Cliente", full.customer_name],
                 ["E-mail", full.customer_email],
                 ["Total", Number(full.total_price ?? 0).toFixed(2)],
+                ["Frete", ((full.shipping_address ?? {}) as { frete?: string }).frete],
               ]);
             }
           }

@@ -10,7 +10,8 @@ import {
   toCents,
 } from "@/lib/payments/rede";
 import { PRODUCT_CATALOG, getCatalogProduct, resolveAddons } from "@/lib/catalog.server";
-import { computeTotals } from "@/lib/pricing";
+import { computeTotals, formatBRL } from "@/lib/pricing";
+import { ShippingUnavailableError, quoteShipping } from "@/lib/shipping.server";
 import { sendOrderConfirmation, sendSalesAlert } from "@/lib/email.server";
 
 import { rateLimit, rateLimitDb } from "@/lib/rate-limit.server";
@@ -52,6 +53,8 @@ const PaymentSchema = z.object({
   payment_method: z.enum(["pix", "credit_card"]),
   // Códigos de acessórios opcionais (discos/grades); preços vêm do catálogo.
   addons: z.array(z.string().trim().max(12)).max(12).optional(),
+  // Serviço de frete escolhido; o preço é recotado aqui no servidor.
+  shipping_service_id: z.string().trim().min(1).max(40),
   card_data: z
     .object({
       cardNumber: z.string().min(13).max(25),
@@ -93,10 +96,36 @@ export const processPayment = createServerFn({ method: "POST" })
       : catalog.name;
     const productPrice = catalog.price + addons.reduce((acc, a) => acc + a.price, 0);
     // Frete grátis para Alagoas (CEP 57); desconto PIX de 5% sobre os itens.
-    const {
-      shipping: shippingPrice,
-      total,
-    } = computeTotals(productPrice, data.payment_method, data.shipping_address.cep);
+    // Frete: recota no servidor e usa o serviço escolhido pelo cliente.
+    let quotes;
+    try {
+      quotes = await quoteShipping({
+        cep: data.shipping_address.cep,
+        insuranceValue: productPrice,
+        addonCount: addons.length,
+      });
+    } catch (e) {
+      const msg = e instanceof ShippingUnavailableError ? e.message : "Falha ao calcular o frete.";
+      throw new Error(JSON.stringify({ kind: "shipping_unavailable", message: msg }));
+    }
+    const chosen = quotes.find((q) => q.id === data.shipping_service_id);
+    if (!chosen) {
+      throw new Error(
+        JSON.stringify({
+          kind: "shipping_unavailable",
+          message: "O frete mudou. Volte à etapa de entrega e escolha a opção novamente.",
+        }),
+      );
+    }
+    const { shipping: shippingPrice, total } = computeTotals(
+      productPrice,
+      data.payment_method,
+      chosen.price,
+    );
+    const shippingNote =
+      chosen.price === 0
+        ? "Frete grátis (Alagoas)"
+        : `${chosen.carrier} ${chosen.service} — ${formatBRL(chosen.price)}${chosen.days ? ` · até ${chosen.days} dias úteis` : ""}`;
 
     const cleanPhone = onlyDigits(data.customer_phone);
     const cleanCnpj = data.customer_cnpj ? onlyDigits(data.customer_cnpj) : null;
@@ -109,7 +138,7 @@ export const processPayment = createServerFn({ method: "POST" })
         customer_phone: cleanPhone,
         customer_company: data.customer_company || null,
         customer_cnpj: cleanCnpj,
-        shipping_address: data.shipping_address,
+        shipping_address: { ...data.shipping_address, frete: shippingNote },
         product_name: productName,
         product_price: productPrice,
         shipping_price: shippingPrice,
@@ -194,6 +223,7 @@ export const processPayment = createServerFn({ method: "POST" })
             billingDocument: cleanCnpj ?? (cleanCpf || undefined),
             shippingCity: data.shipping_address.city,
             shippingState: data.shipping_address.state,
+            shippingNote,
           });
         } catch (e) {
           console.error("[processPayment] confirmation email failed:", e);
@@ -205,6 +235,7 @@ export const processPayment = createServerFn({ method: "POST" })
           ["E-mail", data.customer_email],
           ["Total", total.toFixed(2)],
           ["Parcelas", cd.installments],
+          ["Frete", shippingNote],
           ["Cidade/UF", `${data.shipping_address.city}/${data.shipping_address.state}`],
         ]);
         return { success: true, orderId: order.id, status: "paid" as const, total };
@@ -280,4 +311,40 @@ export const getOrderStatus = createServerFn({ method: "POST" })
       status: (order?.status ?? "pending") as string,
       total: order ? Number(order.total_price) : null,
     };
+  });
+
+// Opções de frete para o CEP (etapa de entrega do checkout).
+export const getShippingQuotes = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        cep: z.string().trim().min(8).max(9),
+        product_slug: z.enum(Object.keys(PRODUCT_CATALOG) as [string, ...string[]]),
+        addons: z.array(z.string().trim().max(12)).max(12).optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data }) => {
+    const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
+    if (!rateLimit(`frete:ip:${ip}`, { limit: 20, windowMs: 60_000 }).ok) {
+      return { ok: false as const, message: "Muitas consultas. Aguarde um minuto." };
+    }
+    const catalog = getCatalogProduct(data.product_slug);
+    if (!catalog) return { ok: false as const, message: "Produto inválido." };
+    const addons = resolveAddons(catalog, data.addons);
+    const insuranceValue = catalog.price + addons.reduce((acc, a) => acc + a.price, 0);
+    try {
+      const quotes = await quoteShipping({
+        cep: data.cep,
+        insuranceValue,
+        addonCount: addons.length,
+      });
+      return { ok: true as const, quotes };
+    } catch (e) {
+      return {
+        ok: false as const,
+        message:
+          e instanceof ShippingUnavailableError ? e.message : "Não foi possível calcular o frete.",
+      };
+    }
   });

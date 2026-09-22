@@ -292,7 +292,7 @@ export const PA7_FAQ = [
   },
   {
     q: "Qual é o valor do frete e como funciona a entrega?",
-    a: "Para todo o estado de Alagoas (CEP iniciado em 57) o frete é grátis. Para os demais estados, o frete é fixo de R$ 89,90 via transportadora parceira. Temos pronta entrega do equipamento, e o prazo final é confirmado pelo nosso time via WhatsApp logo após a compra, de acordo com a rota do seu município.",
+    a: "Para todo o estado de Alagoas (CEP iniciado em 57) o frete é grátis. Para os demais estados, o frete é calculado automaticamente pelo CEP no checkout (transportadoras parceiras) e já entra no pagamento. Temos pronta entrega do equipamento, e o prazo final é confirmado pelo nosso time via WhatsApp logo após a compra, de acordo com a rota do seu município.",
   },
   {
     q: "Posso parcelar? Qual o desconto no PIX?",
