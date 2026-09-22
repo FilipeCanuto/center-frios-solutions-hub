@@ -28,10 +28,7 @@ import { HardwareGrid } from "./HardwareGrid";
 import { UgcWall } from "./UgcWall";
 import { CrossSellConfigurator } from "./CrossSellConfigurator";
 
-import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
-import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
-import calabresaVideo from "@/assets/pa7/videos/calabresa.mp4.asset.json";
-import batataVideo from "@/assets/pa7/videos/batata-fatiada.mp4.asset.json";
+import { PA7_VIDEOS } from "@/data/pa7-videos";
 
 import {
   PA7_GALLERY,
@@ -372,8 +369,8 @@ export function Pa7ProLanding() {
           {/* D — Demonstração em vídeo */}
           <div className="lg:col-start-2 lg:row-start-3">
             <LazyVideo
-              src={circuitoVideo.url}
-              poster={PA7_IMAGES.main}
+              src={PA7_VIDEOS.circuito.src}
+              poster={PA7_VIDEOS.circuito.poster}
               aspect="aspect-[9/16]"
               showMuteToggle
               variant="phone"
@@ -477,7 +474,8 @@ export function Pa7ProLanding() {
           <div className="mb-16 grid items-center gap-12 md:grid-cols-[auto_1fr] md:gap-16">
             <div className="relative">
               <LazyVideo
-                src={versatilidadeVideo.url}
+                src={PA7_VIDEOS.versatilidade.src}
+                poster={PA7_VIDEOS.versatilidade.poster}
                 aspect="aspect-[9/16]"
                 showMuteToggle
                 variant="phone"
@@ -666,7 +664,8 @@ export function Pa7ProLanding() {
             </div>
             <div className="relative">
               <LazyVideo
-                src={calabresaVideo.url}
+                src={PA7_VIDEOS.calabresa.src}
+                poster={PA7_VIDEOS.calabresa.poster}
                 aspect="aspect-[9/16]"
                 showMuteToggle
                 variant="phone"

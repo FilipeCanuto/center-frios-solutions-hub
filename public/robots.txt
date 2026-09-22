@@ -5,5 +5,6 @@ Allow: /produtos/moedor-homogeneizador-hs-98
 Allow: /assets/
 Allow: /__l5e/
 Allow: /favicon.png
+Allow: /videos/
 
 Sitemap: https://ofertas.centerfrios.com/sitemap.xml

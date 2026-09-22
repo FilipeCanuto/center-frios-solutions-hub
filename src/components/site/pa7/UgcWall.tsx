@@ -1,17 +1,15 @@
 import { motion } from "framer-motion";
 import { LazyVideo } from "./LazyVideo";
-import thomasVideo from "@/assets/pa7/videos/thomas-burguer.mp4.asset.json";
-import batataVideo from "@/assets/pa7/videos/batata-fatiada.mp4.asset.json";
-import calabresaVideo from "@/assets/pa7/videos/calabresa.mp4.asset.json";
+import { PA7_VIDEOS } from "@/data/pa7-videos";
 
 const FLANK = [
   {
-    src: batataVideo.url,
+    ...PA7_VIDEOS.batata,
     title: "Batata fatiada",
     role: "Disco E3 · 3 mm",
   },
   {
-    src: calabresaVideo.url,
+    ...PA7_VIDEOS.calabresa,
     title: "Calabresa em fatias",
     role: "Pizzaria · alta produção",
   },
@@ -46,6 +44,7 @@ export function UgcWall() {
             <div className="mx-auto w-full max-w-[260px] scale-90 opacity-80 transition-all duration-500 hover:scale-100 hover:opacity-100">
               <LazyVideo
                 src={FLANK[0].src}
+                poster={FLANK[0].poster}
                 aspect="aspect-[9/16]"
                 variant="phone"
                 showMuteToggle
@@ -73,7 +72,8 @@ export function UgcWall() {
             </div>
             <div className="relative">
               <LazyVideo
-                src={thomasVideo.url}
+                src={PA7_VIDEOS.thomas.src}
+                poster={PA7_VIDEOS.thomas.poster}
                 aspect="aspect-[9/16]"
                 variant="phone"
                 showMuteToggle
@@ -102,6 +102,7 @@ export function UgcWall() {
             <div className="mx-auto w-full max-w-[260px] scale-90 opacity-80 transition-all duration-500 hover:scale-100 hover:opacity-100">
               <LazyVideo
                 src={FLANK[1].src}
+                poster={FLANK[1].poster}
                 aspect="aspect-[9/16]"
                 variant="phone"
                 showMuteToggle
@@ -121,6 +122,7 @@ export function UgcWall() {
               <div key={f.title} className="mx-auto w-full max-w-[260px]">
                 <LazyVideo
                   src={f.src}
+                  poster={f.poster}
                   aspect="aspect-[9/16]"
                   variant="phone"
                   showMuteToggle
