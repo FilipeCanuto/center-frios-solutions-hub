@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, ChevronRight, CreditCard, Flame, ShieldCheck, Sparkles, Truck } from "lucide-react";
+import { Check, CreditCard, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CheckoutDialog } from "./CheckoutDialog";
 import productHero from "@/assets/products/pa7-pro/main.png";
 import { PA7_OPTIONAL_DISCS } from "@/data/pa7";
+import { installmentValue, pixPrice, pixSavings } from "@/lib/pricing";
 
 interface CheckoutSectionProps {
   product: {
@@ -21,6 +20,7 @@ interface CheckoutSectionProps {
   };
   selectedOptionalDiscs?: string[];
   additionalTotal?: number;
+  onBuy: () => void;
 }
 
 const fmtBRL = (n: number) =>
@@ -30,22 +30,14 @@ export function CheckoutSection({
   product,
   selectedOptionalDiscs = [],
   additionalTotal = 0,
+  onBuy,
 }: CheckoutSectionProps) {
-  const [open, setOpen] = useState(false);
-
-  const basePix = product.pixPrice ?? product.price * (1 - product.pixDiscount / 100);
-  const baseCard = product.price;
-  const baseInstallment =
-    product.installmentValue ?? product.price / product.installments;
-
-  const dynamicPix = basePix + additionalTotal;
-  const dynamicCard = baseCard + additionalTotal;
-  const dynamicInstallment = baseInstallment + additionalTotal / product.installments;
-
+  // Mesmas regras do servidor: 5% no PIX sobre equipamento + acessórios.
+  const dynamicCard = product.price + additionalTotal;
   const totalBRL = fmtBRL(dynamicCard);
-  const pixPrice = fmtBRL(dynamicPix);
-  const installmentValue = fmtBRL(dynamicInstallment);
-  const savings = product.savings ?? Math.round(product.price * (product.pixDiscount / 100));
+  const pixTotal = fmtBRL(pixPrice(dynamicCard));
+  const installmentBRL = fmtBRL(installmentValue(dynamicCard, product.installments));
+  const savings = pixSavings(dynamicCard);
 
   const selectedDiscs = selectedOptionalDiscs
     .map((code) => PA7_OPTIONAL_DISCS.find((d) => d.code === code))
@@ -54,33 +46,13 @@ export function CheckoutSection({
   return (
     <section id="checkout-pa7" className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
-        {/* Value Anchor & Progress Tracker */}
-        <ol className="mb-10 flex flex-wrap items-center gap-x-2 gap-y-2 text-[11px] font-semibold uppercase tracking-[0.14em]">
-          <li className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-emerald-300">
-            <span className="grid size-4 place-items-center rounded-full bg-emerald-400/20">
-              <Check className="size-3" />
-            </span>
-            1. Configuração do Maquinário
-            <span className="text-emerald-300/70">(Concluído)</span>
-          </li>
-          <ChevronRight className="size-3.5 text-muted-foreground" />
-          <li className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-accent">
-            <span className="size-1.5 rounded-full bg-accent animate-pulse" />
-            2. Dados de Entrega
-          </li>
-          <ChevronRight className="size-3.5 text-muted-foreground" />
-          <li className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-muted-foreground">
-            3. Faturamento com Emissão de NF-e
-          </li>
-        </ol>
-
         <div className="mb-12 max-w-2xl">
           <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl text-pretty">
             Adquira o seu <span className="text-accent">{product.name}</span> agora
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            O equipamento que vai transformar a produtividade da sua cozinha. Pronta entrega com
-            garantia total CENTERFRIOS.
+            Pronta entrega, nota fiscal e garantia de 12 meses. Em Alagoas o frete é por nossa
+            conta.
           </p>
         </div>
 
@@ -110,8 +82,8 @@ export function CheckoutSection({
 
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                { icon: Truck, title: "🚚 Frete Grátis para AL", desc: "Pronta entrega com consulta de rota para todo o Brasil" },
-                { icon: ShieldCheck, title: "Compra Segura", desc: "Ambiente criptografado e NF-e" },
+                { icon: Truck, title: "Frete grátis para Alagoas", desc: "Demais estados: frete fixo de R$ 89,90" },
+                { icon: ShieldCheck, title: "Compra segura", desc: "Pagamento e-Rede e nota fiscal" },
                 { icon: CreditCard, title: "Até 12x Sem Juros", desc: "Parcelamento facilitado no cartão" },
                 { icon: Check, title: "Garantia 12 Meses", desc: "Suporte técnico próprio em campo" },
               ].map((item) => (
@@ -138,8 +110,8 @@ export function CheckoutSection({
           >
             <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-br from-accent/20 to-transparent blur-2xl" />
 
-            <p className="mb-3 text-center text-[11px] font-semibold text-emerald-500">
-              🚚 Frete Grátis para todo o estado de Alagoas ativo para este lote.
+            <p className="mb-3 text-center text-sm font-semibold text-emerald-400">
+              Frete grátis para todo o estado de Alagoas
             </p>
             <div className="metal-surface metal-hover relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-2xl md:p-10">
               <div className="mb-8">
@@ -157,12 +129,12 @@ export function CheckoutSection({
               <div className="space-y-6">
                 {/* PIX */}
                 <div className="pb-6 border-b border-white/5">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-accent">
-                    PREÇO À VISTA NO PIX
+                  <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                    À vista no PIX · 5% off
                   </p>
                   <div className="mt-2 flex items-baseline gap-3 flex-wrap">
                     <span className="text-5xl md:text-6xl font-black text-foreground tracking-tighter leading-none">
-                      {pixPrice}
+                      {pixTotal}
                     </span>
                   </div>
                   <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5">
@@ -209,20 +181,9 @@ export function CheckoutSection({
                     {totalBRL}
                   </div>
                   <p className="mt-0.5 text-sm text-foreground/80">
-                    Ou em até {product.installments}x de {installmentValue} sem juros no cartão
+                    Ou em até {product.installments}x de {installmentBRL} sem juros no cartão
                   </p>
                 </div>
-
-                {/* Dynamic Savings Notification */}
-                <div className="flex items-start gap-2.5 rounded-2xl border border-amber-400/30 bg-gradient-to-r from-amber-500/15 via-amber-500/[0.06] to-transparent p-3.5">
-                  <Flame className="mt-0.5 size-4 shrink-0 text-amber-300" />
-                  <p className="text-[11px] font-bold uppercase leading-snug tracking-wider text-amber-100">
-                    Você está economizando {fmtBRL(savings)} no PIX + Suporte organizador
-                    de fábrica incluso grátis.
-                  </p>
-                </div>
-
-
 
                 <Button
                   id="cta-finalize-purchase-pa7"
@@ -231,20 +192,13 @@ export function CheckoutSection({
                   size="lg"
                   variant="conversion"
                   className="w-full rounded-full h-14 text-base shadow-lg"
-                  onClick={() => setOpen(true)}
+                  onClick={onBuy}
                 >
-                  Finalizar Compra
+                  Comprar agora
                 </Button>
 
-                {/* B2B Scarcity */}
-                <p className="text-center text-[11px] font-medium leading-relaxed text-amber-200/90">
-                  ⚡ Lote promocional do Circuito Experience 2026: restam apenas{" "}
-                  <span className="font-bold text-amber-100">4 unidades</span> com despacho
-                  prioritário programado pela rota de entrega.
-                </p>
-
-                <p className="text-center text-[10px] text-muted-foreground uppercase tracking-widest font-medium">
-                  🔒 PAGAMENTO 100% SEGURO • NOTA FISCAL INCLUSA
+                <p className="text-center text-xs font-medium text-muted-foreground">
+                  Pagamento processado pela e-Rede · Nota fiscal inclusa
                 </p>
               </div>
             </div>
@@ -252,16 +206,6 @@ export function CheckoutSection({
         </div>
       </div>
 
-      <CheckoutDialog
-        open={open}
-        onOpenChange={setOpen}
-        product={{
-          slug: product.id,
-          name: product.name,
-          image: product.image,
-          price: product.price,
-        }}
-      />
     </section>
   );
 }

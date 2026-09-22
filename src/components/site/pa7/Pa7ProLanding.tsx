@@ -1,10 +1,10 @@
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 
 import {
-  ArrowLeft,
   Check,
+  MapPin,
+  MessageCircle,
   ChevronRight,
   Disc3,
   Gauge,
@@ -28,10 +28,6 @@ import { HardwareGrid } from "./HardwareGrid";
 import { UgcWall } from "./UgcWall";
 import { CrossSellConfigurator } from "./CrossSellConfigurator";
 
-import { SectionVideoBg } from "./SectionVideoBg";
-import { OptimizedVideoBg } from "./OptimizedVideoBg";
-import heroPoster from "@/assets/products/pa7-pro/main.png";
-import heroVideo from "@/assets/pa7/videos/hero-processador.mp4.asset.json";
 import versatilidadeVideo from "@/assets/pa7/videos/versatilidade.mp4.asset.json";
 import circuitoVideo from "@/assets/pa7/videos/circuito-experience.mp4.asset.json";
 import calabresaVideo from "@/assets/pa7/videos/calabresa.mp4.asset.json";
@@ -46,9 +42,15 @@ import {
   PA7_PRICE,
   PA7_SHOWCASE,
 } from "@/data/pa7";
-import { getProduct } from "@/data/site";
+import { SALES_WHATSAPP, STORE_WHATSAPP, getProduct, whatsappLink } from "@/data/site";
+import { ecommerce, pushEvent, trackWhatsappClick } from "@/lib/tracking";
+import { formatBRL } from "@/lib/pricing";
+
+export const PA7_WHATSAPP_MESSAGE = `Olá, ${SALES_WHATSAPP.name}! Tenho interesse no Processador PA7 Pro Skymsen.`;
 
 const HIGHLIGHT_ICONS = [Gauge, Disc3, ShieldCheck, Power];
+
+const SITE_URL = "https://ofertas.centerfrios.com";
 
 type TurbineDiscProps = {
   disc: { code: string; group: string; desc: string; image?: string; utility?: string };
@@ -110,28 +112,26 @@ export function Pa7ProLanding() {
   const [open, setOpen] = useState(false);
   const [selectedOptionalDiscs, setSelectedOptionalDiscs] = useState<string[]>([]);
 
-  // Mid-funnel: fire GA4 `view_item` on landing mount for impression tracking.
+  // Topo de funil: GA4 `view_item` ao abrir a landing.
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: "view_item",
-      ecommerce: {
-        currency: "BRL",
-        value: PA7_PRICE.pixAmount,
-        items: [
-          {
-            item_id: "pa7-pro",
-            item_name: "Processador PA7 Pro Skymsen",
-            item_brand: "CENTERFRIOS",
-            item_category: "Processador de Alimentos",
-            price: PA7_PRICE.pixAmount,
-            quantity: 1,
-          },
-        ],
-      },
-    });
+    pushEvent(
+      "view_item",
+      ecommerce(PA7_PRICE.amount, [
+        {
+          item_id: "pa7-pro",
+          item_name: "Processador PA7 Pro Skymsen",
+          item_brand: "Skymsen",
+          item_category: "Processador de Alimentos",
+          price: PA7_PRICE.amount,
+        },
+      ]),
+    );
   }, []);
+
+  const selectedAddons = selectedOptionalDiscs
+    .map((code) => PA7_OPTIONAL_DISCS.find((x) => x.code === code))
+    .filter((d): d is (typeof PA7_OPTIONAL_DISCS)[number] => Boolean(d))
+    .map((d) => ({ code: d.code, label: `${d.group} ${d.code} (${d.desc})`, price: d.price }));
 
   const additionalTotal = selectedOptionalDiscs.reduce((acc, code) => {
     const d = PA7_OPTIONAL_DISCS.find((x) => x.code === code);
@@ -142,22 +142,10 @@ export function Pa7ProLanding() {
     target: discsGridRef,
     offset: ["start end", "end start"],
   });
-  const installment = PA7_PRICE.installmentValue.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-  const totalBRL = PA7_PRICE.amount.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-  const pixBRL = PA7_PRICE.pixAmount.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-  const savingsBRL = PA7_PRICE.savings.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
+  const installment = formatBRL(PA7_PRICE.installmentValue);
+  const totalBRL = formatBRL(PA7_PRICE.amount);
+  const pixBRL = formatBRL(PA7_PRICE.pixAmount);
+  const savingsBRL = formatBRL(PA7_PRICE.savings);
 
   // Framer Motion Animation Variants
   const containerVariants = {
@@ -187,14 +175,17 @@ export function Pa7ProLanding() {
         name: "Skymsen PA7 Pro",
         brand: { "@type": "Brand", name: "Skymsen" },
         category: "Processador de Alimentos Industrial",
-        image: [PA7_IMAGES.main],
+        image: [`${SITE_URL}${PA7_IMAGES.main}`],
         description:
           "Processador de alimentos profissional Skymsen PA7 Pro — 250 kg/h, 07 discos inclusos, bivolt, aço inox, NR-12.",
-        sku: "pa7-pro",
+        sku: "702609",
+        gtin13: "7895707702608",
         offers: {
           "@type": "Offer",
           priceCurrency: "BRL",
           price: PA7_PRICE.pixAmount.toFixed(2),
+          priceValidUntil: `${new Date().getFullYear()}-12-31`,
+          itemCondition: "https://schema.org/NewCondition",
           availability: "https://schema.org/InStock",
           seller: { "@type": "Organization", name: "CENTERFRIOS" },
           url: "https://ofertas.centerfrios.com/produtos/processador-pa7-pro-skymsen",
@@ -204,12 +195,11 @@ export function Pa7ProLanding() {
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
         name: "CENTERFRIOS",
-        image: "https://ofertas.centerfrios.com/favicon.png",
-        url: "https://ofertas.centerfrios.com",
+        image: `${SITE_URL}/favicon.png`,
+        url: SITE_URL,
         telephone: "+55-82-3223-2497",
         address: {
           "@type": "PostalAddress",
-          streetAddress: "Maceió",
           addressLocality: "Maceió",
           addressRegion: "AL",
           addressCountry: "BR",
@@ -227,211 +217,179 @@ export function Pa7ProLanding() {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {/* HERO */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative overflow-hidden border-b border-white/5"
-      >
-        <OptimizedVideoBg src={heroVideo.url} posterSrc={heroPoster} darknessClass="bg-neutral-950/85 mix-blend-multiply" />
+      {/* HERO — sem animação de entrada: o conteúdo já chega visível do servidor */}
+      <section className="relative overflow-hidden border-b border-white/5">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-10 tech-grid opacity-20 animate-pulse"
-          style={{ animationDuration: "10s" }}
+          className="pointer-events-none absolute inset-0 tech-grid opacity-20"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[500px]"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[500px]"
           style={{
             background:
               "radial-gradient(80% 50% at 50% 0%, color-mix(in oklab, var(--brand-blue) 26%, transparent), transparent 70%)",
           }}
         />
 
-        <div className="relative z-20 mx-auto max-w-7xl px-6 pb-16 pt-8 md:pb-24 md:pt-12">
-          <Link
-            to="/produtos"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="size-4" /> Catálogo
-          </Link>
+        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 pb-14 pt-6 sm:px-6 md:pb-24 md:pt-12 lg:grid-cols-[1.15fr_1fr] lg:gap-x-16">
+          {/* A — Título */}
+          <div className="lg:col-start-1 lg:row-start-1">
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
+              <span className="size-1.5 rounded-full bg-accent" />
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground">
+                Skymsen · Linha Profissional
+              </span>
+            </div>
+            <h1 className="mt-4 text-balance text-4xl font-semibold leading-[1.1] tracking-tight text-foreground md:text-5xl lg:text-6xl">
+              Processador de Alimentos{" "}
+              <span className="bg-gradient-to-r from-foreground to-accent bg-clip-text text-transparent">
+                PA7 Pro Skymsen
+              </span>
+            </h1>
+            <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+              Até 250 kg/h de legumes, queijos e frios cortados em segundos — fatias, ralados,
+              palitos e cubos padronizados, sem depender da faca.
+            </p>
+          </div>
 
-          <div className="mt-8 grid gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16 lg:items-start">
-            {/* LEFT — Conversion copy + benefits + trust */}
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={containerVariants}
-              className="flex flex-col"
-            >
-              <motion.div
-                variants={itemVariants}
-                className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur"
-              >
-                <span className="size-1.5 rounded-full bg-accent animate-pulse" />
-                <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground">
-                  Skymsen · Linha Profissional
-                </span>
-              </motion.div>
-
-              <motion.h1
-                variants={itemVariants}
-                className="mt-5 text-balance text-4xl font-semibold leading-[1.1] tracking-tight text-foreground md:text-5xl lg:text-6xl"
-              >
-                Processador de Alimentos{" "}
-                <span className="bg-gradient-to-r from-foreground to-accent bg-clip-text text-transparent">
-                  PA7 Pro Skymsen
-                </span>
-              </motion.h1>
-              <motion.p
-                variants={itemVariants}
-                className="mt-3 text-base font-medium uppercase tracking-[0.18em] text-accent"
-              >
-                O melhor que a sua cozinha merece
-              </motion.p>
-              <motion.p
-                variants={itemVariants}
-                className="mt-4 text-lg leading-relaxed text-muted-foreground"
-              >
-                Cortes precisos e sem esforço, alta produtividade e grande variedade de cortes —
-                agora também em cubos e palitos (julienne).
-              </motion.p>
-
-              <motion.ul variants={itemVariants} className="mt-6 grid gap-3">
-                {[
-                  "Produção contínua de até 250 kg/h · 600 W · 440 rpm",
-                  "07 discos com suporte inclusos (fatiadores, raladores e julienne)",
-                  "Aço inox, sensor de segurança na tampa e bivolt 127/220 V",
-                ].map((b) => (
-                  <li key={b} className="flex items-start gap-2.5 text-sm text-foreground">
-                    <div className="mt-1 flex size-5 shrink-0 items-center justify-center rounded-full bg-accent/10 border border-accent/20 text-accent">
-                      <Check className="size-3" />
-                    </div>
-                    <span className="ml-1">{b}</span>
-                  </li>
-                ))}
-              </motion.ul>
-
-              <motion.div
-                variants={itemVariants}
-                className="mt-7 grid grid-cols-2 gap-2 text-xs text-muted-foreground sm:grid-cols-4"
-              >
-                {[
-                  { icon: ShieldCheck, label: "NR-12" },
-                  { icon: Wrench, label: "Garantia 12m" },
-                  { icon: Truck, label: "Entrega Brasil" },
-                  { icon: Power, label: "127/220 V" },
-                ].map(({ icon: Icon, label }) => (
-                  <div
-                    key={label}
-                    className="group flex items-center gap-2 rounded-xl border border-white/5 bg-neutral-900/40 px-4 py-2 text-xs font-medium tracking-wide text-foreground/90 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-all duration-300 hover:border-accent/30 hover:bg-neutral-900/60"
-                  >
-                    <Icon className="size-3.5 text-accent transition-transform group-hover:scale-110" />
-                    <span className="uppercase tracking-[0.12em]">{label}</span>
-                  </div>
-                ))}
-
-              </motion.div>
-            </motion.div>
-
-            {/* RIGHT — Circuito Experience video + Pricing card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col gap-5 lg:sticky lg:top-24"
-            >
-              {/* Premium smartphone-mockup video frame */}
-              <div className="relative mx-auto w-full">
-                <LazyVideo
-                  src={circuitoVideo.url}
-                  aspect="aspect-[9/16]"
-                  showMuteToggle
-                  variant="phone"
+          {/* B — Oferta (no mobile vem logo após o título) */}
+          <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
+            <div className="metal-surface relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.01] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.25)] sm:p-6 lg:sticky lg:top-24">
+              <div className="flex items-start gap-4">
+                <img
+                  src={PA7_IMAGES.main}
+                  alt="Processador PA7 Pro Skymsen em aço inox"
+                  width={112}
+                  height={112}
+                  fetchPriority="high"
+                  className="size-24 shrink-0 rounded-xl bg-white/[0.04] object-contain p-1.5 sm:size-28"
                 />
-                <div className="mt-4 flex items-center justify-center gap-2">
-                  <span className="size-1.5 rounded-full bg-red-500 animate-pulse" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                    Ao vivo · Circuito Experience 2026
-                  </span>
-                </div>
-              </div>
-
-
-              {/* Pricing Card */}
-              <div className="metal-surface metal-hover relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.01] p-6 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.25)]">
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute -right-12 -top-12 size-36 rounded-full opacity-15 blur-2xl"
-                  style={{ background: "radial-gradient(circle, var(--accent) 50%, transparent)" }}
-                />
-                <div className="relative z-10">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-accent">
-                    PREÇO À VISTA NO PIX
+                <div className="min-w-0">
+                  <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                    À vista no PIX · 5% off
                   </p>
-                  <p className="mt-1.5 text-4xl md:text-5xl font-black text-foreground tracking-tighter leading-none">
+                  <p className="mt-1 text-4xl font-black leading-none tracking-tight text-foreground md:text-5xl">
                     {pixBRL}
                   </p>
-                  <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-accent">
-                      Economia imediata de {savingsBRL} no PIX
-                    </span>
-                  </div>
-
-                  <div className="mt-5 border-t border-white/5 pt-4 opacity-90">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                      OU PARCELADO NO CARTÃO
-                    </p>
-                    <p className="mt-1 text-base font-medium text-muted-foreground">{totalBRL}</p>
-                    <p className="mt-0.5 text-sm text-foreground/80">
-                      Ou em até {PA7_PRICE.installments}x de {installment} sem juros no cartão
-                    </p>
-                  </div>
-
-                  <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                    <Button
-                      size="lg"
-                      variant="conversion"
-                      className="w-full sm:flex-1 group/btn"
-                      onClick={() => setOpen(true)}
-                    >
-                      Ir para o checkout
-                      <ChevronRight className="ml-1 size-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
-                    </Button>
-                    <Button
-                      asChild
-                      size="lg"
-                      variant="outline"
-                      className="w-full rounded-full sm:w-auto font-semibold"
-                    >
-                      <a
-                        href="https://api.whatsapp.com/send?phone=5582996820070&text=Olá! Gostaria de falar com a Maria sobre o Processador PA7 Pro."
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Falar com especialista
-                      </a>
-                    </Button>
-                  </div>
+                  <p className="mt-2 text-sm font-semibold text-emerald-400">
+                    Você economiza {savingsBRL}
+                  </p>
                 </div>
               </div>
-            </motion.div>
+
+              <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                <p className="text-base text-foreground">
+                  ou <strong>{PA7_PRICE.installments}x de {installment}</strong> sem juros
+                </p>
+                <p className="text-sm text-muted-foreground">no cartão · total {totalBRL}</p>
+              </div>
+
+              <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3">
+                <Truck className="mt-0.5 size-5 shrink-0 text-emerald-400" />
+                <p className="text-sm text-emerald-100">
+                  <strong className="text-emerald-300">Frete grátis para todo o estado de Alagoas.</strong>{" "}
+                  Pronta entrega. Demais estados: R$ 89,90.
+                </p>
+              </div>
+
+              <div className="mt-5 grid gap-3">
+                <Button
+                  size="lg"
+                  variant="conversion"
+                  className="h-14 w-full text-base"
+                  onClick={() => setOpen(true)}
+                  id="cta-buy-pa7-hero"
+                >
+                  Comprar agora
+                  <ChevronRight className="ml-1 size-5" />
+                </Button>
+                <a
+                  href={whatsappLink(PA7_WHATSAPP_MESSAGE)}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => trackWhatsappClick("hero")}
+                  className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[color:var(--color-brand-whatsapp)]/50 bg-[var(--color-brand-whatsapp)]/10 px-4 text-sm font-semibold text-foreground transition-colors hover:bg-[var(--color-brand-whatsapp)]/20"
+                >
+                  <MessageCircle className="size-4 text-[color:var(--color-brand-whatsapp)]" />
+                  Tirar dúvidas com a {SALES_WHATSAPP.name} no WhatsApp
+                </a>
+              </div>
+
+              <p className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1">
+                  <ShieldCheck className="size-3.5 text-accent" /> Nota fiscal
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Wrench className="size-3.5 text-accent" /> Garantia 12 meses
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Check className="size-3.5 text-accent" /> Pagamento seguro e-Rede
+                </span>
+              </p>
+            </div>
+          </div>
+
+          {/* C — Benefícios e confiança */}
+          <div className="lg:col-start-1 lg:row-start-2">
+            <ul className="grid gap-3">
+              {[
+                "Produção contínua de até 250 kg/h · motor 0,5 CV · 600 W",
+                "07 discos inclusos: fatiadores, raladores e julienne (palito)",
+                "Cubos perfeitos com grades opcionais de 8 a 20 mm",
+                "Aço inox, sensor de segurança na tampa (NR-12) e bivolt 127/220 V",
+              ].map((b) => (
+                <li key={b} className="flex items-start gap-2.5 text-base text-foreground">
+                  <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-accent">
+                    <Check className="size-3" />
+                  </span>
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <MapPin className="size-4 text-accent" /> Center Frios · Maceió, Alagoas
+              </p>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                Empresa alagoana: entrega grátis em todo o estado e suporte técnico próprio em
+                campo, durante e depois da garantia. Dúvidas gerais: loja{" "}
+                <a
+                  href={`https://wa.me/${STORE_WHATSAPP.number}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => trackWhatsappClick("hero_loja")}
+                  className="font-medium text-foreground underline underline-offset-2"
+                >
+                  {STORE_WHATSAPP.display}
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+
+          {/* D — Demonstração em vídeo */}
+          <div className="lg:col-start-2 lg:row-start-3">
+            <LazyVideo
+              src={circuitoVideo.url}
+              poster={PA7_IMAGES.main}
+              aspect="aspect-[9/16]"
+              showMuteToggle
+              variant="phone"
+            />
+            <p className="mt-3 text-center text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+              Demonstração · Circuito Experience 2026
+            </p>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* GALLERY */}
       <section className="border-b border-white/5 py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+          <div className="mx-auto max-w-3xl">
             <Gallery items={PA7_GALLERY} />
-            <LazyVideo
-              src={heroVideo.url}
-              aspect="aspect-video"
-              showMuteToggle
-              variant="monitor"
-            />
           </div>
         </div>
       </section>
@@ -510,7 +468,6 @@ export function Pa7ProLanding() {
 
       {/* INCLUDED DISCS */}
       <section className="relative overflow-hidden border-t border-white/5 py-20 md:py-28">
-        <SectionVideoBg src={calabresaVideo.url} maskClassName="pointer-events-none absolute inset-0 z-10 bg-neutral-950/85 mix-blend-multiply" />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--brand-blue)_8%,transparent),transparent_80%)] opacity-50"
@@ -601,8 +558,8 @@ export function Pa7ProLanding() {
             transition={{ delay: 0.4 }}
             className="mt-8 text-center text-xs text-muted-foreground"
           >
-            Grades de cubo (GC8, GC10, GC14 e GC20 PRO) e discos adicionais disponíveis sob
-            consulta.
+            Quer cubos? Adicione grades de cubo (GC8 a GC20) e fatiadores extras no
+            configurador abaixo — eles entram no mesmo pedido.
           </motion.p>
         </div>
       </section>
@@ -615,7 +572,6 @@ export function Pa7ProLanding() {
         transition={{ duration: 0.6 }}
         className="relative overflow-hidden border-t border-white/5 py-20 md:py-28"
       >
-        <OptimizedVideoBg src={batataVideo.url} darknessClass="bg-neutral-950/88 mix-blend-multiply" />
         <div className="relative z-20 mx-auto max-w-6xl px-6">
           <div className="flex items-end justify-between gap-6">
             <div>
@@ -636,7 +592,6 @@ export function Pa7ProLanding() {
 
       {/* USE CASES — Pre-Checkout Configurator */}
       <section className="relative overflow-hidden border-t border-white/5">
-        <OptimizedVideoBg src={versatilidadeVideo.url} darknessClass="bg-neutral-950/85 mix-blend-multiply" />
         <div className="relative z-20">
           <CrossSellConfigurator
             selected={selectedOptionalDiscs}
@@ -652,10 +607,10 @@ export function Pa7ProLanding() {
         <section className="border-t border-white/5 py-20 md:py-28">
           <div className="mx-auto max-w-5xl px-6">
             <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
-              Onde já está em operação
+              Para quem é
             </span>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-              Para operações que exigem padrão
+              Feito para cozinhas que não podem parar
             </h2>
             <ul className="mt-8 grid gap-3 sm:grid-cols-2">
               {product.applications.map((a) => (
@@ -740,6 +695,7 @@ export function Pa7ProLanding() {
         }}
         selectedOptionalDiscs={selectedOptionalDiscs}
         additionalTotal={additionalTotal}
+        onBuy={() => setOpen(true)}
       />
 
       <StickyBuyBar
@@ -762,6 +718,7 @@ export function Pa7ProLanding() {
               image: PA7_IMAGES.main,
               price: PA7_PRICE.amount,
             }}
+            addons={selectedAddons}
           />
         </Suspense>
       )}

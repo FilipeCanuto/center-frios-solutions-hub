@@ -7,6 +7,7 @@ import {
   PA7_PRICE,
   type OptionalDisc,
 } from "@/data/pa7";
+import { pixPrice } from "@/lib/pricing";
 
 const fmtBRL = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -263,14 +264,17 @@ export function CrossSellConfigurator({ selected, onChange }: CrossSellConfigura
                   + {fmtBRL(total)}
                 </span>
               </div>
-              <div className="mt-1 flex items-baseline justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-accent">
-                  Estimado final
+              <div className="mt-3 flex items-baseline justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-accent">
+                  Total no PIX
                 </span>
                 <span className="text-2xl font-black tracking-tight text-foreground">
-                  {fmtBRL(grandTotal)}
+                  {fmtBRL(pixPrice(grandTotal))}
                 </span>
               </div>
+              <p className="mt-1 text-right text-xs text-muted-foreground">
+                ou 12x de {fmtBRL(grandTotal / 12)} sem juros ({fmtBRL(grandTotal)})
+              </p>
 
               <Button
                 size="lg"
@@ -285,9 +289,8 @@ export function CrossSellConfigurator({ selected, onChange }: CrossSellConfigura
               </Button>
 
               <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
-                Os adicionais selecionados aparecem no orçamento final emitido pelo time
-                CENTERFRIOS. O checkout abaixo cobra o equipamento base; os acessórios
-                entram na nota junto.
+                Os acessórios selecionados entram no mesmo pedido e na mesma nota fiscal,
+                com o desconto de 5% no PIX aplicado sobre o total.
               </p>
             </div>
           </aside>

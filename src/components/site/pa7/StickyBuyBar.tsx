@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CONTACT } from "@/data/site";
+import { SALES_WHATSAPP, whatsappLink } from "@/data/site";
+import { pixPrice as applyPix } from "@/lib/pricing";
+import { trackWhatsappClick } from "@/lib/tracking";
 
 type Props = {
   name: string;
@@ -32,7 +34,9 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
   }, [show]);
 
 
-  const displayPrice = (pixPrice ?? price) + additionalTotal;
+  // PIX com 5% sobre equipamento + acessórios (mesma regra do servidor).
+  void pixPrice;
+  const displayPrice = applyPix(price + additionalTotal);
 
   return (
     <div
@@ -41,10 +45,6 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
       }`}
     >
       <div className="mx-auto max-w-7xl px-3 pb-3">
-        <p className="mb-1.5 hidden text-center text-[10px] font-medium leading-snug text-amber-200/90 sm:block">
-          ⚡ Lote Circuito Experience 2026 — restam apenas{" "}
-          <span className="font-bold text-amber-100">4 unidades</span> · frete grátis para Alagoas.
-        </p>
         <div className="flex items-center gap-2 rounded-xl border border-[color:var(--steel)] bg-brushed-metal p-2 shadow-[var(--shadow-4)] backdrop-blur-xl sm:gap-3 sm:p-3">
           {/* Thumb */}
           <div className="relative z-10 hidden size-12 shrink-0 overflow-hidden rounded-lg border border-[color:var(--steel)] bg-card md:block">
@@ -63,8 +63,8 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
             </p>
             <p className="truncate text-sm font-semibold text-foreground sm:text-base">
               {fmtBRL(displayPrice)}
-              <span className="ml-1.5 hidden text-[11px] font-normal text-muted-foreground sm:inline">
-                à vista no PIX
+              <span className="ml-1.5 text-[11px] font-normal text-muted-foreground">
+                no PIX
               </span>
             </p>
           </div>
@@ -72,10 +72,13 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
           {/* Actions — perfectly center-aligned, consistent gaps */}
           <div className="relative z-10 flex shrink-0 items-center gap-2">
             <a
-              href="https://api.whatsapp.com/send?phone=5582996820070&text=Olá! Gostaria de falar com a Maria sobre o Processador PA7 Pro."
+              href={whatsappLink(
+                `Olá, ${SALES_WHATSAPP.name}! Tenho interesse no Processador PA7 Pro Skymsen.`,
+              )}
               target="_blank"
               rel="noreferrer"
-              aria-label="Falar no WhatsApp"
+              onClick={() => trackWhatsappClick("sticky_bar")}
+              aria-label={`Falar com a ${SALES_WHATSAPP.name} no WhatsApp`}
               className="inline-flex h-11 items-center justify-center gap-1.5 rounded-full bg-[var(--color-brand-whatsapp)] px-3 text-sm font-semibold text-white shadow-md transition-transform hover:scale-[1.03] sm:px-4"
             >
               <svg viewBox="0 0 24 24" className="size-4 fill-current" aria-hidden>
@@ -89,7 +92,7 @@ export function StickyBuyBar({ name, image, price, pixPrice, additionalTotal = 0
               data-gtm-event="begin_checkout"
               data-product="pa7-pro"
               onClick={onBuy}
-              className="inline-flex h-11 items-center justify-center bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white font-black uppercase tracking-widest border border-blue-400/20 shadow-[0_0_25px_rgba(37,99,235,0.4)] hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(37,99,235,0.65)] transition-all duration-500 ease-out rounded-xl px-6 py-3 text-sm md:text-base animate-pulse"
+              className="inline-flex h-11 items-center justify-center rounded-xl border border-amber-400/20 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 px-5 text-sm font-black uppercase tracking-wider text-white shadow-[0_8px_24px_-6px_rgba(245,158,11,0.55)] transition-transform hover:scale-[1.02] md:text-base"
             >
               Comprar agora
             </button>

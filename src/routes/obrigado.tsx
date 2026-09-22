@@ -2,13 +2,28 @@ import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, Package, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SALES_WHATSAPP, whatsappLink } from "@/data/site";
+import { PA7_LINK } from "@/lib/visibility";
+import { ecommerce, markPurchaseTracked, pushEvent, trackWhatsappClick } from "@/lib/tracking";
 
-type ObrigadoSearch = { product?: string; value?: string };
+type ObrigadoSearch = { product?: string; value?: string; order?: string; method?: string };
+
+const asText = (v: unknown) =>
+  typeof v === "string" ? v : typeof v === "number" ? String(v) : undefined;
+
+const PRODUCT_NAMES: Record<string, string> = {
+  "pa7-pro": "Processador PA7 Pro Skymsen",
+  "hs-98": "Homogeneizador HS-98 Skymsen",
+  "hs-22": "Homogeneizador HS-22 Skymsen",
+};
 
 export const Route = createFileRoute("/obrigado")({
   validateSearch: (search: Record<string, unknown>): ObrigadoSearch => ({
-    product: typeof search.product === "string" ? search.product : undefined,
-    value: typeof search.value === "string" ? search.value : undefined,
+    // O router decodifica a query como JSON: "5984.05" chega como número.
+    product: asText(search.product),
+    value: asText(search.value),
+    order: asText(search.order),
+    method: asText(search.method),
   }),
   head: () => ({
     meta: [
@@ -29,37 +44,26 @@ export const Route = createFileRoute("/obrigado")({
   component: ObrigadoPage,
 });
 
-declare global {
-  interface Window {
-    dataLayer?: Record<string, unknown>[];
-  }
-}
-
 function ObrigadoPage() {
-  const { product, value } = Route.useSearch();
+  const { product, value, order, method } = Route.useSearch();
 
   const parsedValue = value ? parseFloat(value.replace(",", ".")) || 0 : 0;
-  const productLabel = product?.trim() || "";
+  const productKey = product?.trim() || "";
+  const productLabel = PRODUCT_NAMES[productKey] ?? productKey;
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: "purchase",
-      ecommerce: {
-        transaction_id:
-          "CF_" +
-          new Date().getTime() +
-          "_" +
-          Math.floor(Math.random() * 1000),
-        affiliation: "CENTERFRIOS Hub",
-        value: parsedValue,
-        item_name: productLabel || "Generic Product",
-        currency: "BRL",
-      },
-    });
-  }, [parsedValue, productLabel]);
+    // Só registra compra vinda do checkout (com ID do pedido), e uma única vez
+    // por pedido — recarregar a página não duplica a conversão.
+    if (!order || !markPurchaseTracked(order)) return;
+    pushEvent(
+      "purchase",
+      ecommerce(
+        parsedValue,
+        [{ item_id: productKey || "produto", item_name: productLabel || "Pedido", price: parsedValue }],
+        { transaction_id: order, affiliation: "Center Frios — site", payment_type: method },
+      ),
+    );
+  }, [order, parsedValue, productKey, productLabel, method]);
 
   const headline = productLabel
     ? `Obrigado! Seu ${productLabel} já está garantido!`
@@ -132,16 +136,23 @@ function ObrigadoPage() {
 
         <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row">
           <Button asChild variant="conversion" size="lg">
-            <Link to="/produtos">
-              Ver mais produtos
+            <a
+              href={whatsappLink(
+                `Olá, ${SALES_WHATSAPP.name}! Acabei de comprar ${productLabel || "pelo site"}${order ? ` (pedido ${order.slice(0, 8).toUpperCase()})` : ""}.`,
+              )}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => trackWhatsappClick("obrigado")}
+            >
+              Falar com a {SALES_WHATSAPP.name} no WhatsApp
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
+            </a>
           </Button>
           <Link
-            to="/"
+            {...PA7_LINK}
             className="text-sm font-medium text-neutral-400 underline-offset-4 transition-colors hover:text-white hover:underline"
           >
-            Voltar ao início
+            Voltar à página do produto
           </Link>
         </div>
 

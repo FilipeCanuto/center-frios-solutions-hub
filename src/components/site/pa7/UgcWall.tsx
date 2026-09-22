@@ -23,13 +23,14 @@ export function UgcWall() {
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-accent">
-            Provado e Aprovado
+            Em ação
           </span>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-            Cozinhas reais de clientes CENTERFRIOS
+            Veja o PA7 Pro no ritmo de uma cozinha de verdade
           </h2>
           <p className="mt-3 text-base text-muted-foreground">
-            Hamburguerias, pizzarias e buffets operando o PA7 Pro no ritmo da produção real.
+            No centro, a Thomas Burguer, cliente Center Frios, usando o PA7 Pro no preparo diário.
+            Ao lado, demonstrações de corte com os discos inclusos.
           </p>
         </div>
 
@@ -68,7 +69,7 @@ export function UgcWall() {
           >
             <div className="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-accent/25 via-transparent to-transparent blur-3xl" />
             <div className="absolute -left-3 -top-3 z-30 inline-flex items-center gap-1.5 rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-red-200 backdrop-blur-md shadow-lg">
-              🔥 Cliente Real CENTERFRIOS
+              Cliente Center Frios
             </div>
             <div className="relative">
               <LazyVideo
