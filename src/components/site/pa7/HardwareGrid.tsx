@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cpu, Shield, Box, CircleDot, Maximize2, Zap } from "lucide-react";
-import item03 from "@/assets/pa7/hardware/item03.png.asset.json";
-import item04 from "@/assets/pa7/hardware/item04.png.asset.json";
-import item05 from "@/assets/pa7/hardware/item05.png.asset.json";
-import item06 from "@/assets/pa7/hardware/item06.png.asset.json";
-import item07 from "@/assets/pa7/hardware/item07.png.asset.json";
-import item09 from "@/assets/pa7/hardware/item09.png.asset.json";
+const item03 = { url: "/images/pa7/hardware/item03.webp" };
+const item04 = { url: "/images/pa7/hardware/item04.webp" };
+const item05 = { url: "/images/pa7/hardware/item05.webp" };
+const item06 = { url: "/images/pa7/hardware/item06.webp" };
+const item07 = { url: "/images/pa7/hardware/item07.webp" };
+const item09 = { url: "/images/pa7/hardware/item09.webp" };
 
 type Spec = {
   id: string;

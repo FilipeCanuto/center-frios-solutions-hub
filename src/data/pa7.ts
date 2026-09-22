@@ -1,17 +1,18 @@
-import main from "@/assets/products/pa7-pro/main.png";
-import img01 from "@/assets/products/pa7-pro/01.png";
-import img06 from "@/assets/products/pa7-pro/06.png";
-import img07 from "@/assets/products/pa7-pro/07.png";
-import img09 from "@/assets/products/pa7-pro/09.png";
-import img10 from "@/assets/products/pa7-pro/10.png";
-import img14 from "@/assets/products/pa7-pro/14.png";
-import img19 from "@/assets/products/pa7-pro/19.png";
-import img20 from "@/assets/products/pa7-pro/20.png";
-import img23 from "@/assets/products/pa7-pro/23.png";
-import img24 from "@/assets/products/pa7-pro/24.png";
-import img27 from "@/assets/products/pa7-pro/27.png";
-import bivolt from "@/assets/products/pa7-pro/bivolt.png";
-import trava from "@/assets/products/pa7-pro/trava.png";
+import main from "@/assets/products/pa7-pro/main.webp";
+import img01 from "@/assets/products/pa7-pro/01.webp";
+import img06 from "@/assets/products/pa7-pro/06.webp";
+import img07 from "@/assets/products/pa7-pro/07.webp";
+import img09 from "@/assets/products/pa7-pro/09.webp";
+import img10 from "@/assets/products/pa7-pro/10.webp";
+import img14 from "@/assets/products/pa7-pro/14.webp";
+import img19 from "@/assets/products/pa7-pro/19.webp";
+import img20 from "@/assets/products/pa7-pro/20.webp";
+import img23 from "@/assets/products/pa7-pro/23.webp";
+import img24 from "@/assets/products/pa7-pro/24.webp";
+import img27 from "@/assets/products/pa7-pro/27.webp";
+import bivolt from "@/assets/products/pa7-pro/bivolt.webp";
+import trava from "@/assets/products/pa7-pro/trava.webp";
+import mainThumb from "@/assets/products/pa7-pro/main-thumb.webp";
 import {
   MAX_INSTALLMENTS,
   PIX_DISCOUNT_RATE,
@@ -25,6 +26,10 @@ export const PA7_BASE_PRICE = 6299;
 
 export const PA7_IMAGES = {
   main,
+  /** 224 px para miniaturas (hero, checkout, barra fixa). */
+  thumb: mainThumb,
+  /** Imagem 1200×630 para compartilhamento (WhatsApp/Instagram/Google). */
+  og: "/og/pa7-pro.jpg",
   img01,
   img06,
   img07,
@@ -105,21 +110,21 @@ export const PA7_SHOWCASE = [
   },
 ];
 
-import discE1 from "@/assets/pa7/discs/e1.png.asset.json";
-import discE3 from "@/assets/pa7/discs/e3.png.asset.json";
-import discV from "@/assets/pa7/discs/v.png.asset.json";
-import discZ3 from "@/assets/pa7/discs/z3.png.asset.json";
-import discZ5 from "@/assets/pa7/discs/z5.png.asset.json";
-import discZ8 from "@/assets/pa7/discs/z8.png.asset.json";
-import discH7 from "@/assets/pa7/discs/h7.png.asset.json";
-import discE5 from "@/assets/pa7/discs-optional/e5.png.asset.json";
-import discE8 from "@/assets/pa7/discs-optional/e8.png.asset.json";
-import discE10 from "@/assets/pa7/discs-optional/e10.png.asset.json";
-import discE14 from "@/assets/pa7/discs-optional/e14.png.asset.json";
-import discGC8 from "@/assets/pa7/discs-optional/gc8.png.asset.json";
-import discGC10 from "@/assets/pa7/discs-optional/gc10.png.asset.json";
-import discGC14 from "@/assets/pa7/discs-optional/gc14.png.asset.json";
-import discGC20 from "@/assets/pa7/discs-optional/gc20.png.asset.json";
+const discE1 = { url: "/images/pa7/discs/e1.webp" };
+const discE3 = { url: "/images/pa7/discs/e3.webp" };
+const discV = { url: "/images/pa7/discs/v.webp" };
+const discZ3 = { url: "/images/pa7/discs/z3.webp" };
+const discZ5 = { url: "/images/pa7/discs/z5.webp" };
+const discZ8 = { url: "/images/pa7/discs/z8.webp" };
+const discH7 = { url: "/images/pa7/discs/h7.webp" };
+const discE5 = { url: "/images/pa7/discs/e5.webp" };
+const discE8 = { url: "/images/pa7/discs/e8.webp" };
+const discE10 = { url: "/images/pa7/discs/e10.webp" };
+const discE14 = { url: "/images/pa7/discs/e14.webp" };
+const discGC8 = { url: "/images/pa7/discs/gc8.webp" };
+const discGC10 = { url: "/images/pa7/discs/gc10.webp" };
+const discGC14 = { url: "/images/pa7/discs/gc14.webp" };
+const discGC20 = { url: "/images/pa7/discs/gc20.webp" };
 
 export type OptionalDisc = {
   code: string;

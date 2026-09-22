@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Check, CreditCard, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import productHero from "@/assets/products/pa7-pro/main.png";
+import productHero from "@/assets/products/pa7-pro/main.webp";
 import { PA7_OPTIONAL_DISCS } from "@/data/pa7";
 import { installmentValue, pixPrice, pixSavings } from "@/lib/pricing";
 

@@ -23,7 +23,30 @@ export function LazyVideo({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [inView, setInView] = useState(false);
+  // Pôster só é pedido quando o vídeo está a ~1 tela de distância, para não
+  // baixar todas as capas da página no carregamento inicial.
+  const [near, setNear] = useState(false);
   const [muted, setMuted] = useState(true);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || !poster) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setNear(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setNear(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "900px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [poster]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -84,7 +107,7 @@ export function LazyVideo({
               <video
                 ref={videoRef}
                 src={inView ? src : undefined}
-                poster={poster}
+                poster={near ? poster : undefined}
                 autoPlay
                 muted={muted}
                 loop
@@ -126,7 +149,7 @@ export function LazyVideo({
               <video
                 ref={videoRef}
                 src={inView ? src : undefined}
-                poster={poster}
+                poster={near ? poster : undefined}
                 autoPlay
                 muted={muted}
                 loop
@@ -167,7 +190,7 @@ export function LazyVideo({
         <video
           ref={videoRef}
           src={inView ? src : undefined}
-          poster={poster}
+          poster={near ? poster : undefined}
           autoPlay
           muted={muted}
           loop

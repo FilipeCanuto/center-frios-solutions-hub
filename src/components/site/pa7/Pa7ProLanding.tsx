@@ -172,7 +172,7 @@ export function Pa7ProLanding() {
         name: "Skymsen PA7 Pro",
         brand: { "@type": "Brand", name: "Skymsen" },
         category: "Processador de Alimentos Industrial",
-        image: [`${SITE_URL}${PA7_IMAGES.main}`],
+        image: [`${SITE_URL}${PA7_IMAGES.og}`, `${SITE_URL}${PA7_IMAGES.main}`],
         description:
           "Processador de alimentos profissional Skymsen PA7 Pro — 250 kg/h, 07 discos inclusos, bivolt, aço inox, NR-12.",
         sku: "702609",
@@ -255,7 +255,7 @@ export function Pa7ProLanding() {
             <div className="metal-surface relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.01] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.25)] sm:p-6 lg:sticky lg:top-24">
               <div className="flex items-start gap-4">
                 <img
-                  src={PA7_IMAGES.main}
+                  src={PA7_IMAGES.thumb}
                   alt="Processador PA7 Pro Skymsen em aço inox"
                   width={112}
                   height={112}
@@ -699,7 +699,7 @@ export function Pa7ProLanding() {
 
       <StickyBuyBar
         name="PA7 Pro Skymsen"
-        image={PA7_IMAGES.main}
+        image={PA7_IMAGES.thumb}
         price={PA7_PRICE.amount}
         pixPrice={PA7_PRICE.pixAmount}
         additionalTotal={additionalTotal}
@@ -714,7 +714,7 @@ export function Pa7ProLanding() {
             product={{
               slug: product.slug,
               name: "Processador de Alimentos PA7 Pro Skymsen",
-              image: PA7_IMAGES.main,
+              image: PA7_IMAGES.thumb,
               price: PA7_PRICE.amount,
             }}
             addons={selectedAddons}
