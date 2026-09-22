@@ -11,7 +11,7 @@ import {
 } from "@/lib/payments/rede";
 import { PRODUCT_CATALOG, getCatalogProduct, resolveAddons } from "@/lib/catalog.server";
 import { computeTotals } from "@/lib/pricing";
-import { sendOrderConfirmation } from "@/lib/email.server";
+import { sendOrderConfirmation, sendSalesAlert } from "@/lib/email.server";
 
 import { rateLimit, rateLimitDb } from "@/lib/rate-limit.server";
 
@@ -198,6 +198,15 @@ export const processPayment = createServerFn({ method: "POST" })
         } catch (e) {
           console.error("[processPayment] confirmation email failed:", e);
         }
+        await sendSalesAlert(`Pedido PAGO (cartão ${cd.installments}x): ${productName}`, [
+          ["Pedido", order.id],
+          ["Cliente", data.customer_name],
+          ["WhatsApp", cleanPhone],
+          ["E-mail", data.customer_email],
+          ["Total", total.toFixed(2)],
+          ["Parcelas", cd.installments],
+          ["Cidade/UF", `${data.shipping_address.city}/${data.shipping_address.state}`],
+        ]);
         return { success: true, orderId: order.id, status: "paid" as const, total };
       }
 

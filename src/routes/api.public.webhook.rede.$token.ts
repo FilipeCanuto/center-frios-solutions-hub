@@ -197,6 +197,13 @@ export const Route = createFileRoute("/api/public/webhook/rede/$token")({
               } catch (e) {
                 console.error("[rede-webhook] confirmation email failed", e);
               }
+              const { sendSalesAlert } = await import("@/lib/email.server");
+              await sendSalesAlert(`Pedido PAGO (${full.payment_method}): ${full.product_name}`, [
+                ["Pedido", full.id],
+                ["Cliente", full.customer_name],
+                ["E-mail", full.customer_email],
+                ["Total", Number(full.total_price ?? 0).toFixed(2)],
+              ]);
             }
           }
         }

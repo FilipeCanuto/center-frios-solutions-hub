@@ -62,6 +62,9 @@ function AuthenticatedLayout() {
             <Link to="/admin/pedidos" className="text-sm text-muted-foreground hover:text-foreground">
               Pedidos
             </Link>
+            <Link to="/admin/leads" className="text-sm text-muted-foreground hover:text-foreground">
+              Leads
+            </Link>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span>{user?.email}</span>

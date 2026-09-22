@@ -64,3 +64,19 @@ export const getOrderById = createServerFn({ method: "POST" })
 
     return { order, transactions: transactions ?? [] };
   });
+
+export const listLeads = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ limit: z.number().min(1).max(500).optional() }).parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: leads, error } = await supabaseAdmin
+      .from("quote_leads")
+      .select("id, created_at, name, company, email, phone, product_interest, message, source")
+      .order("created_at", { ascending: false })
+      .limit(data.limit ?? 200);
+    if (error) throw new Error(error.message);
+    return { leads: leads ?? [] };
+  });
