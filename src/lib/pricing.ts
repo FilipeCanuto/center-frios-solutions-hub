@@ -5,8 +5,8 @@
 export const PIX_DISCOUNT_RATE = 0.05;
 export const MAX_INSTALLMENTS = 12;
 
-// Frete fixo fora de Alagoas até existir cálculo por CEP.
-export const FIXED_SHIPPING_PRICE = 89.9;
+// Fora de Alagoas o frete é cotado com a transportadora após a compra
+// (não é cobrado no checkout).
 
 export type PaymentMethod = "pix" | "credit_card";
 
@@ -21,8 +21,9 @@ export function isAlagoasCep(cep: string | null | undefined): boolean {
   return onlyDigits(cep).startsWith("57");
 }
 
-export function shippingFor(cep: string | null | undefined): number {
-  return isAlagoasCep(cep) ? 0 : FIXED_SHIPPING_PRICE;
+/** Valor de frete cobrado no checkout: sempre 0 (AL grátis; demais estados a cotar). */
+export function shippingFor(_cep: string | null | undefined): number {
+  return 0;
 }
 
 export function pixPrice(amount: number): number {
