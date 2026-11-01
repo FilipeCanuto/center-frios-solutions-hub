@@ -51,13 +51,26 @@ export function LazyVideo({
   useEffect(() => {
     const v = videoRef.current;
     if (!v || !inView) return;
-    try {
-      v.load();
+    // iOS/Android only allow autoplay when the muted ATTRIBUTE is present
+    // (React's `muted` prop does not set it in the DOM).
+    v.muted = true;
+    v.defaultMuted = true;
+    v.setAttribute("muted", "");
+    v.setAttribute("playsinline", "");
+    v.setAttribute("webkit-playsinline", "");
+    const tryPlay = () => {
       const p = v.play();
       if (p && typeof p.catch === "function") p.catch(() => {});
-    } catch {
-      /* noop */
-    }
+    };
+    tryPlay();
+    v.addEventListener("canplay", tryPlay, { once: true });
+    // Low-power mode may block autoplay: start on first touch anywhere.
+    const onTouch = () => v.paused && tryPlay();
+    window.addEventListener("touchstart", onTouch, { once: true, passive: true });
+    return () => {
+      v.removeEventListener("canplay", tryPlay);
+      window.removeEventListener("touchstart", onTouch);
+    };
   }, [inView]);
 
   const toggleMute = () => {
