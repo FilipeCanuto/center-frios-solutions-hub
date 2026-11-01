@@ -186,7 +186,7 @@ export function Pa7ProLanding() {
           itemCondition: "https://schema.org/NewCondition",
           availability: "https://schema.org/InStock",
           seller: { "@type": "Organization", name: "CENTERFRIOS" },
-          url: "https://ofertas.centerfrios.com/produtos/pa7-pro",
+          url: "https://ofertas.centerfrios.com/produtos/processador-pa7-pro-skymsen",
           shippingDetails: {
             "@type": "OfferShippingDetails",
             shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "BRL" },
