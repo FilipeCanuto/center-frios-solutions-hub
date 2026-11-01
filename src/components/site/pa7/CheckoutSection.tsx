@@ -197,6 +197,24 @@ export function CheckoutSection({
                   Comprar agora
                 </Button>
 
+                <Button
+                  asChild
+                  id="cta-whatsapp-specialist-pa7"
+                  data-gtm-event="whatsapp_specialist"
+                  data-product="pa7-pro"
+                  size="lg"
+                  variant="outline"
+                  className="w-full rounded-full h-12 text-sm"
+                >
+                  <a
+                    href={`https://wa.me/5582996820070?text=${encodeURIComponent("Olá Maria! Tenho dúvidas sobre o Processador PA7 PRO e gostaria de ajuda para comprar.")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Dúvidas? Fale com a especialista no WhatsApp
+                  </a>
+                </Button>
+
                 <p className="text-center text-xs font-medium text-muted-foreground">
                   Pagamento processado pela e-Rede · Nota fiscal inclusa
                 </p>

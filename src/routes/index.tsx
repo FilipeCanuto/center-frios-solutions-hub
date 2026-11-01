@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Truck, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuoteDialog } from "@/components/site/QuoteDialog";
@@ -30,6 +30,10 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "https://ofertas.centerfrios.com/" }],
   }),
+  // Temporary: send all traffic to the PA7 PRO page while we validate ROI.
+  beforeLoad: () => {
+    throw redirect({ to: "/produtos/$slug", params: { slug: "pa7-pro" }, statusCode: 307 });
+  },
   component: HomePage,
 });
 
