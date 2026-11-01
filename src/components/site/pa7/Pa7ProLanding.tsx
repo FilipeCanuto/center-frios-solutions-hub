@@ -39,6 +39,7 @@ import {
   PA7_PRICE,
   PA7_SHOWCASE,
 } from "@/data/pa7";
+import { PA7_FAQ as PA7_FAQ_LD } from "@/data/pa7";
 import { SALES_WHATSAPP, STORE_WHATSAPP, getProduct, whatsappLink } from "@/data/site";
 import { ecommerce, pushEvent, trackWhatsappClick } from "@/lib/tracking";
 import { formatBRL } from "@/lib/pricing";
