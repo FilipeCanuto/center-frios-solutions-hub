@@ -215,6 +215,8 @@ export function CheckoutSection({
                   </a>
                 </Button>
 
+                <SpecialistStatus />
+
                 <p className="text-center text-xs font-medium text-muted-foreground">
                   Pagamento processado pela e-Rede · Nota fiscal inclusa
                 </p>
