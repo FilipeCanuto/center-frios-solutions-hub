@@ -153,11 +153,12 @@ export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Pro
   const cepKnown = effectiveCep.length === 8;
   const isFreeShippingAL = isAlagoasCep(effectiveCep);
   const shipping = cepKnown ? shippingFor(effectiveCep) : 0;
+  void shipping;
   const shippingLabel = !cepKnown
     ? "Grátis para Alagoas"
     : isFreeShippingAL
       ? "Grátis (Alagoas)"
-      : formatBRL(shipping);
+      : "A cotar";
 
   const [paymentMethod, setPaymentMethod] = useState<"pix" | "credit_card">("pix");
 
@@ -778,7 +779,7 @@ export function CheckoutDialog({ open, onOpenChange, product, addons = [] }: Pro
                         <p className="text-xs text-muted-foreground">
                           {isFreeShippingAL
                             ? "Pronta entrega · prazo confirmado pelo nosso time no WhatsApp"
-                            : "Frete fixo para outros estados · prazo confirmado no WhatsApp"}
+                            : "Frete calculado pela transportadora conforme as condições da sua região · valor e prazo confirmados pelo nosso time no WhatsApp, à parte do pagamento"}
                         </p>
                       </div>
                       <span
