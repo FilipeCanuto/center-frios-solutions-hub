@@ -208,7 +208,7 @@ export function Pa7ProLanding() {
       {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        mainEntity: PA7_FAQ.map((f) => ({
+        mainEntity: PA7_FAQ_LD.map((f) => ({
           "@type": "Question",
           name: f.q,
           acceptedAnswer: { "@type": "Answer", text: f.a },
