@@ -1,3 +1,4 @@
+import { SpecialistStatus } from "./SpecialistStatus";
 import { motion } from "framer-motion";
 import { Check, CreditCard, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
