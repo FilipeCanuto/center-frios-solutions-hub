@@ -30,6 +30,10 @@ export function OptimizedVideoBg({
 
   useEffect(() => {
     if (shouldMount) return;
+    // Mobile/data-saver: keep the lightweight poster only (no video download).
+    if (window.matchMedia("(max-width: 767px)").matches) return;
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (conn?.saveData) return;
     const node = wrapperRef.current;
     if (!node || typeof IntersectionObserver === "undefined") {
       setShouldMount(true);
