@@ -1,3 +1,4 @@
+import { SpecialistStatus } from "./SpecialistStatus";
 import { motion } from "framer-motion";
 import { Check, CreditCard, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -214,6 +215,8 @@ export function CheckoutSection({
                     Dúvidas? Fale com a especialista no WhatsApp
                   </a>
                 </Button>
+
+                <SpecialistStatus />
 
                 <p className="text-center text-xs font-medium text-muted-foreground">
                   Pagamento processado pela e-Rede · Nota fiscal inclusa
