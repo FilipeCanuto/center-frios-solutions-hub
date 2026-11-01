@@ -39,6 +39,7 @@ import {
   PA7_PRICE,
   PA7_SHOWCASE,
 } from "@/data/pa7";
+import { PA7_FAQ as PA7_FAQ_LD } from "@/data/pa7";
 import { SALES_WHATSAPP, STORE_WHATSAPP, getProduct, whatsappLink } from "@/data/site";
 import { ecommerce, pushEvent, trackWhatsappClick } from "@/lib/tracking";
 import { formatBRL } from "@/lib/pricing";
@@ -186,7 +187,32 @@ export function Pa7ProLanding() {
           availability: "https://schema.org/InStock",
           seller: { "@type": "Organization", name: "CENTERFRIOS" },
           url: "https://ofertas.centerfrios.com/produtos/processador-pa7-pro-skymsen",
+          shippingDetails: {
+            "@type": "OfferShippingDetails",
+            shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "BRL" },
+            shippingDestination: {
+              "@type": "DefinedRegion",
+              addressCountry: "BR",
+              addressRegion: "AL",
+            },
+          },
+          hasMerchantReturnPolicy: {
+            "@type": "MerchantReturnPolicy",
+            applicableCountry: "BR",
+            returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+            merchantReturnDays: 7,
+            returnMethod: "https://schema.org/ReturnByMail",
+          },
         },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: PA7_FAQ_LD.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
       },
       {
         "@context": "https://schema.org",

@@ -32,7 +32,7 @@ export const Route = createFileRoute("/")({
   }),
   // Temporary: send all traffic to the PA7 PRO page while we validate ROI.
   beforeLoad: () => {
-    throw redirect({ to: "/produtos/$slug", params: { slug: "pa7-pro" }, statusCode: 307 });
+    throw redirect({ to: "/produtos/$slug", params: { slug: "processador-pa7-pro-skymsen" }, statusCode: 307 });
   },
   component: HomePage,
 });

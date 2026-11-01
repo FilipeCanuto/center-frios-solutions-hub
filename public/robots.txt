@@ -1,10 +1,21 @@
 User-agent: *
-Disallow: /
-Allow: /produtos/processador-pa7-pro-skymsen
-Allow: /produtos/moedor-homogeneizador-hs-98
-Allow: /assets/
-Allow: /__l5e/
-Allow: /favicon.png
-Allow: /videos/
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
 
 Sitemap: https://ofertas.centerfrios.com/sitemap.xml
