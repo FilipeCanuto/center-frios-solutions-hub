@@ -185,8 +185,33 @@ export function Pa7ProLanding() {
           itemCondition: "https://schema.org/NewCondition",
           availability: "https://schema.org/InStock",
           seller: { "@type": "Organization", name: "CENTERFRIOS" },
-          url: "https://ofertas.centerfrios.com/produtos/processador-pa7-pro-skymsen",
+          url: "https://ofertas.centerfrios.com/produtos/pa7-pro",
+          shippingDetails: {
+            "@type": "OfferShippingDetails",
+            shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "BRL" },
+            shippingDestination: {
+              "@type": "DefinedRegion",
+              addressCountry: "BR",
+              addressRegion: "AL",
+            },
+          },
+          hasMerchantReturnPolicy: {
+            "@type": "MerchantReturnPolicy",
+            applicableCountry: "BR",
+            returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+            merchantReturnDays: 7,
+            returnMethod: "https://schema.org/ReturnByMail",
+          },
         },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: PA7_FAQ.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
       },
       {
         "@context": "https://schema.org",
